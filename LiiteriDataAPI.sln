@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriDataAPI", "LiiteriDataAPI\LiiteriDataAPI.csproj", "{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportTool", "ImportTool\ImportTool.csproj", "{DE73C493-3456-425B-8960-6DC6A9D7279F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriDataTests", "LiiteriDataTests\LiiteriDataTests.csproj", "{71B5052E-80B4-460D-B019-426B40AD6485}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71B5052E-80B4-460D-B019-426B40AD6485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71B5052E-80B4-460D-B019-426B40AD6485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71B5052E-80B4-460D-B019-426B40AD6485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71B5052E-80B4-460D-B019-426B40AD6485}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
