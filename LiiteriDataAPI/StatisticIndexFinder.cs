@@ -24,6 +24,90 @@ namespace LiiteriDataAPI
             return conn;
         }
 
+        public RegionLayer[] GetRegionLayers(DbConnection db, int id)
+        {
+            var result = new List<RegionLayer>();
+            string sqlString = @"
+SELECT
+	fta.AlueTaso_ID,
+	dat.AlueTasoKuvaus
+FROM
+	FactTilastoarvo fta,
+	DimAlueTaso dat
+WHERE
+	dat.AlueTaso_ID = fta.AlueTaso_ID AND
+	fta.Tilasto_ID = @id
+GROUP BY
+	fta.AlueTaso_ID,
+	dat.AlueTasoKuvaus
+";
+            using (DbCommand cmd = db.CreateCommand()) {
+                DbParameter param;
+                cmd.CommandText = sqlString;
+
+                param = cmd.CreateParameter();
+                param.DbType = DbType.Int32;
+                param.ParameterName = "@id";
+                param.Value = id;
+                cmd.Parameters.Add(param);
+
+                using (DbDataReader rdr = cmd.ExecuteReader()) {
+                    while (rdr.Read()) {
+                        var rl = new RegionLayer();
+                        rl.Id = (int) rdr["AlueTaso_ID"];
+                        rl.Name = rdr["AlueTasoKuvaus"].ToString();
+                        result.Add(rl);
+                    }
+                }
+            }
+            return result.ToArray();
+        }
+
+        public RegionLayer[] GetRegionLayers(int id)
+        {
+            using (DbConnection db = this.GetDbConnection()) {
+                return this.GetRegionLayers(db, id);
+            }
+        }
+
+        public string[] GetYears(DbConnection db, int id)
+        {
+            var result = new List<string>();
+            string sqlString = @"
+SELECT
+    DISTINCT Jakso_ID
+FROM
+    FactTilastoArvo 
+WHERE
+    Tilasto_ID = @id
+";
+
+            using (DbCommand cmd = db.CreateCommand()) {
+                DbParameter param;
+                cmd.CommandText = sqlString;
+
+                param = cmd.CreateParameter();
+                param.DbType = DbType.Int32;
+                param.ParameterName = "@id";
+                param.Value = id;
+                cmd.Parameters.Add(param);
+
+                using (DbDataReader rdr = cmd.ExecuteReader()) {
+                    while (rdr.Read()) {
+                        result.Add(rdr["Jakso_ID"].ToString());
+                    }
+                }
+            }
+            return result.ToArray();
+        }
+
+        public string[] GetYears(int id)
+        {
+            using (DbConnection db = this.GetDbConnection()) {
+                return this.GetYears(db, id);
+            }
+        }
+
         public List<Models.StatisticIndexBrief>
             GetStatisticIndexBriefsByName(string searchString)
         {
@@ -114,7 +198,11 @@ WHERE
                         var factory1 = new Models.StatisticIndexBriefFactory();
                         brief = factory1.GetStatisticIndexResult(rdr);
                         var factory2 = new Models.StatisticIndexDetailsFactory();
-                        result = factory2.GetStatisticIndexDetails(brief, rdr);
+                        result = factory2.GetStatisticIndexDetails(
+                            brief,
+                            rdr,
+                            this.GetYears(db, brief.Id),
+                            this.GetRegionLayers(db, brief.Id));
                         return result;
                     }
                 }

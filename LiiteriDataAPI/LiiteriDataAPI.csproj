@@ -87,11 +87,14 @@
     </Compile>
     <Compile Include="Models\StatisticIndexDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegionLayer.cs" />
     <Compile Include="StatisticIndexFinder.cs" />
     <Compile Include="Models\StatisticIndexBrief.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

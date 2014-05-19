@@ -10,14 +10,9 @@ namespace LiiteriDataAPI.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int? Group { get; set; }
-        public string Unit { get; set; }
-        //public int? StatisticId { get; set; }
-        public string ProcessingStage { get; set; }
-        public string TimeSpan { get; set; }
-        public int? DecimalCount { get; set; }
-        //public Models.StatisticIndexTheme[] StatisticIndexThemes { get; set; }
         public string[] Themes { get; set; }
+
+        //public Models.StatisticIndexTheme[] StatisticIndexThemes { get; set; }
     }
 
     public class StatisticIndexBriefFactory
@@ -26,14 +21,7 @@ namespace LiiteriDataAPI.Models
         {
             StatisticIndexBrief result = new StatisticIndexBrief();
             result.Id = (int) rdr["Tilasto_ID"];
-            result.Name = (string) rdr["statisticName"].ToString();
-
-            result.Group = rdr["statisticGroup"] as int? ?? default(int);
-            result.Unit = (string) rdr["unit"].ToString();
-            //result.StatisticId = rdr["statisticId"] as int? ?? default(int);
-            result.ProcessingStage = (string) rdr["processingStage"].ToString();
-            result.TimeSpan = (string) rdr["timeSpan"].ToString();
-            result.DecimalCount = rdr["decimalCount"] as int? ?? default(int);
+            result.Name = (string) rdr["Nimi"].ToString();
 
             //var themes = new List<StatisticIndexTheme>();
             var themes = new List<string>();
