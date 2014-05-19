@@ -24,7 +24,7 @@ namespace LiiteriDataAPI.Models
 
             result.Group = brief.Group;
             result.Unit = brief.Unit;
-            result.StatisticId = brief.StatisticId;
+            //result.StatisticId = brief.StatisticId;
             result.ProcessingStage = brief.ProcessingStage;
             result.TimeSpan = brief.TimeSpan;
             result.DecimalCount = brief.DecimalCount;

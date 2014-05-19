@@ -12,7 +12,7 @@ namespace LiiteriDataAPI.Models
         public string Name { get; set; }
         public int? Group { get; set; }
         public string Unit { get; set; }
-        public int? StatisticId { get; set; }
+        //public int? StatisticId { get; set; }
         public string ProcessingStage { get; set; }
         public string TimeSpan { get; set; }
         public int? DecimalCount { get; set; }
@@ -25,12 +25,12 @@ namespace LiiteriDataAPI.Models
         public StatisticIndexBrief GetStatisticIndexResult(DbDataReader rdr)
         {
             StatisticIndexBrief result = new StatisticIndexBrief();
-            result.Id = (int) rdr["id"];
+            result.Id = (int) rdr["Tilasto_ID"];
             result.Name = (string) rdr["statisticName"].ToString();
 
             result.Group = rdr["statisticGroup"] as int? ?? default(int);
             result.Unit = (string) rdr["unit"].ToString();
-            result.StatisticId = rdr["statisticId"] as int? ?? default(int);
+            //result.StatisticId = rdr["statisticId"] as int? ?? default(int);
             result.ProcessingStage = (string) rdr["processingStage"].ToString();
             result.TimeSpan = (string) rdr["timeSpan"].ToString();
             result.DecimalCount = rdr["decimalCount"] as int? ?? default(int);

@@ -11,7 +11,8 @@ namespace LiiteriDataAPI.Controllers
     {
         [Route("v0/indicators/")]
         [HttpGet]
-        public IEnumerable<Models.StatisticIndexBrief> GetIndices(string searchKey)
+        public IEnumerable<Models.StatisticIndexBrief>
+            GetIndices(string searchKey = null)
         {
             var finder = new StatisticIndexFinder();
             var result = finder.GetStatisticIndexBriefsByName(searchKey);
@@ -26,11 +27,5 @@ namespace LiiteriDataAPI.Controllers
             var result = finder.GetStatisticIndexDetailsById(id);
             return result;
         }
-        /*
-        public IHttpActionResult GetStatisticIndex(string searchString)
-        {
-
-        }
-        */
     }
 }

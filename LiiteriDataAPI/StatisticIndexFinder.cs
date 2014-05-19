@@ -31,9 +31,11 @@ namespace LiiteriDataAPI
 SELECT
     *
 FROM
-    statisticIndex
+    statisticIndex idx,
+    DimTilasto tilasto
 WHERE
-    theme1 LIKE @searchString OR
+    idx.statisticID = tilasto.Tilasto_ID AND
+    (theme1 LIKE @searchString OR
     theme2 LIKE @searchString OR
     theme3 LIKE @searchString OR
     theme4 LIKE @searchString OR
@@ -45,7 +47,7 @@ WHERE
         theme3,
         theme4,
         theme5,
-        statisticName) LIKE @searchString
+        statisticName) LIKE @searchString)
 ORDER BY
     theme1,
     theme2,
@@ -91,11 +93,11 @@ USE [LiiteriDataMarts];
 SELECT
 	*
 FROM
-	statisticIndex
-LEFT JOIN
-	DimTilasto ON Tilasto_ID = statisticIndex.statisticId
+	statisticIndex idx,
+	DimTilasto tilasto
 WHERE
-	id = @id
+    idx.statisticID = tilasto.Tilasto_ID AND
+	idx.statisticID = @id
 ";
 
             Models.StatisticIndexDetails result;
