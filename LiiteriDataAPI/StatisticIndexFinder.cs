@@ -41,13 +41,7 @@ WHERE
     theme4 LIKE @searchString OR
     theme5 LIKE @searchString OR
     statisticName LIKE @searchString OR
-    CONCAT(
-        theme1,
-        theme2,
-        theme3,
-        theme4,
-        theme5,
-        statisticName) LIKE @searchString)
+    (theme1 + theme2 + theme3 + theme4 + theme5 + statisticName) LIKE @searchString)
 ORDER BY
     theme1,
     theme2,
