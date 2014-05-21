@@ -5,7 +5,7 @@ using System.Web;
 
 namespace LiiteriDataAPI
 {
-    public class RegionLayer
+    public class RegionType
     {
         public int Id { get; set; }
         public string Name { get; set; }
