@@ -13,67 +13,81 @@ namespace LiiteriDataAPI
     {
         public IEnumerable<Models.StatisticsResult> GetStatisticsResults(
             int id,
-            string[] years,
+            string year,
             int calctype)
         {
             var results = new List<Models.StatisticsResult>();
 
-            string sqlString = @"
+            string sqlString = null;
+
+            string sqlString_normal = @"
+DECLARE @AlueTaso_ID INT = 2
 SELECT
-	ku.Alue_ID AS regionID,
-	ku.Nimi AS municipalityName,
-	fta.Jakso_ID AS year,
-	{0}
+	K.Alue_ID AS regionID,
+	K.Nimi AS municipalityName,
+	K.Nro AS municipalityID,
+	T.Jakso_ID AS year,
+	SUM(T.Arvo) AS value
 FROM
-	FactTilastoArvo fta,
-	DimAlue da_alue,
-	DimAlue da_kunta,
-	DimKunta ku
+	FactTilastoArvo T
+		INNER JOIN DimAlue A ON
+			A.Alue_ID = T.Alue_ID AND
+			@year BETWEEN A.Alkaen_Jakso_ID AND A.Asti_JAKSO_ID
+		INNER JOIN DimKunta K ON
+			K.Alue_ID = A.Kunta_Alue_ID
 WHERE
-	fta.Tilasto_ID = @id AND
-	da_alue.Alue_ID = fta.Alue_ID AND
-	da_alue.Kunta_Alue_ID = da_kunta.Alue_ID AND
-	ku.Alue_ID = da_kunta.Alue_ID AND
-	{1}
+	T.Tilasto_ID = @id AND
+	T.Jakso_ID = @year
 GROUP BY
-	ku.Nimi,
-	ku.Alue_ID,
-	fta.Jakso_ID
+	K.Nimi,
+	K.Nro,
+	K.Alue_ID,
+	T.Jakso_ID
 ORDER BY
-	municipalityName
+	municipalityName;
 ";
 
-            List<string> years2 = new List<string>();
-            foreach (string year in years) {
-                years2.Add(string.Format("'{0}'", year));
-            }
-            string years3 = string.Format("fta.JAKSO_ID IN ({0})",
-                string.Join(", ", years2));
+            string sqlString_derived_summed = @"
+DECLARE @AlueTaso_ID INT = 2
+SELECT
+	K.Alue_ID AS regionID,
+	K.Nimi AS municipalityName,
+	K.Nro AS municipalityID,
+	T.Jakso_ID AS year,
+	SUM(T.Arvo) AS value
+FROM
+	DimTilasto_JohdettuTilasto_Summa Tjts
+		INNER JOIN FactTilastoarvo T ON
+			T.Tilasto_ID = Tjts.Yhteenlaskettava_Tilasto_ID AND
+			T.Jakso_ID = @year
+		INNER JOIN DimAlue A ON
+			A.Alue_ID = T.Alue_ID AND
+			@year BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+			A.AlueTaso_ID = @AlueTaso_ID
+		INNER JOIN DimKunta K ON
+			K.Alue_ID = A.Kunta_Alue_ID
+WHERE
+	Tjts.Tilasto_ID = @id
+GROUP BY
+	K.Nimi,
+	K.Nro,
+	K.Alue_ID,
+	T.Jakso_ID
+ORDER BY
+	municipalityName;
+";
 
-            string aggr = "NULL AS value";
             switch (calctype) {
+                case 5: /* Johdettu tilasto - summaamalla laskettava */
+                    sqlString = sqlString_derived_summed;
+                    break;
                 case 1:
-                    aggr = "SUM(fta.Arvo) AS value";
+                    sqlString = sqlString_normal;
                     break;
-                case 2:
-                    aggr = "0 AS value";
-                    //throw new NotImplementedException("Not implemented: Aputilasto");
-                    break;
-                case 3:
-                    aggr = "0 AS value";
-                    //throw new NotImplementedException("Not implemented: Johdettu tilasto - jakamalla laskettava");
-                    break;
-                case 4:
-                    aggr = "0 AS value";
-                    //throw new NotImplementedException("Not implemented: Johdettu tilasto - erikseen laskettava");
-                    break;
-                case 5:
-                    aggr = "0 AS value";
-                    //throw new NotImplementedException("Not implemented: Johdettu tilasto - summaamalla laskettava");
-                    break;
+                default:
+                    throw new Exception("Calculation type not implemented!");
             }
 
-            sqlString = string.Format(sqlString, aggr, years3);
 
             Models.StatisticsResult result;
             using (DbConnection db = this.GetDbConnection()) {
@@ -85,6 +99,12 @@ ORDER BY
                     param.DbType = DbType.Int32;
                     param.ParameterName = "@id";
                     param.Value = id;
+                    cmd.Parameters.Add(param);
+
+                    param = cmd.CreateParameter();
+                    param.DbType = DbType.String;
+                    param.ParameterName = "@year";
+                    param.Value = year;
                     cmd.Parameters.Add(param);
 
                     using (DbDataReader rdr = cmd.ExecuteReader()) {
@@ -104,8 +124,9 @@ ORDER BY
             Models.StatisticsResult result = new Models.StatisticsResult();
             result.RegionID = (int) rdr["regionID"];
             result.MunicipalityName = (string) rdr["municipalityName"].ToString();
+            result.MunicipalityId = (string) rdr["municipalityID"].ToString();
             result.Year = (string) rdr["year"].ToString();
-            result.value = rdr["value"];
+            result.Value = rdr["value"];
             return result;
         }
     }

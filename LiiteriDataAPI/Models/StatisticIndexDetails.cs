@@ -19,7 +19,7 @@ namespace LiiteriDataAPI.Models
         public string Description;
         public string AdditionalInformation;
 
-        [IgnoreDataMember]
+        //[IgnoreDataMember]
         public int CalculationType { get; set; }
 
         public string[] Years;

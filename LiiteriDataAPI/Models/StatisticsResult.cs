@@ -9,7 +9,8 @@ namespace LiiteriDataAPI.Models
     {
         public int RegionID { get; set; }
         public string MunicipalityName { get; set; }
+        public string MunicipalityId { get; set; }
         public string Year { get; set; }
-        public object value { get; set; }
+        public object Value { get; set; }
     }
 }

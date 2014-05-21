@@ -32,18 +32,14 @@ namespace LiiteriDataAPI.Controllers
         [HttpGet]
         public IEnumerable<Models.StatisticsResult> GetStatistics(
             int id,
-            string years = null)
+            string year)
         {
             Models.StatisticIndexDetails details =
                 new StatisticIndexDetailsFactory().GetStatisticIndexDetailsById(id);
             var factory = new StatisticsResultFactory();
-            string[] lyears = null;
-            if (years != null) {
-                lyears = years.Split(new char[] { ',' }).ToArray();
-            }
             return factory.GetStatisticsResults(
                 id,
-                lyears,
+                year,
                 details.CalculationType);
         }
     }
