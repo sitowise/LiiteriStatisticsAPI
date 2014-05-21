@@ -34,7 +34,7 @@ WHERE
 	da_alue.Alue_ID = fta.Alue_ID AND
 	da_alue.Kunta_Alue_ID = da_kunta.Alue_ID AND
 	ku.Alue_ID = da_kunta.Alue_ID AND
-	fta.Jakso_ID IN ('2011', '2012', '2013')
+	{1}
 GROUP BY
 	ku.Nimi,
 	ku.Alue_ID,
@@ -42,6 +42,13 @@ GROUP BY
 ORDER BY
 	municipalityName
 ";
+
+            List<string> years2 = new List<string>();
+            foreach (string year in years) {
+                years2.Add(string.Format("'{0}'", year));
+            }
+            string years3 = string.Format("fta.JAKSO_ID IN ({0})",
+                string.Join(", ", years2));
 
             string aggr = "NULL AS value";
             switch (calctype) {
@@ -66,7 +73,7 @@ ORDER BY
                     break;
             }
 
-            sqlString = string.Format(sqlString, aggr);
+            sqlString = string.Format(sqlString, aggr, years3);
 
             Models.StatisticsResult result;
             using (DbConnection db = this.GetDbConnection()) {
