@@ -32,7 +32,8 @@ FROM
 	FactTilastoArvo T
 		INNER JOIN DimAlue A ON
 			A.Alue_ID = T.Alue_ID AND
-			@year BETWEEN A.Alkaen_Jakso_ID AND A.Asti_JAKSO_ID
+			@year BETWEEN A.Alkaen_Jakso_ID AND A.Asti_JAKSO_ID AND
+			A.AlueTaso_ID = @AlueTaso_ID
 		INNER JOIN DimKunta K ON
 			K.Alue_ID = A.Kunta_Alue_ID
 WHERE
