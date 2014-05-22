@@ -87,8 +87,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Region.cs" />
     <Compile Include="Models\StatisticIndexDetails.cs" />
     <Compile Include="Models\StatisticsResult.cs" />
+    <Compile Include="RegionFactory.cs" />
     <Compile Include="StatisticIndexBriefFactory.cs" />
     <Compile Include="StatisticIndexDetailsFactory.cs" />
     <Compile Include="StatisticsResultFactory.cs" />

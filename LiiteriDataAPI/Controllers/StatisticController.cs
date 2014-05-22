@@ -42,5 +42,13 @@ namespace LiiteriDataAPI.Controllers
                 year,
                 details.CalculationType);
         }
+
+        [Route("v0/regions/")]
+        [HttpGet]
+        public IEnumerable<Models.Region> GetRegions()
+        {
+            var factory = new RegionFactory();
+            return factory.GetRegions();
+        }
     }
 }
