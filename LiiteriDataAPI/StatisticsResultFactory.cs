@@ -77,7 +77,47 @@ ORDER BY
 	municipalityName;
 ";
 
+            string sqlString_derived_divided = @"
+DECLARE @AlueTaso_ID INT = 2
+SELECT
+	(SUM(T1.Arvo) / SUM(T2.Arvo)) AS Value,
+	K.Nimi AS municipalityName,
+	K.Alue_ID AS regionID,
+	K.Nro AS municipalityId,
+	T1.Jakso_ID AS year
+FROM
+	DimTilasto_JohdettuTilasto_Jako J
+		LEFT JOIN FactTilastoarvo T1 ON
+			T1.Tilasto_ID = J.Osoittaja_Tilasto_ID AND
+			T1.Jakso_ID = @year AND
+			T1.AlueTaso_ID = @AlueTaso_ID
+		LEFT JOIN FactTilastoarvo T2 ON
+			T2.Tilasto_ID = J.Nimittaja_Tilasto_ID AND
+			T2.Jakso_ID = @year AND
+			T2.AlueTaso_ID = @AlueTaso_ID
+
+		INNER JOIN DimAlue A ON
+			A.Alue_ID = T1.Alue_ID AND
+			A.Alue_ID = T2.Alue_ID AND
+			@year BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+			A.AlueTaso_ID = @AlueTaso_ID
+		INNER JOIN DimKunta K ON
+			K.Alue_ID = A.Kunta_Alue_ID
+WHERE
+	J.Tilasto_ID = @id
+GROUP BY
+	K.Nimi,
+	K.Nro,
+	K.Alue_ID,
+	T1.Jakso_ID
+ORDER BY
+	K.Nimi
+";
+
             switch (calctype) {
+                case 3: /* Johdettu tilasto - jakamalla laskettava */
+                    sqlString = sqlString_derived_divided;
+                    break;
                 case 5: /* Johdettu tilasto - summaamalla laskettava */
                     sqlString = sqlString_derived_summed;
                     break;
