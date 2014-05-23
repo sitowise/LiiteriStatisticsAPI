@@ -21,7 +21,7 @@ SELECT
 	theme4,
 	theme5,
 	idx.statisticName,
-	COUNT(ja.Jakso_ID)
+	COUNT(ja.Jakso_ID) jakso_count
 FROM
     statisticIndex idx,
     DimTilasto tilasto,
@@ -29,6 +29,7 @@ FROM
 WHERE
     idx.statisticID = tilasto.Tilasto_ID AND
 	ja.Tilasto_ID = tilasto.Tilasto_ID AND
+	ja.AlueTaso_ID = 2 AND
     (theme1 LIKE @searchString OR
     theme2 LIKE @searchString OR
     theme3 LIKE @searchString OR
@@ -69,6 +70,9 @@ ORDER BY
                     using (DbDataReader rdr = cmd.ExecuteReader()) {
                         var factory = new Models.StatisticIndexBriefFactory();
                         while (rdr.Read()) {
+                            if ((int) rdr["jakso_count"] == 0) {
+                                continue;
+                            }
                             Models.StatisticIndexBrief result =
                                 factory.GetStatisticIndexResult(rdr);
                             results.Add(result);
