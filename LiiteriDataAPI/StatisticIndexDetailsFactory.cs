@@ -59,8 +59,6 @@ GROUP BY
             GetStatisticIndexDetailsById(int id)
         {
             string sqlString1 = @"
-USE [LiiteriDataMarts];
-
 SELECT
 	*
 FROM
@@ -107,11 +105,12 @@ WHERE
             var result = new List<string>();
             string sqlString = @"
 SELECT
-    DISTINCT Jakso_ID
+	DISTINCT Jakso_ID
 FROM
-    FactTilastoArvo 
+	Apu_TilastoTallennusJakso J
 WHERE
-    Tilasto_ID = @id
+	J.Tilasto_ID = 8003 AND
+	J.AlueTaso_ID = 2;
 ";
 
             using (DbCommand cmd = db.CreateCommand()) {

@@ -14,12 +14,21 @@ namespace LiiteriDataAPI
         {
             string sqlString = @"
 SELECT
-    *
+    tilasto.Tilasto_ID,
+	theme1,
+	theme2,
+	theme3,
+	theme4,
+	theme5,
+	idx.statisticName,
+	COUNT(ja.Jakso_ID)
 FROM
     statisticIndex idx,
-    DimTilasto tilasto
+    DimTilasto tilasto,
+	Apu_TilastoTallennusJakso ja
 WHERE
     idx.statisticID = tilasto.Tilasto_ID AND
+	ja.Tilasto_ID = tilasto.Tilasto_ID AND
     (theme1 LIKE @searchString OR
     theme2 LIKE @searchString OR
     theme3 LIKE @searchString OR
@@ -27,13 +36,21 @@ WHERE
     theme5 LIKE @searchString OR
     statisticName LIKE @searchString OR
     (theme1 + theme2 + theme3 + theme4 + theme5 + statisticName) LIKE @searchString)
+GROUP BY
+	tilasto.Tilasto_ID,
+	theme1,
+	theme2,
+	theme3,
+	theme4,
+	theme5,
+	idx.statisticName
 ORDER BY
     theme1,
     theme2,
     theme3,
     theme4,
     theme5,
-    statisticName
+    idx.statisticName
 ";
 
             var results = new List<Models.StatisticIndexBrief>();

@@ -21,7 +21,7 @@ namespace LiiteriDataAPI.Models
         {
             StatisticIndexBrief result = new StatisticIndexBrief();
             result.Id = (int) rdr["Tilasto_ID"];
-            result.Name = (string) rdr["Nimi"].ToString();
+            result.Name = (string) rdr["statisticName"].ToString();
 
             //var themes = new List<StatisticIndexTheme>();
             var themes = new List<string>();

@@ -68,7 +68,8 @@ FROM
 		INNER JOIN DimKunta K ON
 			K.Alue_ID = A.Kunta_Alue_ID
 WHERE
-	Tjts.Tilasto_ID = @id
+	Tjts.Tilasto_ID = @id AND
+    Tjtjs.Ryhma_SEQ = 0
 GROUP BY
 	K.Nimi,
 	K.Nro,
@@ -170,5 +171,12 @@ ORDER BY
             result.Value = rdr["value"];
             return result;
         }
+
+        /*
+        private IEnumerable<Models.StatisticsResult>
+            GetStatisticsResultNormal(int id,string year)
+        {
+        }
+        */
     }
 }
