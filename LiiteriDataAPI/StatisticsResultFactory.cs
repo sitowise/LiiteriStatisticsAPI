@@ -38,7 +38,8 @@ FROM
 			K.Alue_ID = A.Kunta_Alue_ID
 WHERE
 	T.Tilasto_ID = @id AND
-	T.Jakso_ID = @year
+	T.Jakso_ID = @year AND
+	T.Arvo IS NOT NULL
 GROUP BY
 	K.Nimi,
 	K.Nro,
