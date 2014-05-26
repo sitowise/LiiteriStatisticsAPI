@@ -155,6 +155,7 @@ ORDER BY
                         while (rdr.Read()) {
                             result = this.GetStatisticsResult(rdr);
                             this.ConvertStatisticValue(result, details);
+                            this.SetStatisticDecimals(result, details);
                             results.Add(result);
                         }
                     }
@@ -171,7 +172,7 @@ ORDER BY
             result.MunicipalityName = (string) rdr["municipalityName"].ToString();
             result.MunicipalityId = (string) rdr["municipalityID"].ToString();
             result.Year = (string) rdr["year"].ToString();
-            result.Value = rdr["value"];
+            result.Value = (decimal) ((double) rdr["value"]);
             return result;
         }
 
@@ -189,18 +190,29 @@ ORDER BY
                 case 12: // osuus
                     switch (details.DisplayUnitID) {
                         case 1: // %
-                            statResult.Value = (double) statResult.Value * 100;
+                            statResult.Value = (decimal) ((double) statResult.Value * 100);
                             break;
                     }
                     break;
                 case 10: // m2
                     switch (details.DisplayUnitID) {
                         case 14: // ha
-                            statResult.Value = (double) statResult.Value / 100;
+                            statResult.Value = (decimal) ((double) statResult.Value / 100);
                             break;
                     }
                     break;
             }
+        }
+
+        public void SetStatisticDecimals(
+            Models.StatisticsResult statResult,
+            Models.StatisticIndexDetails details)
+        {
+            int decimalCount = 0;
+            if (details.DecimalCount != null) {
+                decimalCount = (int) details.DecimalCount;
+            }
+            statResult.Value = decimal.Round(statResult.Value, decimalCount);
         }
     }
 }

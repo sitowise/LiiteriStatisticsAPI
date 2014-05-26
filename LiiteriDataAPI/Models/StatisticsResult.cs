@@ -11,6 +11,6 @@ namespace LiiteriDataAPI.Models
         public string MunicipalityName { get; set; }
         public string MunicipalityId { get; set; }
         public string Year { get; set; }
-        public object Value { get; set; }
+        public decimal Value { get; set; }
     }
 }
