@@ -34,7 +34,8 @@ namespace LiiteriDataAPI
         {
             Models.Region result = new Models.Region();
             result.Id = (int) rdr["Alue_ID"];
-            result.Code = (string) rdr["Nro"].ToString();
+            result.Code = int.Parse((string) rdr["Nro"]).ToString();
+            //result.Code = (string) rdr["Nro"].ToString();
             result.Category = "Kunta";
             result.Title = (string) rdr["Nimi"].ToString();
             return result;

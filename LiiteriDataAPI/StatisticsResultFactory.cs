@@ -170,7 +170,9 @@ ORDER BY
             Models.StatisticsResult result = new Models.StatisticsResult();
             result.RegionID = (int) rdr["regionID"];
             result.MunicipalityName = (string) rdr["municipalityName"].ToString();
-            result.MunicipalityId = (string) rdr["municipalityID"].ToString();
+            //result.MunicipalityId = (string) rdr["municipalityID"].ToString();
+            result.MunicipalityId =
+                (string) int.Parse((string) rdr["municipalityID"]).ToString();
             result.Year = (string) rdr["year"].ToString();
             result.Value = (decimal) ((double) rdr["value"]);
             return result;
