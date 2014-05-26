@@ -40,7 +40,7 @@ namespace LiiteriDataAPI.Controllers
             return factory.GetStatisticsResults(
                 id,
                 year,
-                details.CalculationType);
+                details);
         }
 
         [Route("v0/regions/")]

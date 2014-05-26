@@ -14,7 +14,7 @@ namespace LiiteriDataAPI
         public IEnumerable<Models.StatisticsResult> GetStatisticsResults(
             int id,
             string year,
-            int calctype)
+            Models.StatisticIndexDetails details)
         {
             var results = new List<Models.StatisticsResult>();
 
@@ -116,7 +116,7 @@ ORDER BY
 	K.Nimi
 ";
 
-            switch (calctype) {
+            switch (details.CalculationType) {
                 case 3: /* Johdettu tilasto - jakamalla laskettava */
                     sqlString = sqlString_derived_divided;
                     break;
@@ -152,6 +152,7 @@ ORDER BY
                     using (DbDataReader rdr = cmd.ExecuteReader()) {
                         while (rdr.Read()) {
                             result = this.GetStatisticsResult(rdr);
+                            this.ConvertStatisticValue(result, details);
                             results.Add(result);
                         }
                     }
@@ -172,11 +173,32 @@ ORDER BY
             return result;
         }
 
-        /*
-        private IEnumerable<Models.StatisticsResult>
-            GetStatisticsResultNormal(int id,string year)
+        public void ConvertStatisticValue(
+            Models.StatisticsResult statResult,
+            Models.StatisticIndexDetails details)
         {
+            /* we appear to have the following cases in db:
+             * 10, 14 (m2 -> ha)
+             * 12, 1 (osuus -> %)
+             * 6,7 (kpl -> lkm)
+             * 15,18 (e -> unknown)
+             */
+            switch (details.InternalUnitID) {
+                case 12: // osuus
+                    switch (details.DisplayUnitID) {
+                        case 1: // %
+                            statResult.Value = (double) statResult.Value * 100;
+                            break;
+                    }
+                    break;
+                case 10: // m2
+                    switch (details.DisplayUnitID) {
+                        case 14: // ha
+                            statResult.Value = (double) statResult.Value / 100;
+                            break;
+                    }
+                    break;
+            }
         }
-        */
     }
 }

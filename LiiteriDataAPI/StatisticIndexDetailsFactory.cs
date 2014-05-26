@@ -156,6 +156,9 @@ WHERE
             result.TimeSpan = (string) rdr["timeSpan"].ToString();
             result.DecimalCount = rdr["EsitysDesimaaliTarkkuus"] as int? ?? default(int);
 
+            result.DisplayUnitID = (int) rdr["MittayksikkoEsitys_Mittayksikko_ID"];
+            result.InternalUnitID = (int) rdr["MittayksikkoTallennus_Mittayksikko_ID"];
+
             result.Themes = brief.Themes;
 
             result.Description = (string) rdr["Kuvaus"].ToString();

@@ -16,6 +16,12 @@ namespace LiiteriDataAPI.Models
         public string TimeSpan { get; set; }
         public int? DecimalCount { get; set; }
 
+        /* unit of measurement */
+        [IgnoreDataMember]
+        public int DisplayUnitID { get; set; }
+        [IgnoreDataMember]
+        public int InternalUnitID { get; set; }
+
         public string Description;
         public string AdditionalInformation;
 
