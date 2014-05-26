@@ -28,10 +28,10 @@ namespace LiiteriDataAPI.Models
             for (int i = 0; i < rdr.FieldCount; i ++) {
                 string key = rdr.GetName(i);
                 if (!key.StartsWith("theme")) continue;
-                if (rdr.IsDBNull(i)) continue;
-                //var theme = new StatisticIndexTheme();
-                //theme.Name = rdr.GetString(i);
-                string theme = rdr.GetString(i);
+                string theme = "";
+                if (!rdr.IsDBNull(i)) {
+                    theme = rdr.GetString(i);
+                }
                 themes.Add(theme);
             }
             result.Themes = themes.ToArray();

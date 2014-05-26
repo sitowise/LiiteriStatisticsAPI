@@ -111,7 +111,7 @@ INSERT INTO statisticIndex (
 
                 using (DbTransaction dbTrans = db.BeginTransaction()) {
 
-                    TruncateTable(db, "statisticDB", dbTrans);
+                    TruncateTable(db, "statisticIndex", dbTrans);
 
                     for (int i = start.Row + 1; i <= end.Row; i++) {
                         var data = new Dictionary<string, string>();
@@ -130,13 +130,23 @@ INSERT INTO statisticIndex (
                             if (!key.StartsWith("Teemataso ")) {
                                 continue;
                             }
-                            //Debug.WriteLine(key);
                             if (data[key].Trim().Length == 0) {
                                 continue;
                             }
                             cur_themes[key] = data[key];
-                        }
 
+                            /* zero pad the rest since we have a new lower
+                             * level subtheme */
+                            bool empty = false;
+                            int count = 0;
+                            foreach (string tk in cur_themes.Keys.ToArray()) {
+                                if (count++ > 0 && tk == key) {
+                                    empty = true;
+                                } else if (empty) {
+                                    cur_themes[tk] = "";
+                                }
+                            }
+                        }
 
                         using (DbCommand cmd = db.CreateCommand()) {
                             cmd.CommandText = insertSqlString;
