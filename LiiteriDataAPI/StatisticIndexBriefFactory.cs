@@ -30,6 +30,7 @@ WHERE
     idx.statisticID = tilasto.Tilasto_ID AND
 	ja.Tilasto_ID = tilasto.Tilasto_ID AND
 	ja.AlueTaso_ID = 2 AND
+    tilasto.TilastoLaskentatyyppi_ID <> 2 AND
     (theme1 LIKE @searchString OR
     theme2 LIKE @searchString OR
     theme3 LIKE @searchString OR
