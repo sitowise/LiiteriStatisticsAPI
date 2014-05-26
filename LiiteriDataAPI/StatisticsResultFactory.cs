@@ -39,6 +39,7 @@ FROM
 WHERE
 	T.Tilasto_ID = @id AND
 	T.Jakso_ID = @year AND
+	T.AlueTaso_ID = @AlueTaso_ID AND
 	T.Arvo IS NOT NULL
 GROUP BY
 	K.Nimi,
