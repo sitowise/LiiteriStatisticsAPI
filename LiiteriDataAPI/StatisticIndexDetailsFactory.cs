@@ -109,7 +109,7 @@ SELECT
 FROM
 	Apu_TilastoTallennusJakso J
 WHERE
-	J.Tilasto_ID = 8003 AND
+	J.Tilasto_ID = @id AND
 	J.AlueTaso_ID = 2;
 ";
 
