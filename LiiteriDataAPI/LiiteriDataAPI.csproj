@@ -84,6 +84,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BaseFactory.cs" />
     <Compile Include="Controllers\StatisticController.cs" />
+    <Compile Include="Controllers\ThemeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -111,6 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LiiteriStatisticsCore\LiiteriStatisticsCore.csproj">
+      <Project>{741cd9e6-dcf6-4688-8c9d-6560a7038286}</Project>
+      <Name>LiiteriStatisticsCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
