@@ -7,14 +7,14 @@ using System.Data.Common;
 
 namespace LiiteriStatisticsCore.Factories
 {
-    public class ThemeFactory : BaseFactory, IFactory
+    public class IndicatorBriefFactory : BaseFactory, IFactory
     {
         public override Models.ILiiteriEntity Create(DbDataReader rdr)
         {
-            var obj = new Models.Theme();
+            var obj = new Models.IndicatorBrief();
             obj.Id = (int) rdr["Id"];
             obj.Name = rdr["Name"].ToString();
-            obj.ParentId = (int?) this.GetValueOrNull(rdr, "ParentId");
+            obj.ThemeId = (int?) this.GetValueOrNull(rdr, "ThemeId");
             return obj;
         }
     }

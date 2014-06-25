@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+/* Only used by V0 API, to be removed */
+
 namespace LiiteriDataAPI.Models
 {
     public class Region

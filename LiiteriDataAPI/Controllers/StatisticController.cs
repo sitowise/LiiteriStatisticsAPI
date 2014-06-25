@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
+/* These are for V0 only, and will be replaced */
+
 namespace LiiteriDataAPI.Controllers
 {
     public class StatisticController : ApiController

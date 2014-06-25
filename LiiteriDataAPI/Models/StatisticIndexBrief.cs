@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Data.Common;
 
+/* Only used by V0 API, to be removed */
+
 namespace LiiteriDataAPI.Models
 {
     public class StatisticIndexBrief
