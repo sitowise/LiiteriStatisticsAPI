@@ -4,13 +4,14 @@ from __future__ import unicode_literals
 from openpyxl import load_workbook
 from md5 import md5
 import json
-import urllib
-import urllib2
+import sys
+import requests
 
 class Theme(object):
 
     hash = None
     parent = None
+    statistics_id = None
     name = ""
 
 class ThemeFactory(object):
@@ -20,7 +21,7 @@ class ThemeFactory(object):
     def getHash(self, pieces):
         return md5('/'.join([repr(x) for x in pieces])).hexdigest()
 
-    def getOrAdd(self, pieces):
+    def getOrAdd(self, pieces, statistics_id = None):
         pieces = [x for x in pieces
             if x is not None and len(x.strip()) > 0]
 
@@ -33,6 +34,7 @@ class ThemeFactory(object):
             t = Theme()
             t.hash = hash
             t.name = pieces[-1]
+            t.statistics_id = statistics_id
             self.repository.append(t)
 
             if len(pieces) > 1:
@@ -54,16 +56,30 @@ def restAddTheme(theme, parent):
         "ParentId": parent,
         }
     data = json.dumps(entry)
-    url = 'http://localhost/LiiteriDataAPI2/themes/'
-    req = urllib2.Request(url, data, {
+    url = 'http://localhost/LiiteriDataAPI/v1/themes/'
+    headers = {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        })
-    f = urllib2.urlopen(req)
-    response = f.read()
-    f.close()
-    response = json.loads(response)
+        }
+    req = requests.post(url, data, headers=headers)
+    response = req.json()
     return int(response["Id"])
+
+def restAddStatistics(theme_id, theme):
+    url = 'http://localhost/LiiteriDataAPI/v1/indicators/%d' % \
+        (theme.statistics_id,)
+    data = None
+    headers = {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        }
+    req = requests.get(url, headers=headers)
+    obj = req.json()
+    obj['ThemeId'] = theme_id
+
+    data = json.dumps(obj)
+    req = requests.put(url, data, headers=headers)
+    obj = req.json()
 
 if __name__ == '__main__':
     excel_file = r"C:\Projects\Liiteri\Liiteri_Tilastot_Rakenne.xlsx"
@@ -116,13 +132,18 @@ if __name__ == '__main__':
                     cur_themes[tk] = None
                 count += 1
 
+        statistics_id = data["Liiteri-Tilasto_ID"]
+        if statistics_id is not None:
+            statistics_id = int(statistics_id)
+
         theme = tFactory.getOrAdd((
-            cur_themes['Teemataso 1'],
-            cur_themes['Teemataso 2'],
-            cur_themes['Teemataso 3'],
-            cur_themes['Teemataso 4'],
-            cur_themes['Teemataso 5'],
-            ))
+                cur_themes['Teemataso 1'],
+                cur_themes['Teemataso 2'],
+                cur_themes['Teemataso 3'],
+                cur_themes['Teemataso 4'],
+                cur_themes['Teemataso 5'],
+            ),
+            statistics_id)
 
     def addThemes(parentHash = None, parentId = None, iter = 0):
         for theme in tFactory.findByParent(parentHash):
@@ -130,7 +151,10 @@ if __name__ == '__main__':
                 iter * ' ',
                 theme.name))
             id = restAddTheme(theme, parentId)
+            if theme.statistics_id is not None:
+                restAddStatistics(id, theme)
             addThemes(theme.hash, id, iter + 1)
+            print("addThemes");
 
     addThemes()
 

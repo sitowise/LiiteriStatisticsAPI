@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>ad6eb449-f338-4e25-b2a4-10c061fa6d9f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ImportTool2.py</StartupFile>
+    <StartupFile>import-themes.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,9 +24,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ImportTool2.py" />
-  </ItemGroup>
-  <ItemGroup>
     <Interpreter Include="env\">
       <Id>{8a51248c-f3a2-4ccc-b1ad-9530dcae534d}</Id>
       <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
@@ -37,6 +34,9 @@
       <LibraryPath>Lib\</LibraryPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="import-themes.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
