@@ -41,15 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factories\AreaTypeFactory.cs" />
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Factories\IndicatorBriefFactory.cs" />
     <Compile Include="Factories\IndicatorDetailsFactory.cs" />
     <Compile Include="Factories\ThemeFactory.cs" />
+    <Compile Include="Factories\TimePeriodFactory.cs" />
+    <Compile Include="Models\AreaType.cs" />
     <Compile Include="Models\ILiiteriEntity.cs" />
     <Compile Include="Models\ILiiteriMarker.cs" />
     <Compile Include="Models\IndicatorBrief.cs" />
     <Compile Include="Models\IndicatorDetails.cs" />
+    <Compile Include="Models\TimePeriod.cs" />
     <Compile Include="Models\StatisticsResult.cs" />
     <Compile Include="Models\Theme.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace LiiteriStatisticsCore.Queries
 {
@@ -79,13 +80,18 @@ namespace LiiteriStatisticsCore.Queries
             fields["T.Lisatieto"] = "AdditionalInformation";
             fields["T.TilastoLaskentatyyppi_ID"] = "CalculationType";
 
-            foreach (var pair in fields) {
-                sb.Append(string.Format("{0} AS {1}, ", pair.Key, pair.Value));
-            }
+            fields["J.Jakso_ID"] = "PeriodId";
+            fields["J.AlueTaso_ID"] = "AreaTypeId";
 
-            sb.Append("COUNT(J.Jakso_Id) AS jakso_count ");
+            sb.Append(
+                string.Join<string>(", ", (
+                    from pair in fields
+                    select string.Format(
+                        "{0} AS {1}", pair.Key, pair.Value)
+                    ).ToArray())
+                );
 
-            sb.Append(string.Format("FROM [{0}]..[DimTilasto] T ",
+            sb.Append(string.Format(" FROM [{0}]..[DimTilasto] T ",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
             sb.Append(string.Format(
                 "INNER JOIN [{0}]..[Apu_TilastoTallennusJakso] J ON ",
@@ -100,9 +106,7 @@ namespace LiiteriStatisticsCore.Queries
                 sb.Append(string.Join(" AND ", whereList));
             }
 
-            sb.Append("GROUP BY ");
-
-            sb.Append(string.Join(", ", fields.Keys));
+            sb.Append("ORDER BY T.Tilasto_ID, J.Jakso_ID, J.AlueTaso_ID ");
 
             return sb.ToString();
         }

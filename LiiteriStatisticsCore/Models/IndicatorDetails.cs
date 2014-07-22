@@ -30,5 +30,7 @@ namespace LiiteriStatisticsCore.Models
 
         //public string[] Years;
         //public RegionType[] RegionLayers;
+
+        public IEnumerable<TimePeriod> TimePeriods;
     }
 }

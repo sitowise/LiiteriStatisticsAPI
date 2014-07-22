@@ -23,6 +23,19 @@ namespace LiiteriStatisticsCore.Repositories
         {
             var entityList = new List<T>();
 
+            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+                while (rdr.Read()) {
+                    T p = (T) factory.Create(rdr);
+                    entityList.Add(p);
+                }
+            }
+
+            return entityList;
+        }
+
+        public DbDataReader GetDbDataReader(
+            Queries.ISqlQuery query)
+        {
             using (DbCommand cmd = this.dbConnection.CreateCommand()) {
                 cmd.CommandText = query.GetQueryString();
 
@@ -32,15 +45,8 @@ namespace LiiteriStatisticsCore.Repositories
                         new SqlParameter(param.Key, param.Value));
                 }
 
-                using (DbDataReader rdr = cmd.ExecuteReader()) {
-                    while (rdr.Read()) {
-                        T p = (T) factory.Create(rdr);
-                        entityList.Add(p);
-                    }
-                }
+                return cmd.ExecuteReader();
             }
-
-            return entityList;
         }
 
         public abstract IEnumerable<T> FindAll(Queries.ISqlQuery query);
