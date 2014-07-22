@@ -39,9 +39,7 @@ namespace LiiteriStatisticsCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add(string.Format(
-                    "(T.Nimi = @NameIs OR [{0}].[dbo].[ThemeFullName](THST.theme_id) = @NameIs)",
-                    ConfigurationManager.AppSettings["DbDataIndex"]));
+                this.whereList.Add("T.Nimi = @NameIs");
                 this.AddParameter("@NameIs", value);
             }
         }
@@ -55,9 +53,7 @@ namespace LiiteriStatisticsCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add(string.Format(
-                    "(T.Nimi LIKE @NameLike OR [{0}].[dbo].[ThemeFullName](THST.theme_id) LIKE @NameLike)",
-                    ConfigurationManager.AppSettings["DbDataIndex"]));
+                this.whereList.Add("T.Nimi LIKE @NameLike");
                 this.AddParameter("@NameLike", value);
             }
         }
@@ -73,7 +69,6 @@ namespace LiiteriStatisticsCore.Queries
             /* These are used by IndicatorBrief */
             fields["T.Tilasto_Id"] = "Id";
             fields["T.Nimi"] = "Name";
-            fields["THST.theme_id"] = "ThemeId";
 
             /* These are used by IndicatorDetails */
             fields["T.EsitysDesimaalitarkkuus"] = "DecimalCount";
@@ -96,11 +91,6 @@ namespace LiiteriStatisticsCore.Queries
                 "INNER JOIN [{0}]..[Apu_TilastoTallennusJakso] J ON ",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
             sb.Append("J.Tilasto_Id = T.Tilasto_Id ");
-
-            sb.Append(string.Format(
-                "LEFT OUTER JOIN [{0}]..[Themes_Statistics] THST ON ",
-                ConfigurationManager.AppSettings["DbDataIndex"]));
-            sb.Append("THST.statistics_id = T.Tilasto_Id ");
 
             //this.whereList.Add("J.AlueTaso_Id = 2");
             this.whereList.Add("T.TilastoLaskentatyyppi_ID <> 2");

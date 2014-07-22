@@ -10,7 +10,7 @@ using System.Configuration;
 namespace LiiteriStatisticsCore.Repositories
 {
     public class IndicatorDetailsRepository :
-        SqlReadWriteRepository<Models.IndicatorDetails>
+        SqlReadRepository<Models.IndicatorDetails>
     {
         public IndicatorDetailsRepository(DbConnection dbConnection) :
             base(dbConnection)
@@ -34,41 +34,6 @@ namespace LiiteriStatisticsCore.Repositories
         {
             return this.FindAll(query,
                 new Factories.IndicatorDetailsFactory()).First();
-        }
-
-        public override void Update(Models.IndicatorDetails entity)
-        {
-            string queryString = @"
-MERGE INTO
-	[{0}]..[Themes_Statistics] T
-USING (
-	SELECT
-		*
-	FROM
-		(VALUES (@ThemeId, @StatisticsId)) Dummy(theme_id, statistics_id)) S
-ON
-	(T.statistics_id = S.statistics_id)
-WHEN
-	NOT MATCHED THEN
-	INSERT VALUES (theme_id, statistics_id)
-WHEN
-	MATCHED THEN
-	UPDATE SET
-		T.theme_id = S.theme_id
-;
-";
-            queryString = string.Format(
-                queryString,
-                ConfigurationManager.AppSettings["DbDataIndex"]);
-
-            using (DbCommand cmd = dbConnection.CreateCommand()) {
-                cmd.Parameters.Add(new SqlParameter(
-                    "@ThemeId", entity.ThemeId));
-                cmd.Parameters.Add(new SqlParameter(
-                    "@StatisticsId", entity.Id));
-                cmd.CommandText = queryString;
-                cmd.ExecuteNonQuery();
-            }
         }
     }
 }

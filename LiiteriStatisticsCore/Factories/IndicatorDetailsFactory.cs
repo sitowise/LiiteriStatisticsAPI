@@ -14,7 +14,6 @@ namespace LiiteriStatisticsCore.Factories
             var obj = new Models.IndicatorDetails();
             obj.Id = (int) rdr["Id"];
             obj.Name = rdr["Name"].ToString();
-            obj.ThemeId = (int?) this.GetValueOrNull(rdr, "ThemeId");
 
             obj.DecimalCount = (int?) this.GetValueOrNull(rdr, "DecimalCount");
 
