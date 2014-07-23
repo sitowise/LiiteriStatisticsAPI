@@ -13,6 +13,7 @@ namespace LiiteriStatisticsCore.Factories
         {
             var obj = new Models.AreaType();
             obj.Id = (int) rdr["AreaTypeId"];
+            obj.DataSource = rdr["DataSource"].ToString();
             return obj;
         }
     }

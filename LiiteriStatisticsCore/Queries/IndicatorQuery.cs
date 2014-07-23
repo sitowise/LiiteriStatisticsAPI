@@ -80,8 +80,12 @@ namespace LiiteriStatisticsCore.Queries
             fields["T.Lisatieto"] = "AdditionalInformation";
             fields["T.TilastoLaskentatyyppi_ID"] = "CalculationType";
 
+            /* This is used by TimePeriod */
             fields["J.Jakso_ID"] = "PeriodId";
+
+            /* These are used by AreaType */
             fields["J.AlueTaso_ID"] = "AreaTypeId";
+            fields["TL.Tietolahde"] = "DataSource";
 
             sb.Append(
                 string.Join<string>(", ", (
@@ -93,10 +97,28 @@ namespace LiiteriStatisticsCore.Queries
 
             sb.Append(string.Format(" FROM [{0}]..[DimTilasto] T ",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
-            sb.Append(string.Format(
-                "INNER JOIN [{0}]..[Apu_TilastoTallennusJakso] J ON ",
+
+            sb.Append(string.Format(@"
+INNER JOIN [{0}]..[Apu_TilastoTallennusJakso] J ON
+    J.Tilasto_Id = T.Tilasto_Id
+",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
-            sb.Append("J.Tilasto_Id = T.Tilasto_Id ");
+
+            sb.Append(string.Format(@"
+OUTER APPLY (
+    SELECT
+        TOP 1 TL.Tietolahde
+    FROM
+        [LiiteriDataMarts]..[FactTilastoTietolahde] TL
+    WHERE
+        J.Jakso_ID >= TL.Alkaen_Jakso_ID AND
+        J.AlueTaso_ID = TL.AlueTaso_ID AND
+        t.Tilasto_ID = TL.Tilasto_ID
+    ORDER BY
+        TL.Alkaen_Jakso_ID DESC
+    ) TL
+",
+                ConfigurationManager.AppSettings["DbDataMarts"]));
 
             //this.whereList.Add("J.AlueTaso_Id = 2");
             this.whereList.Add("T.TilastoLaskentatyyppi_ID <> 2");

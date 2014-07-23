@@ -28,7 +28,7 @@ namespace LiiteriStatisticsCore.Repositories
             var entityList = new List<Models.IndicatorDetails>();
             int prevDetailsId = 0;
             int prevPeriodId = 0;
-            var detailsFactory = new Factories.IndicatorDetailsFactory();;
+            var detailsFactory = new Factories.IndicatorDetailsFactory();
             var periodFactory = new Factories.TimePeriodFactory();
             var areaTypeFactory = new Factories.AreaTypeFactory();
 
