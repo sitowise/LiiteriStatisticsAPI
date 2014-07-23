@@ -84,8 +84,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BaseFactory.cs" />
     <Compile Include="Controllers\IndicatorController.cs" />
-    <Compile Include="Controllers\StatisticController.cs" />
-    <Compile Include="Controllers\ThemeController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
