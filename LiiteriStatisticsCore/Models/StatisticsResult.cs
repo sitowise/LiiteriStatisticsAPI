@@ -9,5 +9,6 @@ namespace LiiteriStatisticsCore.Models
     public class StatisticsResult : ILiiteriMarker
     {
         public decimal Value { get; set; }
+        public string AreaName { get; set; }
     }
 }

@@ -41,14 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Factories\AreaTypeFactory.cs" />
+    <Compile Include="Factories\AreaTypeFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Factories\IndicatorBriefFactory.cs" />
     <Compile Include="Factories\IndicatorDetailsFactory.cs" />
+    <Compile Include="Factories\StatisticsResultFactory.cs" />
     <Compile Include="Factories\ThemeFactory.cs" />
     <Compile Include="Factories\TimePeriodFactory.cs" />
-    <Compile Include="Models\AreaType.cs" />
+    <Compile Include="Models\AreaType.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\ILiiteriEntity.cs" />
     <Compile Include="Models\ILiiteriMarker.cs" />
     <Compile Include="Models\IndicatorBrief.cs" />
@@ -60,6 +65,7 @@
     <Compile Include="Queries\AnySqlQuery.cs" />
     <Compile Include="Queries\IndicatorQuery.cs" />
     <Compile Include="Queries\SqlQuery.cs" />
+    <Compile Include="Queries\StatisticsQuery.cs" />
     <Compile Include="Queries\ThemeQuery.cs" />
     <Compile Include="Repositories\IndicatorBriefRepository.cs" />
     <Compile Include="Repositories\IndicatorDetailsRepository.cs" />
@@ -67,6 +73,7 @@
     <Compile Include="Repositories\IReadWriteRepository.cs" />
     <Compile Include="Repositories\SqlReadRepository.cs" />
     <Compile Include="Repositories\SqlReadWriteRepository.cs" />
+    <Compile Include="Repositories\StatisticsResultRepository.cs" />
     <Compile Include="Repositories\ThemeRepository.cs" />
     <Compile Include="Util\Range.cs" />
   </ItemGroup>

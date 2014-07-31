@@ -9,7 +9,7 @@ namespace LiiteriStatisticsCore.Factories
 {
     public class TimePeriodFactory : BaseFactory, IFactory
     {
-        public override Models.ILiiteriEntity Create(DbDataReader rdr)
+        public override Models.ILiiteriMarker Create(DbDataReader rdr)
         {
             var obj = new Models.TimePeriod();
             obj.Id = (int) rdr["PeriodId"];

@@ -9,7 +9,7 @@ namespace LiiteriStatisticsCore.Factories
 {
     public abstract class BaseFactory : Factories.IFactory
     {
-        public abstract Models.ILiiteriEntity Create(DbDataReader rdr);
+        public abstract Models.ILiiteriMarker Create(DbDataReader rdr);
 
         public object GetValueOrNull(DbDataReader rdr, string key)
         {

@@ -9,7 +9,7 @@ namespace LiiteriStatisticsCore.Factories
 {
     public class AreaTypeFactory : BaseFactory, IFactory
     {
-        public override Models.ILiiteriEntity Create(DbDataReader rdr)
+        public override Models.ILiiteriMarker Create(DbDataReader rdr)
         {
             var obj = new Models.AreaType();
             obj.Id = (int) rdr["AreaTypeId"];

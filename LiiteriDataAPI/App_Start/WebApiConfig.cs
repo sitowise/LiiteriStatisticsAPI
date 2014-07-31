@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
+using LiiteriStatisticsCore.Util;
+
 namespace LiiteriDataAPI
 {
     public static class WebApiConfig
@@ -10,6 +12,12 @@ namespace LiiteriDataAPI
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+
+            GlobalConfiguration.Configuration.BindParameter(
+                typeof(DateRange), new Binders.DateRangeModelBinder());
+
+            GlobalConfiguration.Configuration.BindParameter(
+                typeof(int[]), new Binders.IntegerArrayModelBinder());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

@@ -8,6 +8,6 @@ namespace LiiteriStatisticsCore.Factories
 {
     public interface IFactory
     {
-        Models.ILiiteriEntity Create(DbDataReader rdr);
+        Models.ILiiteriMarker Create(DbDataReader rdr);
     }
 }

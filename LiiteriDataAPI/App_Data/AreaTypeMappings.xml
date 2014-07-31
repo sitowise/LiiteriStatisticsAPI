@@ -1,0 +1,165 @@
+<SelectionAreaTypes>
+    <SelectionAreaType id="1">
+        <Description>Ruutu 250 m</Description>
+        <DatabaseColumn>Ruutu_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="2">
+        <Description>Kunta</Description>
+        <DatabaseColumn>Kunta_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimKunta</DatabaseTable>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="3">
+        <Description>Taajama</Description>
+        <DatabaseColumn>Taajama_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimTaajama</DatabaseTable>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="4">
+        <Description>Kyl&#228;</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="5">
+        <Description>Pienkyl&#228;</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="7">
+        <Description>Ruutu 500 m</Description>
+        <DatabaseColumn>Ruutu_500m_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="8">
+        <Description>Harva pientaloasutus</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="9">
+        <Description>Kerrostaloalue</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="10">
+        <Description>Pientaloalue</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="11">
+        <Description>Asemakaavoitettu alue</Description>
+        <DatabaseColumn>AsemakaavoitettuAlue_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimAsemakaavoitettuAlue</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="12">
+        <Description>Ruutu 250 m, asemakaavoitettu osa</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="13">
+        <Description>Kunta, asemakaavoitettu osa</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="14">
+        <Description>Harva maaseutuasutus</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="15">
+        <Description>Kaupunkiseutu</Description>
+        <DatabaseColumn>Kaupunkiseutu_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimKaupunkiseutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="16">
+        <Description>Maakunta</Description>
+        <DatabaseColumn>Maakunta_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimMaakunta</DatabaseTable>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="16" name="Maakunta" />
+            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="17">
+        <Description>Seutukunta</Description>
+        <DatabaseColumn>Seutukunta_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimSeutukunta</DatabaseTable>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="18">
+        <Description>ELY</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="19">
+        <Description>Hallinto-oikeus</Description>
+        <DatabaseColumn>HallintoOikeus_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimHallintoOikeus</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="20">
+        <Description>Haja-asutusalue</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="21">
+        <Description>Suomi</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+    </SelectionAreaType>
+    <SelectionAreaType id="22">
+        <Description>Ruutu 1 km</Description>
+        <DatabaseColumn>Ruutu_1km_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="23">
+        <Description>Ruutu 2 km</Description>
+        <DatabaseColumn>Ruutu_2km_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="24">
+        <Description>Ruutu 5 km</Description>
+        <DatabaseColumn>Ruutu_5km_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="25">
+        <Description>Ruutu 10 km</Description>
+        <DatabaseColumn>Ruutu_10km_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="26">
+        <Description>Ruutu 20 km</Description>
+        <DatabaseColumn>Ruutu_20km_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimRuutu</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="27">
+        <Description>Keskusta</Description>
+        <DatabaseColumn>Keskusta_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimKeskusta</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="28">
+        <Description>Kaupan alue</Description>
+        <DatabaseColumn>KaupanAlue_Alue_ID</DatabaseColumn>
+        <DatabaseTable>DimKaupanAlue</DatabaseTable>
+    </SelectionAreaType>
+    <SelectionAreaType id="21">
+        <Description>Suomi</Description>
+        <DatabaseColumn/>
+        <DatabaseTable/>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="21" name="Suomi" />
+            <DatabaseAreaType id="18" name="ELY" />
+            <DatabaseAreaType id="16" name="Maakunta" />
+            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+</SelectionAreaTypes>
