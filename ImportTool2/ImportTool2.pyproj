@@ -36,7 +36,7 @@
     </Interpreter>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="import-themes.py" />
+    <Compile Include="ImportTool2.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
