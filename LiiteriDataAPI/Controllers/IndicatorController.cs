@@ -27,9 +27,13 @@ namespace LiiteriDataAPI.Controllers
 
         [Route("v1/indicators/")]
         [HttpGet]
-        public IEnumerable<IndicatorBrief> GetIndicators()
+        public IEnumerable<IndicatorBrief> GetIndicators(
+            string name = null)
         {
             var query = new IndicatorQuery();
+
+            query.NameLike = '%' + name + '%';
+
             using (DbConnection db = this.GetDbConnection()) {
                 var repository = new IndicatorBriefRepository(db);
                 return (List<IndicatorBrief>) repository.FindAll(query);

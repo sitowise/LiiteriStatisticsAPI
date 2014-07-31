@@ -44,7 +44,8 @@ namespace LiiteriStatisticsCore.Repositories
                     /* each IndicatorDetails instance may have a number
                      * of TimePeriods */
                     if (prevDetailsId != (prevDetailsId = (int) rdr["Id"])) {
-                        details = (Models.IndicatorDetails) detailsFactory.Create(rdr);
+                        details = (Models.IndicatorDetails)
+                            detailsFactory.Create(rdr);
 
                         timePeriods = new List<Models.TimePeriod>();
                         details.TimePeriods = timePeriods;
@@ -55,7 +56,8 @@ namespace LiiteriStatisticsCore.Repositories
                     /* each TimePeriod instance may have a number
                      * of AreaTypes */
                     if (prevPeriodId != (prevPeriodId = (int) rdr["PeriodId"])) {
-                        timePeriod = (Models.TimePeriod) periodFactory.Create(rdr);
+                        timePeriod = (Models.TimePeriod)
+                            periodFactory.Create(rdr);
 
                         areaTypes = new List<Models.AreaType>();
                         timePeriod.AreaTypes = areaTypes;

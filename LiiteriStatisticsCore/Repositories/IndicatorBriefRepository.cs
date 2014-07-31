@@ -18,20 +18,39 @@ namespace LiiteriStatisticsCore.Repositories
         public override IEnumerable<Models.IndicatorBrief>
             FindAll(Queries.ISqlQuery query)
         {
-            return this.FindAll(query,
-                new Factories.IndicatorBriefFactory());
+            /* Here we have to do a bit of manual work with the indicators,
+             * since we are receiving multiples of the same indicator due
+             * to data being joined from other tables */
+
+            var entityList = new List<Models.IndicatorBrief>();
+            int prevDetailsId = 0;
+            var briefFactory = new Factories.IndicatorBriefFactory();
+            Models.IndicatorBrief brief = null;
+
+            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+                while (rdr.Read()) {
+                    if (prevDetailsId == (prevDetailsId = (int) rdr["Id"])) {
+                        continue;
+                    }
+                    brief = (Models.IndicatorBrief) briefFactory.Create(rdr);
+                    entityList.Add(brief);
+                }
+            }
+
+            return entityList;
+
+            /* return this.FindAll(query,
+                new Factories.IndicatorBriefFactory()); */
         }
 
         public override Models.IndicatorBrief Single(Queries.ISqlQuery query)
         {
-            return this.FindAll(query,
-                new Factories.IndicatorBriefFactory()).Single();
+            return this.FindAll(query).Single();
         }
 
         public override Models.IndicatorBrief First(Queries.ISqlQuery query)
         {
-            return this.FindAll(query,
-                new Factories.IndicatorBriefFactory()).First();
+            return this.FindAll(query).First();
         }
     }
 }
