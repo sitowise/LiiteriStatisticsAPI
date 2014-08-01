@@ -7,13 +7,13 @@ using System.Data.Common;
 
 namespace LiiteriStatisticsCore.Factories
 {
-    public class AreaTypeFactory : BaseFactory, IFactory
+    public class AreaFactory : BaseFactory, IFactory
     {
         public override Models.ILiiteriMarker Create(DbDataReader rdr)
         {
-            var obj = new Models.AreaType();
-            obj.Id = (int) rdr["AreaTypeId"];
-            obj.Description = rdr["Description"].ToString();
+            var obj = new Models.Area();
+            obj.Id = (int) rdr["AreaId"];
+            obj.Name = rdr["AreaName"].ToString();
             return obj;
         }
     }

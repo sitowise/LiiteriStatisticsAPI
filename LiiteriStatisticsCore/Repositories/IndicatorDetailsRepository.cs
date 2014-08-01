@@ -30,14 +30,14 @@ namespace LiiteriStatisticsCore.Repositories
             int prevPeriodId = 0;
             var detailsFactory = new Factories.IndicatorDetailsFactory();
             var periodFactory = new Factories.TimePeriodFactory();
-            var areaTypeFactory = new Factories.AreaTypeFactory();
+            var areaTypeFactory = new Factories.DataAreaTypeFactory();
 
             Models.IndicatorDetails details = null;
             Models.TimePeriod timePeriod = null;
-            Models.AreaType areaType = null;
+            Models.DataAreaType areaType = null;
 
             List<Models.TimePeriod> timePeriods = null;
-            List<Models.AreaType> areaTypes = null;
+            List<Models.DataAreaType> areaTypes = null;
 
             using (DbDataReader rdr = this.GetDbDataReader(query)) {
                 while (rdr.Read()) {
@@ -59,15 +59,15 @@ namespace LiiteriStatisticsCore.Repositories
                         timePeriod = (Models.TimePeriod)
                             periodFactory.Create(rdr);
 
-                        areaTypes = new List<Models.AreaType>();
-                        timePeriod.AreaTypes = areaTypes;
+                        areaTypes = new List<Models.DataAreaType>();
+                        timePeriod.DataAreaTypes = areaTypes;
 
                         timePeriods.Add(timePeriod);
                     }
 
                     /* and here are the AreaTypes, which contain
                      * nothing special */
-                    areaType = (Models.AreaType) areaTypeFactory.Create(rdr);
+                    areaType = (Models.DataAreaType) areaTypeFactory.Create(rdr);
                     areaTypes.Add(areaType);
                 }
             }

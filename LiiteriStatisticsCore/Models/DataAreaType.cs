@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace LiiteriStatisticsCore.Models
 {
-    public class TimePeriod : ILiiteriEntity
+    /* Used within TimePeriods within IndicatorDetails */
+    public class DataAreaType : ILiiteriEntity
     {
         public int Id { get; set; }
-        public IEnumerable<DataAreaType> DataAreaTypes;
+        public string DataSource { get; set; }
     }
 }

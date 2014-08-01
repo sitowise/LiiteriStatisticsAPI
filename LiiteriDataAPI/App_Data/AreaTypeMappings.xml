@@ -98,7 +98,7 @@
     <SelectionAreaType id="18">
         <Description>ELY</Description>
         <DatabaseColumn/>
-        <DatabaseTable/>
+        <DatabaseTable>DimELY</DatabaseTable>
     </SelectionAreaType>
     <SelectionAreaType id="19">
         <Description>Hallinto-oikeus</Description>

@@ -86,12 +86,6 @@ namespace LiiteriDataAPI.Controllers
             int? filterAreaTypeId = null,
             int? filterAreaId = null)
         {
-
-            /* int year = years[0]; */ /* should probably do several queries
-                                  * in a loop for different years, because
-                                  * they in theory could have different
-                                  * databaseAreaTypes */
-
             using (DbConnection db = this.GetDbConnection()) {
 
                 /* Step 1: Fetch IndicatorDetails */
@@ -109,6 +103,11 @@ namespace LiiteriDataAPI.Controllers
                 var queries =
                     new List<LiiteriStatisticsCore.Queries.StatisticsQuery>();
 
+                /* although StatisticsQuery implements .YearIn, which 
+                 * accepts a list of years, what about if different years
+                 * end up having different DatabaseAreaTypes?
+                 * For this reason, let's just loop the years and create
+                 * multiple queries */
                 foreach (int year in years) {
 
                     LiiteriStatisticsCore.Models.TimePeriod timePeriod = (
@@ -116,7 +115,7 @@ namespace LiiteriDataAPI.Controllers
                         where p.Id == year
                         select p).Single();
                     int[] availableAreaTypes = (
-                        from a in timePeriod.AreaTypes
+                        from a in timePeriod.DataAreaTypes
                         select a.Id).ToArray();
 
                     /* So we want to group by groupAreaType, and we have to search
@@ -168,15 +167,28 @@ namespace LiiteriDataAPI.Controllers
         public IEnumerable<LiiteriStatisticsCore.Models.AreaType>
             GetAreaTypesV1()
         {
-            return null;
+            var query = new LiiteriStatisticsCore.Queries.AreaTypeQuery();
+            using (DbConnection db = this.GetDbConnection()) {
+                var repository =
+                    new LiiteriStatisticsCore.Repositories.AreaTypeRepository(db);
+                return (List<LiiteriStatisticsCore.Models.AreaType>)
+                    repository.FindAll(query);
+            }
         }
 
-        [Route("v1/areas/{areaTypeId}/")]
+        [Route("v1/areaTypes/{areaTypeId}/areas/")]
         [HttpGet]
-        public IEnumerable<LiiteriStatisticsCore.Models.AreaType>
+        public IEnumerable<LiiteriStatisticsCore.Models.Area>
             GetAreasV1(int areaTypeId)
         {
-            return null;
+            var query = new LiiteriStatisticsCore.Queries.AreaQuery();
+            query.AreaTypeIdIs = areaTypeId;
+            using (DbConnection db = this.GetDbConnection()) {
+                var repository =
+                    new LiiteriStatisticsCore.Repositories.AreaRepository(db);
+                return (List<LiiteriStatisticsCore.Models.Area>)
+                    repository.FindAll(query);
+            }
         }
     }
 }

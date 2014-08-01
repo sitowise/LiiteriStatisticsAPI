@@ -10,6 +10,6 @@ namespace LiiteriStatisticsCore.Models
     public class AreaType : ILiiteriEntity
     {
         public int Id { get; set; }
-        public string DataSource { get; set; }
+        public string Description { get; set; }
     }
 }

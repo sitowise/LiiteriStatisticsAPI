@@ -13,7 +13,7 @@ namespace LiiteriStatisticsCore.Factories
         {
             var obj = new Models.TimePeriod();
             obj.Id = (int) rdr["PeriodId"];
-            obj.AreaTypes = new List<Models.AreaType>();
+            obj.DataAreaTypes = new List<Models.DataAreaType>();
             return obj;
         }
     }
