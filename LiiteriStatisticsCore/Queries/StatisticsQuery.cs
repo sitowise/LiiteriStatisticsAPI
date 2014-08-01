@@ -54,6 +54,33 @@ namespace LiiteriStatisticsCore.Queries
             set
             {
                 this.AddParameter("@YearIs", value);
+                this.whereList.Add(string.Format("T.Jakso_ID = {0}", value));
+            }
+        }
+
+        private int[] _YearIn;
+        public int[] YearIn
+        {
+            get
+            {
+                return this._YearIn;
+            }
+            set
+            {
+                if (value == null) return;
+                if (this._YearIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._YearIn = value;
+                string[] paramNames = value.Select(
+                        (s, i) => "@YearIn_" + i.ToString()
+                    ).ToArray();
+                for (int i = 0; i < paramNames.Length; i++) {
+                    this.AddParameter(paramNames[i], value[i]);
+                }
+                this.whereList.Add(string.Format(
+                    "T.Jakso_ID IN ({0})",
+                    string.Join(",", paramNames)));
             }
         }
 
@@ -130,7 +157,6 @@ FROM
     {1}
 WHERE
 	T.Tilasto_ID = @IdIs AND
-	T.Jakso_ID = @YearIs AND
 	T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
 	T.Arvo IS NOT NULL
     {2}
