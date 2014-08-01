@@ -82,11 +82,12 @@ namespace LiiteriStatisticsCore.Queries
         {
             IDictionary<string, string> fields =
                 new Dictionary<string, string>();
+            List<string> groups = new List<string>();
 
             StringBuilder sbFrom = new StringBuilder();
 
-            fields["T.Arvo"] = "Value";
             fields["T.Jakso_ID"] = "Year";
+            groups.Add("T.Jakso_ID");
 
             if (this.FilterAreaIdIs != null &&
                     this.FilterAreaTypeIdIs != null) {
@@ -94,17 +95,18 @@ namespace LiiteriStatisticsCore.Queries
                     (int) this.FilterAreaTypeIdIs);
                 this.whereList.Add(string.Format(
                     "A.{0} = @FilterAreaIdIs", column));
-                /* A.Maakunta_Alue_ID = @AreaIdIs */
             }
 
             switch (this.CalculationTypeIdIs) {
                 case 1: // normal
 
-                    /* grouping by these fields */
-                    string column = AreaTypeMappings.GetAreaColumn(
-                        (int) this.GroupByAreaTypeIdIs);
-                    fields["A." + column] = "AreaId";
+                    fields["SUM(T.Arvo)"] = "Value";
+
+                    fields["A2.Alue_ID"] = "AreaId";
+                    groups.Add("A2.Alue_ID");
+
                     fields["A2.Nimi"] = "AreaName";
+                    groups.Add("A2.Nimi");
 
                     /* add the proper table that we are grouping by */
                     sbFrom.Append(string.Format(
@@ -142,24 +144,23 @@ GROUP BY
                 ).ToArray());
 
             string groupString =
-                string.Join<string>(", ", fields.Keys);
+                string.Join<string>(", ", groups);
 
             string whereString = "";
             if (this.whereList.Count > 0) {
                 whereString = " AND " + string.Join(" AND ", this.whereList);
             }
 
-            string fromString = sbFrom.ToString();
-            
             queryString = string.Format(queryString,
                 fieldsString,
-                fromString,
+                sbFrom.ToString(),
                 whereString,
                 groupString);
 
             foreach (var param in this.Parameters) {
-                Debug.WriteLine("{0}: {1}", param.Key, param.Value);
+                Debug.WriteLine("DECLARE {0} INT = {1}", param.Key, param.Value);
             }
+
             Debug.WriteLine(queryString);
 
             return queryString;
