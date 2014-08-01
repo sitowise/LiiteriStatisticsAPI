@@ -72,61 +72,8 @@ namespace LiiteriDataAPI.Controllers
             return factory.GetRegions();
         }
 
-        private static IDictionary<int, int[]> AreaTypeMappings =
-            ReadAreaTypeMappings();
-
-        private static IDictionary<int, int[]> ReadAreaTypeMappings()
-        {
-            var data = new Dictionary<int, int[]>();
-
-            string XmlFile = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.GetData("DataDirectory").ToString(),
-                "AreaTypeMappings.xml");
-            Debug.WriteLine(string.Format("Reading xmlFile from {0}", XmlFile));
-            XmlDocument xmldoc = new XmlDocument();
-            XDocument xdoc = XDocument.Load(XmlFile);
-            foreach (var selectionAreaType in
-                    xdoc.Root.Descendants("SelectionAreaType")) {
-                IList<int> l = new List<int>();
-                if (selectionAreaType.Descendants("DatabaseAreaTypes")
-                        .Count() == 0) {
-                    continue;
-                }
-                foreach (var databaseAreaType in selectionAreaType.
-                        Descendants("DatabaseAreaTypes").Single().
-                        Descendants("DatabaseAreaType")) {
-                    l.Add(Convert.ToInt32(
-                        databaseAreaType.Attribute("id").Value.ToString()));
-                }
-                data[Convert.ToInt32(
-                    selectionAreaType.Attribute("id").Value.ToString())] =
-                    l.ToArray();
-            }
-            return data;
-        }
-
-        /*
-         * selectionAreaType = user wants to search by this areaType
-         * availableAreaTypes = the statistics has data for these areaTypes
-         * returns = suggestion on what areaType the datbase search should be done with
-         */
-        private int GetDatabaseAreaType(
-            int selectionAreaType,
-            int[] availableAreaTypes)
-        {
-            if (!AreaTypeMappings.Keys.Contains(selectionAreaType)) {
-                throw new Exception(string.Format(
-                    "No areaType mappings found for id: {0}",
-                    selectionAreaType));
-            }
-            foreach (int id in
-                    AreaTypeMappings[selectionAreaType]) {
-                if (availableAreaTypes.Contains(id)) {
-                    return id;
-                }
-            }
-            throw new Exception("No areaType mapping found!");
-        }
+        private static LiiteriStatisticsCore.Util.AreaTypeMappings
+            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
 
         /* V1 features below */
 
@@ -140,7 +87,7 @@ namespace LiiteriDataAPI.Controllers
             int? filterAreaId = null)
         {
 
-            int year = years[0]; /* should probably do several queries
+            /* int year = years[0]; */ /* should probably do several queries
                                   * in a loop for different years, because
                                   * they in theory could have different
                                   * databaseAreaTypes */
@@ -158,51 +105,78 @@ namespace LiiteriDataAPI.Controllers
                 var details = (LiiteriStatisticsCore.Models.IndicatorDetails)
                     indicatorDetailsRepository.Single(indicatorQuery);
 
-                /* Step 2: Create StatisticsQuery */
+                /* Step 2: Create one or more StatisticsQuery objects */
+                var queries =
+                    new List<LiiteriStatisticsCore.Queries.StatisticsQuery>();
 
-                LiiteriStatisticsCore.Models.TimePeriod timePeriod = (
-                    from p in details.TimePeriods
-                    where p.Id == year
-                    select p).Single();
-                int[] availableAreaTypes = (
-                    from a in timePeriod.AreaTypes
-                    select a.Id).ToArray();
+                foreach (int year in years) {
 
-                /* So we want to group by groupAreaType, and we have to search
-                 * by using one of availableAreaTypes */
+                    LiiteriStatisticsCore.Models.TimePeriod timePeriod = (
+                        from p in details.TimePeriods
+                        where p.Id == year
+                        select p).Single();
+                    int[] availableAreaTypes = (
+                        from a in timePeriod.AreaTypes
+                        select a.Id).ToArray();
 
-                /* We have to decide which one of availableAreaTypes
-                 * (databaseAreaType) will be used */
+                    /* So we want to group by groupAreaType, and we have to search
+                     * by using one of availableAreaTypes */
 
-                var statisticsQuery = new LiiteriStatisticsCore.Queries.
-                    StatisticsQuery(statisticsId);
-                statisticsQuery.CalculationTypeIdIs = details.CalculationType;
+                    /* We have to decide which one of availableAreaTypes
+                     * (databaseAreaType) will be used */
 
-                //statisticsQuery.DatabaseAreaTypeIdIs = availableAreaTypes[0];
-                statisticsQuery.DatabaseAreaTypeIdIs =
-                    this.GetDatabaseAreaType(groupAreaTypeId, availableAreaTypes);
-                Debug.WriteLine(
-                    "We were asked to group by groupAreaTypeId {0}, " +
-                    "statistics data is available in areaTypes {1}, " +
-                    "finally we ended up searching the database by areaType {2}",
-                    groupAreaTypeId,
-                    string.Join(", ", availableAreaTypes),
-                    statisticsQuery.DatabaseAreaTypeIdIs);
+                    var statisticsQuery = new LiiteriStatisticsCore.Queries
+                        .StatisticsQuery(statisticsId);
+                    statisticsQuery.CalculationTypeIdIs = details.CalculationType;
 
-                statisticsQuery.GroupByAreaTypeIdIs = groupAreaTypeId;
+                    //statisticsQuery.DatabaseAreaTypeIdIs = availableAreaTypes[0];
 
-                statisticsQuery.YearIs = year;
+                    statisticsQuery.DatabaseAreaTypeIdIs =
+                        (int) Controllers.StatisticController.AreaTypeMappings.GetDatabaseAreaType(
+                            groupAreaTypeId,
+                            availableAreaTypes);
 
-                statisticsQuery.FilterAreaIdIs = filterAreaId;
-                statisticsQuery.FilterAreaTypeIdIs = filterAreaTypeId;
+                    Debug.WriteLine(
+                        "We were asked to group by groupAreaTypeId {0}, " +
+                        "statistics data is available in areaTypes {1}, " +
+                        "finally we ended up searching the database by areaType {2}",
+                        groupAreaTypeId,
+                        string.Join(", ", availableAreaTypes),
+                        statisticsQuery.DatabaseAreaTypeIdIs);
+
+                    statisticsQuery.GroupByAreaTypeIdIs = groupAreaTypeId;
+
+                    statisticsQuery.YearIs = year;
+
+                    statisticsQuery.FilterAreaIdIs = filterAreaId;
+                    statisticsQuery.FilterAreaTypeIdIs = filterAreaTypeId;
+
+                    queries.Add(statisticsQuery);
+                }
 
                 /* Step 3: Fetch StatisticsResult */
 
                 var repository = new LiiteriStatisticsCore.Repositories.
                     StatisticsResultRepository(db);
                 return (List<LiiteriStatisticsCore.Models.StatisticsResult>)
-                    repository.FindAll(statisticsQuery);
+                    repository.FindAll(queries);
             }
+        }
+
+        [Route("v1/areaTypes/")]
+        [HttpGet]
+        public IEnumerable<LiiteriStatisticsCore.Models.AreaType>
+            GetAreaTypesV1()
+        {
+            return null;
+        }
+
+        [Route("v1/areas/{areaTypeId}/")]
+        [HttpGet]
+        public IEnumerable<LiiteriStatisticsCore.Models.AreaType>
+            GetAreasV1(int areaTypeId)
+        {
+            return null;
         }
     }
 }

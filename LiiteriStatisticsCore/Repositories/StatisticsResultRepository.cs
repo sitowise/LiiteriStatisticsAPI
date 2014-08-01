@@ -15,6 +15,16 @@ namespace LiiteriStatisticsCore.Repositories
         {
         }
 
+        public IEnumerable<Models.StatisticsResult> FindAll(
+            IEnumerable<Queries.ISqlQuery> queries)
+        {
+            var entityList = new List<Models.StatisticsResult>();
+            foreach (Queries.ISqlQuery query in queries) {
+                entityList.AddRange(this.FindAll(query));
+            }
+            return entityList;
+        }
+
         public override IEnumerable<Models.StatisticsResult>
             FindAll(Queries.ISqlQuery query)
         {

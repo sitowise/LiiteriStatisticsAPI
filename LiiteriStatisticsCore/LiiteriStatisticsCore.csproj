@@ -76,6 +76,7 @@
     <Compile Include="Repositories\StatisticsResultRepository.cs" />
     <Compile Include="Repositories\ThemeRepository.cs" />
     <Compile Include="Util\Range.cs" />
+    <Compile Include="Util\AreaTypeMappings.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

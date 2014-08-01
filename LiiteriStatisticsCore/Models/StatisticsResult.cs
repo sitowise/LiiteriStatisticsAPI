@@ -10,5 +10,6 @@ namespace LiiteriStatisticsCore.Models
     {
         public decimal Value { get; set; }
         public string AreaName { get; set; }
+        public int Year { get; set; }
     }
 }
