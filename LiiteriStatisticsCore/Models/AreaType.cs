@@ -7,9 +7,10 @@ using System.Runtime.Serialization;
 
 namespace LiiteriStatisticsCore.Models
 {
-    public class AreaType : ILiiteriEntity
+    public class AreaType : ILiiteriMarker
     {
-        public int Id { get; set; }
+        // id is a string, such as "municipality" or "finland"
+        public string Id { get; set; }
         public string Description { get; set; }
     }
 }

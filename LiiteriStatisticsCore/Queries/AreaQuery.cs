@@ -9,7 +9,7 @@ namespace LiiteriStatisticsCore.Queries
 {
     public class AreaQuery : SqlQuery, ISqlQuery
     {
-        private LiiteriStatisticsCore.Util.AreaTypeMappings
+        private static LiiteriStatisticsCore.Util.AreaTypeMappings
             AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
 
         public AreaQuery() : base()
