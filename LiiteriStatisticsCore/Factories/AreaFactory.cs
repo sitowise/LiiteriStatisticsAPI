@@ -14,6 +14,8 @@ namespace LiiteriStatisticsCore.Factories
             var obj = new Models.Area();
             obj.Id = (int) rdr["AreaId"];
             obj.Name = rdr["AreaName"].ToString();
+            obj.AlternativeId = rdr["AlternativeId"].ToString();
+            obj.Year = (int?) this.GetValueOrNull(rdr, "Year");
             return obj;
         }
     }

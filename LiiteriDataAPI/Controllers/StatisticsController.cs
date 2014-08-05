@@ -21,6 +21,10 @@ namespace LiiteriDataAPI.Controllers
 {
     public class StatisticController : ApiController
     {
+        public static readonly log4net.ILog logger =
+            log4net.LogManager.GetLogger(
+                System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private DbConnection GetDbConnection(bool open = true)
         {
             string connStr = ConfigurationManager.ConnectionStrings[
@@ -82,10 +86,21 @@ namespace LiiteriDataAPI.Controllers
         public IEnumerable<LiiteriStatisticsCore.Models.StatisticsResult> GetStatisticsV1(
             int[] years,
             int statisticsId,
-            int groupAreaTypeId,
-            int? filterAreaTypeId = null,
+            string groupAreaTypeId = null,
+            string filterAreaTypeId = null,
             int? filterAreaId = null)
         {
+            logger.Debug(string.Format(
+                "statisticsId={0}, " +
+                "groupAreaTypeId={1}, " +
+                "years={2}, " +
+                "filterAreaTypeId={3}, " +
+                "filterAreaId={4}",
+                statisticsId,
+                groupAreaTypeId,
+                string.Join(",", years),
+                filterAreaTypeId,
+                filterAreaId));
             using (DbConnection db = this.GetDbConnection()) {
 
                 /* Step 1: Fetch IndicatorDetails */
@@ -131,17 +146,21 @@ namespace LiiteriDataAPI.Controllers
                     //statisticsQuery.DatabaseAreaTypeIdIs = availableAreaTypes[0];
 
                     statisticsQuery.DatabaseAreaTypeIdIs =
-                        (int) Controllers.StatisticController.AreaTypeMappings.GetDatabaseAreaType(
-                            groupAreaTypeId,
+                        (int) Controllers.StatisticController.
+                        AreaTypeMappings.GetDatabaseAreaType(
+                            groupAreaTypeId != null ?
+                                groupAreaTypeId :
+                                "finland",
                             availableAreaTypes);
 
-                    Debug.WriteLine(
-                        "We were asked to group by groupAreaTypeId {0}, " +
-                        "statistics data is available in areaTypes {1}, " +
-                        "finally we ended up searching the database by areaType {2}",
+                    string debugString = string.Format(
+                        "Resolving groupAreaTypeId={0} to areaType={1}, " +
+                        "availableAreaTypes={2}",
                         groupAreaTypeId,
-                        string.Join(", ", availableAreaTypes),
-                        statisticsQuery.DatabaseAreaTypeIdIs);
+                        statisticsQuery.DatabaseAreaTypeIdIs,
+                        string.Join(", ", availableAreaTypes));
+                    logger.Debug(debugString);
+                    Debug.WriteLine(debugString);
 
                     statisticsQuery.GroupByAreaTypeIdIs = groupAreaTypeId;
 
@@ -167,19 +186,13 @@ namespace LiiteriDataAPI.Controllers
         public IEnumerable<LiiteriStatisticsCore.Models.AreaType>
             GetAreaTypesV1()
         {
-            var query = new LiiteriStatisticsCore.Queries.AreaTypeQuery();
-            using (DbConnection db = this.GetDbConnection()) {
-                var repository =
-                    new LiiteriStatisticsCore.Repositories.AreaTypeRepository(db);
-                return (List<LiiteriStatisticsCore.Models.AreaType>)
-                    repository.FindAll(query);
-            }
+            return AreaTypeMappings.GetAreaTypes();
         }
 
         [Route("v1/areaTypes/{areaTypeId}/areas/")]
         [HttpGet]
         public IEnumerable<LiiteriStatisticsCore.Models.Area>
-            GetAreasV1(int areaTypeId)
+            GetAreasV1(string areaTypeId)
         {
             var query = new LiiteriStatisticsCore.Queries.AreaQuery();
             query.AreaTypeIdIs = areaTypeId;

@@ -27,29 +27,44 @@ namespace LiiteriStatisticsCore.Util
             this.xdoc = XDocument.Load(XmlFile);
         }
 
-        public string GetAreaTable(int areaTypeId)
+        public string GetDatabaseIdColumn(string areaTypeId)
         {
-            return (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
-                where Convert.ToInt32(d.Attribute("id").Value) == areaTypeId
-                select d.Element("DatabaseTable").Value).Single();
+            return this.GetValue(areaTypeId, "DatabaseIdColumn");
         }
 
-        public string GetAreaColumn(int areaTypeId)
+        public string GetDatabaseNameColumn(string areaTypeId)
+        {
+            return this.GetValue(areaTypeId, "DatabaseNameColumn");
+        }
+
+        public string GetDatabaseJoinQuery(string areaTypeId)
+        {
+            return this.GetValue(areaTypeId, "DatabaseJoinQuery");
+        }
+
+        public string GetDatabaseListQuery(string areaTypeId)
+        {
+            return this.GetValue(areaTypeId, "DatabaseListQuery");
+        }
+
+        private string GetValue(string areaTypeId, string key)
         {
             return (
                 from d in this.xdoc.Root.Descendants("SelectionAreaType")
-                where Convert.ToInt32(d.Attribute("id").Value) == areaTypeId
-                select d.Element("DatabaseColumn").Value).Single();
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element(key).Value).Single();
         }
 
         public int? GetDatabaseAreaType(
-            int areaTypeId,
+            string areaTypeId,
             int[] availableAreaTypes)
         {
+            if (areaTypeId == null) {
+                throw new ArgumentNullException("areaTypeId must not be null!");
+            }
             var databaseAreaTypes = (
                 from d in this.xdoc.Root.Descendants("SelectionAreaType")
-                where Convert.ToInt32(d.Attribute("id").Value) == areaTypeId
+                where d.Attribute("id").Value == areaTypeId
                 select d.Element("DatabaseAreaTypes")).Single();
             foreach (var databaseAreaType in
                     databaseAreaTypes.Descendants("DatabaseAreaType")) {
@@ -60,6 +75,15 @@ namespace LiiteriStatisticsCore.Util
                 }
             }
             return null;
+        }
+
+        public IEnumerable<Models.AreaType> GetAreaTypes()
+        {
+            var factory = new Factories.AreaTypeFactory();
+            var areaTypes = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                select (Models.AreaType) factory.Create(d));
+            return areaTypes;
         }
     }
 }

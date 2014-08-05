@@ -9,6 +9,10 @@ namespace LiiteriStatisticsCore.Models
     public class Area : ILiiteriEntity
     {
         public int Id { get; set; }
+        public string AlternativeId { get; set; }
         public string Name { get; set; }
+
+        // some areas only exist at some point in time
+        public int? Year { get; set; }
     }
 }

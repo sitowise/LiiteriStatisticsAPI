@@ -1,159 +1,106 @@
 <SelectionAreaTypes>
-    <SelectionAreaType id="1">
-        <Description>Ruutu 250 m</Description>
-        <DatabaseColumn>Ruutu_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="2">
-        <Description>Kunta</Description>
-        <DatabaseColumn>Kunta_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimKunta</DatabaseTable>
-        <DatabaseAreaTypes>
-            <DatabaseAreaType id="2" name="Kunta" />
-        </DatabaseAreaTypes>
-    </SelectionAreaType>
-    <SelectionAreaType id="3">
+    <SelectionAreaType id="locality">
         <Description>Taajama</Description>
-        <DatabaseColumn>Taajama_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimTaajama</DatabaseTable>
+        <DatabaseIdColumn>A.Taajama_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Nimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimTaajama A2 ON (A2.Alue_ID = A.Taajama_Alue_ID AND A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.Nimi AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimTaajama A</DatabaseListQuery>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
             <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="4">
-        <Description>Kyl&#228;</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
+    <SelectionAreaType id="neighborhood">
+        <Description>Asutusalue</Description>
+        <DatabaseIdColumn>A.AsutusalueTyyppi_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.AsutusalueTyyppiSelite</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimAsutusAlueTyyppi A2 ON A2.Asutusaluetyyppi_ID = A.AsutusalueTyyppi_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.AsutusalueTyyppi_ID AS AreaId, A.AsutusalueTyyppiSelite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimAsutusalueTyyppi A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
+        </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="5">
-        <Description>Pienkyl&#228;</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="7">
-        <Description>Ruutu 500 m</Description>
-        <DatabaseColumn>Ruutu_500m_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="8">
-        <Description>Harva pientaloasutus</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="9">
-        <Description>Kerrostaloalue</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="10">
-        <Description>Pientaloalue</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="11">
-        <Description>Asemakaavoitettu alue</Description>
-        <DatabaseColumn>AsemakaavoitettuAlue_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimAsemakaavoitettuAlue</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="12">
-        <Description>Ruutu 250 m, asemakaavoitettu osa</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="13">
-        <Description>Kunta, asemakaavoitettu osa</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="14">
-        <Description>Harva maaseutuasutus</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="15">
+    <SelectionAreaType id="urban_area">
         <Description>Kaupunkiseutu</Description>
-        <DatabaseColumn>Kaupunkiseutu_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimKaupunkiseutu</DatabaseTable>
+        <DatabaseIdColumn>A.Kaupunkiseutu_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.KseutuNimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKaupunkiseutu A2 ON (A2.Alue_ID = A.Kaupunkiseutu_Alue_ID AND A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.KseutuNimi AS AreaName, A.KseutuNro AS AlternativeId, A.Jakso_ID AS Year FROM DimKaupunkiseutu A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
+        </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="16">
+    <SelectionAreaType id="municipality">
+        <Description>Kunta</Description>
+        <DatabaseIdColumn>A.Kunta_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Nimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKunta A2 ON A2.Alue_ID = A.Kunta_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.Nimi AS AreaName, Nro AS AlternativeId, NULL AS Year FROM DimKunta A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="sub_region">
+        <Description>Seutukunta</Description>
+        <DatabaseIdColumn>A.Seutukunta_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Nimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimSeutukunta A2 ON A2.Alue_ID = A.Seutukunta_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.Nimi AS AreaName, Nro AS AlternativeId, NULL AS Year FROM DimSeutukunta A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="region">
         <Description>Maakunta</Description>
-        <DatabaseColumn>Maakunta_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimMaakunta</DatabaseTable>
+        <DatabaseIdColumn>A.Maakunta_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Nimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimMaakunta A2 ON A2.Alue_ID = A.Maakunta_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.Nimi AS AreaName, Nro AS AlternativeId, NULL AS Year FROM DimMaakunta A</DatabaseListQuery>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" />
             <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="17">
-        <Description>Seutukunta</Description>
-        <DatabaseColumn>Seutukunta_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimSeutukunta</DatabaseTable>
+    <SelectionAreaType id="ely_e">
+        <Description>ELY E-alue</Description>
+        <DatabaseIdColumn>A.ELY_E_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Nimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_E_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.Nimi AS AreaName, A.Nro AS AlternativeId, NULL AS Year FROM DimELY A</DatabaseListQuery>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="18">
-        <Description>ELY</Description>
-        <DatabaseColumn/>
-        <DatabaseTable>DimELY</DatabaseTable>
+    <SelectionAreaType id="ely_l">
+        <Description>ELY L-alue</Description>
+        <DatabaseIdColumn>A.ELY_L_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.LiikenneElyNimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_L_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, COALESCE(A.LiikenneElyNimi, A.Nimi) AS AreaName, A.Nro AS AlternativeId, NULL AS Year FROM DimELY A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="19">
-        <Description>Hallinto-oikeus</Description>
-        <DatabaseColumn>HallintoOikeus_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimHallintoOikeus</DatabaseTable>
+    <SelectionAreaType id="ely_y">
+        <Description>ELY Y-alue</Description>
+        <DatabaseIdColumn>A.ELY_Y_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.YmparistoElyNimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_Y_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, COALESCE(A.YmparistoElyNimi, A.Nimi) AS AreaName, A.Nro AS AlternativeId, NULL AS Year FROM DimELY A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="20">
-        <Description>Haja-asutusalue</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="21">
+    <SelectionAreaType id="finland">
         <Description>Suomi</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
-    </SelectionAreaType>
-    <SelectionAreaType id="22">
-        <Description>Ruutu 1 km</Description>
-        <DatabaseColumn>Ruutu_1km_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="23">
-        <Description>Ruutu 2 km</Description>
-        <DatabaseColumn>Ruutu_2km_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="24">
-        <Description>Ruutu 5 km</Description>
-        <DatabaseColumn>Ruutu_5km_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="25">
-        <Description>Ruutu 10 km</Description>
-        <DatabaseColumn>Ruutu_10km_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="26">
-        <Description>Ruutu 20 km</Description>
-        <DatabaseColumn>Ruutu_20km_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimRuutu</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="27">
-        <Description>Keskusta</Description>
-        <DatabaseColumn>Keskusta_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimKeskusta</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="28">
-        <Description>Kaupan alue</Description>
-        <DatabaseColumn>KaupanAlue_Alue_ID</DatabaseColumn>
-        <DatabaseTable>DimKaupanAlue</DatabaseTable>
-    </SelectionAreaType>
-    <SelectionAreaType id="21">
-        <Description>Suomi</Description>
-        <DatabaseColumn/>
-        <DatabaseTable/>
+        <DatabaseIdColumn>NULL</DatabaseIdColumn>
+        <DatabaseNameColumn>'Suomi'</DatabaseNameColumn>
+        <DatabaseJoinQuery></DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT -1 AS AreaId, 'Suomi' AS AreaName, NULL AS AlternativeId, NULL AS Year</DatabaseListQuery>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="21" name="Suomi" />
             <DatabaseAreaType id="18" name="ELY" />

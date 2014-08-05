@@ -10,6 +10,10 @@ namespace LiiteriStatisticsCore.Queries
 {
     public class StatisticsQuery : SqlQuery, ISqlQuery
     {
+        public static readonly log4net.ILog logger =
+            log4net.LogManager.GetLogger(
+                System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private List<string> whereList;
 
         private static LiiteriStatisticsCore.Util.AreaTypeMappings
@@ -61,7 +65,7 @@ namespace LiiteriStatisticsCore.Queries
         public int CalculationTypeIdIs { get; set; }
 
         /* Filters */
-        public int? FilterAreaTypeIdIs { get; set; }
+        public string FilterAreaTypeIdIs { get; set; }
         public int? FilterAreaIdIs
         {
             get
@@ -76,7 +80,7 @@ namespace LiiteriStatisticsCore.Queries
         }
 
         /* Grouping */
-        public int GroupByAreaTypeIdIs { get; set; }
+        public string GroupByAreaTypeIdIs { get; set; }
 
         private string GetQueryString_SummedDivided()
         {
@@ -90,25 +94,32 @@ namespace LiiteriStatisticsCore.Queries
 
             if (this.FilterAreaIdIs != null &&
                     this.FilterAreaTypeIdIs != null) {
-                string column = AreaTypeMappings.GetAreaColumn(
-                    (int) this.FilterAreaTypeIdIs);
+                string column = AreaTypeMappings.GetDatabaseIdColumn(
+                    this.FilterAreaTypeIdIs);
                 this.whereList.Add(string.Format(
-                    "A.{0} = @FilterAreaIdIs", column));
+                    "{0} = @FilterAreaIdIs", column));
             }
 
             fields["(SUM(T1.Arvo) / SUM(T2.Arvo))"] = "Value";
 
-            fields["A2.Alue_ID"] = "AreaId";
-            groups.Add("A2.Alue_ID");
-
-            fields["A2.Nimi"] = "AreaName";
-            groups.Add("A2.Nimi");
-
             /* add the proper table that we are grouping by */
-            sbFrom.Append(string.Format(
-                "INNER JOIN {0} A2 ON A2.Alue_ID = A.{1} ",
-                AreaTypeMappings.GetAreaTable(this.GroupByAreaTypeIdIs),
-                AreaTypeMappings.GetAreaColumn(this.GroupByAreaTypeIdIs)));
+            if (this.GroupByAreaTypeIdIs != null) {
+                string idColumn = AreaTypeMappings.GetDatabaseIdColumn(
+                    this.GroupByAreaTypeIdIs);
+                fields[idColumn] = "AreaId";
+                groups.Add(idColumn);
+
+                string nameColumn = AreaTypeMappings.GetDatabaseNameColumn(
+                    this.GroupByAreaTypeIdIs);
+                fields[nameColumn] = "AreaName";
+                groups.Add(nameColumn);
+
+                sbFrom.Append(AreaTypeMappings.GetDatabaseJoinQuery(
+                    this.GroupByAreaTypeIdIs));
+            } else {
+                fields["NULL"] = "AreaId";
+                fields["NULL"] = "AreaName";
+            }
 
             string queryString = @"
 SELECT
@@ -116,12 +127,12 @@ SELECT
 FROM
     DimTilasto_JohdettuTilasto_Jako J
 
-    LEFT JOIN FactTilastoarvo T1 ON
+    INNER JOIN FactTilastoarvo T1 ON
         T1.Tilasto_ID = J.Osoittaja_Tilasto_ID AND
         T1.Jakso_ID = @YearIs AND
         T1.AlueTaso_ID = @DatabaseAreaTypeIdIs
 
-    LEFT JOIN FactTilastoarvo T2 ON
+    INNER JOIN FactTilastoarvo T2 ON
         T2.Tilasto_ID = J.Nimittaja_Tilasto_ID AND
         T2.Jakso_ID = @YearIs AND
         T2.AlueTaso_ID = @DatabaseAreaTypeIdIs
@@ -133,7 +144,11 @@ FROM
         A.AlueTaso_ID = @DatabaseAreaTypeIdIs
     {1}
 WHERE
-    J.Tilasto_ID = @IdIs
+    J.Tilasto_ID = @IdIs AND
+	T1.Arvo IS NOT NULL AND
+	T2.Arvo IS NOT NULL AND
+	T1.Arvo > 0 AND
+	T2.Arvo > 0
     {2}
 GROUP BY
     {3}
@@ -173,25 +188,32 @@ GROUP BY
 
             if (this.FilterAreaIdIs != null &&
                     this.FilterAreaTypeIdIs != null) {
-                string column = AreaTypeMappings.GetAreaColumn(
-                    (int) this.FilterAreaTypeIdIs);
+                string column = AreaTypeMappings.GetDatabaseIdColumn(
+                    this.FilterAreaTypeIdIs);
                 this.whereList.Add(string.Format(
-                    "A.{0} = @FilterAreaIdIs", column));
+                    "{0} = @FilterAreaIdIs", column));
             }
 
             fields["SUM(T.Arvo)"] = "Value";
 
-            fields["A2.Alue_ID"] = "AreaId";
-            groups.Add("A2.Alue_ID");
-
-            fields["A2.Nimi"] = "AreaName";
-            groups.Add("A2.Nimi");
-
             /* add the proper table that we are grouping by */
-            sbFrom.Append(string.Format(
-                "INNER JOIN {0} A2 ON A2.Alue_ID = A.{1} ",
-                AreaTypeMappings.GetAreaTable(this.GroupByAreaTypeIdIs),
-                AreaTypeMappings.GetAreaColumn(this.GroupByAreaTypeIdIs)));
+            if (this.GroupByAreaTypeIdIs != null) {
+                string idColumn = AreaTypeMappings.GetDatabaseIdColumn(
+                    this.GroupByAreaTypeIdIs);
+                fields[idColumn] = "AreaId";
+                groups.Add(idColumn);
+
+                string nameColumn = AreaTypeMappings.GetDatabaseNameColumn(
+                    this.GroupByAreaTypeIdIs);
+                fields[nameColumn] = "AreaName";
+                groups.Add(nameColumn);
+
+                sbFrom.Append(AreaTypeMappings.GetDatabaseJoinQuery(
+                    this.GroupByAreaTypeIdIs));
+            } else {
+                fields["NULL"] = "AreaId";
+                fields["NULL"] = "AreaName";
+            }
 
             
             string queryString = @"
@@ -242,9 +264,11 @@ GROUP BY
 
             switch (this.CalculationTypeIdIs) {
                 case 1: // normal
+                    logger.Debug("Statistics query: normal");
                     queryString = this.GetQueryString_Normal();
                     break;
                 case 3: // summed & divided
+                    logger.Debug("Statistics query: summed & divided");
                     queryString = this.GetQueryString_SummedDivided();
                     break;
                 default:
@@ -252,11 +276,6 @@ GROUP BY
                         "Unsupported CalculationType: {0}",
                         this.CalculationTypeIdIs));
             }
-
-            foreach (var param in this.Parameters) {
-                Debug.WriteLine("DECLARE {0} INT = {1}", param.Key, param.Value);
-            }
-            Debug.WriteLine(queryString);
 
             return queryString;
         }
