@@ -44,6 +44,7 @@ namespace LiiteriStatisticsCore.Repositories
         {
             using (DbCommand cmd = this.dbConnection.CreateCommand()) {
                 cmd.CommandText = query.GetQueryString();
+                cmd.CommandTimeout = 600;
 
                 foreach (KeyValuePair<string, object> param in
                         query.Parameters) {
