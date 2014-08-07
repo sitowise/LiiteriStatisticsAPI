@@ -14,15 +14,28 @@ namespace LiiteriStatisticsCore.Queries
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private List<string> whereList;
-
         private static LiiteriStatisticsCore.Util.AreaTypeMappings
             AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
+
+        private List<string> whereList;
+
+        // these will be added as fields for SELECT
+        IDictionary<string, string> fields;
+
+        // these will be added to GROUP BY
+        List<string> groups;
+
+        // this is for JOINs and such
+        StringBuilder sbFrom;
 
         public StatisticsQuery(int id) : base()
         {
             this.IdIs = id;
+
             this.whereList = new List<string>();
+            this.fields = new Dictionary<string, string>();
+            this.groups = new List<string>();
+            this.sbFrom = new StringBuilder();
         }
 
         public int IdIs
@@ -82,16 +95,30 @@ namespace LiiteriStatisticsCore.Queries
         /* Grouping */
         public string GroupByAreaTypeIdIs { get; set; }
 
-        private string GetQueryString_SummedDivided()
+        private void SetGroups()
         {
-            IDictionary<string, string> fields =
-                new Dictionary<string, string>();
-            List<string> groups = new List<string>();
-            StringBuilder sbFrom = new StringBuilder();
+            /* add the proper table that we are grouping by */
+            if (this.GroupByAreaTypeIdIs != null) {
+                string idColumn = AreaTypeMappings.GetDatabaseIdColumn(
+                    this.GroupByAreaTypeIdIs);
+                this.fields[idColumn] = "AreaId";
+                this.groups.Add(idColumn);
 
-            fields["T1.Jakso_ID"] = "Year";
-            groups.Add("T1.Jakso_ID");
+                string nameColumn = AreaTypeMappings.GetDatabaseNameColumn(
+                    this.GroupByAreaTypeIdIs);
+                this.fields[nameColumn] = "AreaName";
+                this.groups.Add(nameColumn);
 
+                sbFrom.Append(AreaTypeMappings.GetDatabaseJoinQuery(
+                    this.GroupByAreaTypeIdIs));
+            } else {
+                this.fields["NULL"] = "AreaId";
+                this.fields["NULL"] = "AreaName";
+            }
+        }
+
+        private void SetFilters()
+        {
             if (this.FilterAreaIdIs != null &&
                     this.FilterAreaTypeIdIs != null) {
                 string column = AreaTypeMappings.GetDatabaseIdColumn(
@@ -99,27 +126,39 @@ namespace LiiteriStatisticsCore.Queries
                 this.whereList.Add(string.Format(
                     "{0} = @FilterAreaIdIs", column));
             }
+        }
 
-            fields["(SUM(T1.Arvo) / SUM(T2.Arvo))"] = "Value";
-
-            /* add the proper table that we are grouping by */
-            if (this.GroupByAreaTypeIdIs != null) {
-                string idColumn = AreaTypeMappings.GetDatabaseIdColumn(
-                    this.GroupByAreaTypeIdIs);
-                fields[idColumn] = "AreaId";
-                groups.Add(idColumn);
-
-                string nameColumn = AreaTypeMappings.GetDatabaseNameColumn(
-                    this.GroupByAreaTypeIdIs);
-                fields[nameColumn] = "AreaName";
-                groups.Add(nameColumn);
-
-                sbFrom.Append(AreaTypeMappings.GetDatabaseJoinQuery(
-                    this.GroupByAreaTypeIdIs));
-            } else {
-                fields["NULL"] = "AreaId";
-                fields["NULL"] = "AreaName";
+        private string GetWhereString()
+        {
+            string whereString = "";
+            if (this.whereList.Count > 0) {
+                whereString = " AND " + string.Join(" AND ", this.whereList);
             }
+            return whereString;
+        }
+
+        private string GetFieldsString()
+        {
+            return string.Join<string>(", ", (
+                    from pair in this.fields
+                    select string.Format("{0} AS {1}", pair.Key, pair.Value)
+                ).ToArray());
+        }
+
+        private string GetGroupString()
+        {
+            return string.Join<string>(", ", this.groups);
+        }
+
+        private string GetQueryString_DerivedDivided()
+        {
+            this.fields["T1.Jakso_ID"] = "Year";
+            this.groups.Add("T1.Jakso_ID");
+
+            this.fields["(SUM(T1.Arvo) / SUM(T2.Arvo))"] = "Value";
+
+            this.SetFilters();
+            this.SetGroups();
 
             string queryString = @"
 SELECT
@@ -153,69 +192,67 @@ WHERE
 GROUP BY
     {3}
 ";
-            string fieldsString = string.Join<string>(", ", (
-                    from pair in fields
-                    select string.Format("{0} AS {1}", pair.Key, pair.Value)
-                ).ToArray());
-
-            string groupString =
-                string.Join<string>(", ", groups);
-
-            string whereString = "";
-            if (this.whereList.Count > 0) {
-                whereString = " AND " + string.Join(" AND ", this.whereList);
-            }
-
             queryString = string.Format(queryString,
-                fieldsString,
+                this.GetFieldsString(),
                 sbFrom.ToString(),
-                whereString,
-                groupString);
+                this.GetWhereString(),
+                this.GetGroupString());
+
+            return queryString;
+        }
+
+        private string GetQueryString_DerivedSummed()
+        {
+            this.fields["T.Jakso_ID"] = "Year";
+            this.groups.Add("T.Jakso_ID");
+
+            this.fields["SUM(T.Arvo)"] = "Value";
+
+            this.SetFilters();
+            this.SetGroups();
+
+            string queryString = @"
+SELECT
+    {0}
+FROM
+	DimTilasto_JohdettuTilasto_Summa TS
+
+    INNER JOIN FactTilastoarvo T ON
+        T.Tilasto_ID = TS.Yhteenlaskettava_Tilasto_ID AND
+        T.Jakso_ID = @YearIs
+
+    INNER JOIN DimAlue A ON
+        A.Alue_ID = T.Alue_ID AND
+        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs
+    {1}
+WHERE
+    TS.Tilasto_ID = @IdIs AND
+    TS.Ryhma_SEQ = 0
+    {2}
+GROUP BY
+    {3}
+";
+            queryString = string.Format(queryString,
+                this.GetFieldsString(),
+                sbFrom.ToString(),
+                this.GetWhereString(),
+                this.GetGroupString());
 
             return queryString;
         }
 
         private string GetQueryString_Normal()
         {
-            IDictionary<string, string> fields =
-                new Dictionary<string, string>();
-            List<string> groups = new List<string>();
 
-            StringBuilder sbFrom = new StringBuilder();
+            this.fields["T.Jakso_ID"] = "Year";
+            this.groups.Add("T.Jakso_ID");
 
-            fields["T.Jakso_ID"] = "Year";
-            groups.Add("T.Jakso_ID");
+            this.fields["SUM(T.Arvo)"] = "Value";
 
-            if (this.FilterAreaIdIs != null &&
-                    this.FilterAreaTypeIdIs != null) {
-                string column = AreaTypeMappings.GetDatabaseIdColumn(
-                    this.FilterAreaTypeIdIs);
-                this.whereList.Add(string.Format(
-                    "{0} = @FilterAreaIdIs", column));
-            }
+            this.SetFilters();
+            this.SetGroups();
 
-            fields["SUM(T.Arvo)"] = "Value";
-
-            /* add the proper table that we are grouping by */
-            if (this.GroupByAreaTypeIdIs != null) {
-                string idColumn = AreaTypeMappings.GetDatabaseIdColumn(
-                    this.GroupByAreaTypeIdIs);
-                fields[idColumn] = "AreaId";
-                groups.Add(idColumn);
-
-                string nameColumn = AreaTypeMappings.GetDatabaseNameColumn(
-                    this.GroupByAreaTypeIdIs);
-                fields[nameColumn] = "AreaName";
-                groups.Add(nameColumn);
-
-                sbFrom.Append(AreaTypeMappings.GetDatabaseJoinQuery(
-                    this.GroupByAreaTypeIdIs));
-            } else {
-                fields["NULL"] = "AreaId";
-                fields["NULL"] = "AreaName";
-            }
-
-            
             string queryString = @"
 SELECT
     {0}
@@ -236,24 +273,11 @@ GROUP BY
     {3}
 ";
 
-            string fieldsString = string.Join<string>(", ", (
-                    from pair in fields
-                    select string.Format("{0} AS {1}", pair.Key, pair.Value)
-                ).ToArray());
-
-            string groupString =
-                string.Join<string>(", ", groups);
-
-            string whereString = "";
-            if (this.whereList.Count > 0) {
-                whereString = " AND " + string.Join(" AND ", this.whereList);
-            }
-
             queryString = string.Format(queryString,
-                fieldsString,
+                this.GetFieldsString(),
                 sbFrom.ToString(),
-                whereString,
-                groupString);
+                this.GetWhereString(),
+                this.GetGroupString());
 
             return queryString;
         }
@@ -267,14 +291,20 @@ GROUP BY
                     logger.Debug("Statistics query: normal");
                     queryString = this.GetQueryString_Normal();
                     break;
-                case 3: // summed & divided
-                    logger.Debug("Statistics query: summed & divided");
-                    queryString = this.GetQueryString_SummedDivided();
+                case 3: // derived & divided
+                    logger.Debug("Statistics query: derived/divided");
+                    queryString = this.GetQueryString_DerivedDivided();
+                    break;
+                case 5: // derived & summed
+                    logger.Debug("Statistics query: derived/summed");
+                    queryString = this.GetQueryString_DerivedSummed();
                     break;
                 default:
-                    throw new Exception(string.Format(
+                    string errMsg = string.Format(
                         "Unsupported CalculationType: {0}",
-                        this.CalculationTypeIdIs));
+                        this.CalculationTypeIdIs);
+                    logger.Error(errMsg);
+                    throw new Exception(errMsg);
             }
 
             return queryString;

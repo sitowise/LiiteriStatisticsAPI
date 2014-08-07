@@ -11,7 +11,8 @@ namespace LiiteriStatisticsCore.Util
 {
     /*
      * Make the instance of this class static, so the XML file is
-     * only loaded once
+     * only loaded once. Keep all XML magic in this file, out of sight from
+     * the rest of the project!
      */
     public class AreaTypeMappings
     {

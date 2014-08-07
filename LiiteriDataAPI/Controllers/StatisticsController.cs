@@ -86,21 +86,27 @@ namespace LiiteriDataAPI.Controllers
         public IEnumerable<LiiteriStatisticsCore.Models.StatisticsResult> GetStatisticsV1(
             int[] years,
             int statisticsId,
-            string groupAreaTypeId = null,
-            string filterAreaTypeId = null,
-            int? filterAreaId = null)
+            string group = null,
+            string filter = null)
         {
-            logger.Debug(string.Format(
-                "statisticsId={0}, " +
-                "groupAreaTypeId={1}, " +
-                "years={2}, " +
-                "filterAreaTypeId={3}, " +
-                "filterAreaId={4}",
-                statisticsId,
-                groupAreaTypeId,
-                string.Join(",", years),
-                filterAreaTypeId,
-                filterAreaId));
+            /* allow parameters like filter=municipality:4 */
+            string filterAreaTypeId = null;
+            int? filterAreaId = null;
+            if (filter != null) {
+                string[] filters = filter.Split(',');
+                if (filters.Length > 0) {
+                    filterAreaTypeId = filters.First().Split(':')[0].ToString();
+                    filterAreaId = Convert.ToInt32(filters.First().Split(':')[1]);
+                }
+            }
+
+            logger.Debug(string.Format("statisticsId={0}", statisticsId));
+            logger.Debug(string.Format("group={0}", group));
+            logger.Debug(string.Format("years={0}", years));
+            logger.Debug(string.Format("filterAreaTypeId={0}",
+                filterAreaTypeId == null ? "null" : filterAreaTypeId));
+            logger.Debug(string.Format("filterAreaId={0}", filterAreaId.ToString()));
+
             using (DbConnection db = this.GetDbConnection()) {
 
                 /* Step 1: Fetch IndicatorDetails */
@@ -118,13 +124,12 @@ namespace LiiteriDataAPI.Controllers
                 var queries =
                     new List<LiiteriStatisticsCore.Queries.StatisticsQuery>();
 
-                /* although StatisticsQuery implements .YearIn, which 
-                 * accepts a list of years, what about if different years
+                /* although StatisticsQuery could implement .YearIn, which 
+                 * would accept a list of years, what about if different years
                  * end up having different DatabaseAreaTypes?
                  * For this reason, let's just loop the years and create
                  * multiple queries */
                 foreach (int year in years) {
-
                     LiiteriStatisticsCore.Models.TimePeriod timePeriod = (
                         from p in details.TimePeriods
                         where p.Id == year
@@ -133,7 +138,7 @@ namespace LiiteriDataAPI.Controllers
                         from a in timePeriod.DataAreaTypes
                         select a.Id).ToArray();
 
-                    /* So we want to group by groupAreaType, and we have to search
+                    /* So we want to group by "group", and we have to search
                      * by using one of availableAreaTypes */
 
                     /* We have to decide which one of availableAreaTypes
@@ -148,21 +153,19 @@ namespace LiiteriDataAPI.Controllers
                     statisticsQuery.DatabaseAreaTypeIdIs =
                         (int) Controllers.StatisticController.
                         AreaTypeMappings.GetDatabaseAreaType(
-                            groupAreaTypeId != null ?
-                                groupAreaTypeId :
-                                "finland",
+                            group != null ? group : "finland",
                             availableAreaTypes);
 
                     string debugString = string.Format(
-                        "Resolving groupAreaTypeId={0} to areaType={1}, " +
+                        "Resolving group={0} to areaType={1}, " +
                         "availableAreaTypes={2}",
-                        groupAreaTypeId,
+                        group,
                         statisticsQuery.DatabaseAreaTypeIdIs,
                         string.Join(", ", availableAreaTypes));
                     logger.Debug(debugString);
                     Debug.WriteLine(debugString);
 
-                    statisticsQuery.GroupByAreaTypeIdIs = groupAreaTypeId;
+                    statisticsQuery.GroupByAreaTypeIdIs = group;
 
                     statisticsQuery.YearIs = year;
 
