@@ -20,8 +20,25 @@ namespace LiiteriStatisticsCore.Util
 
         public AreaTypeMappings()
         {
+            object dataDirectory =
+                AppDomain.CurrentDomain.GetData("DataDirectory");
+
+            // Check BaseDirectory in case we are running UnitTests
+            // BaseDirectory is probably bin\Debug\
+            string baseDirectory =
+                AppDomain.CurrentDomain.BaseDirectory;
+
+            if (dataDirectory == null) {
+                dataDirectory = baseDirectory;
+            } else {
+                dataDirectory = dataDirectory.ToString();
+            }
+            if (dataDirectory == null) {
+                throw new System.IO.DirectoryNotFoundException(
+                    "Unable to figure out Data Directory");
+            }
             string XmlFile = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.GetData("DataDirectory").ToString(),
+                (string) dataDirectory,
                 "AreaTypeMappings.xml");
             Debug.WriteLine(string.Format(
                 "Reading XmlFile from {0}", XmlFile));

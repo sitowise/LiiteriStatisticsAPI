@@ -42,11 +42,11 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (int) this.GetParameter("@IdIs");
+                return (int) this.Parameters["IdIs"].Value;
             }
             set
             {
-                this.AddParameter("@IdIs", value);
+                this.Parameters.Add("IdIs", value);
             }
         }
 
@@ -54,11 +54,11 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (int) this.GetParameter("@DatabaseAreaTypeIdIs");
+                return (int) this.Parameters["DatabaseAreaTypeIdIs"].Value;
             }
             set
             {
-                this.AddParameter("@DatabaseAreaTypeIdIs", value);
+                this.Parameters.Add("DatabaseAreaTypeIdIs", value);
             }
         }
 
@@ -66,11 +66,11 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (int) this.GetParameter("@YearIs");
+                return (int) this.Parameters["YearIs"].Value;
             }
             set
             {
-                this.AddParameter("@YearIs", value);
+                this.Parameters.Add("YearIs", value);
             }
         }
 
@@ -78,19 +78,7 @@ namespace LiiteriStatisticsCore.Queries
         public int CalculationTypeIdIs { get; set; }
 
         /* Filters */
-        public string FilterAreaTypeIdIs { get; set; }
-        public int? FilterAreaIdIs
-        {
-            get
-            {
-                return (int?) this.GetParameter("@FilterAreaIdIs");
-            }
-            set
-            {
-                if (value == null) return;
-                this.AddParameter("@FilterAreaIdIs", value);
-            }
-        }
+        public string AreaFilterQueryString { get; set; }
 
         /* Grouping */
         public string GroupByAreaTypeIdIs { get; set; }
@@ -119,12 +107,18 @@ namespace LiiteriStatisticsCore.Queries
 
         private void SetFilters()
         {
-            if (this.FilterAreaIdIs != null &&
-                    this.FilterAreaTypeIdIs != null) {
-                string column = AreaTypeMappings.GetDatabaseIdColumn(
-                    this.FilterAreaTypeIdIs);
-                this.whereList.Add(string.Format(
-                    "{0} = @FilterAreaIdIs", column));
+            if (this.AreaFilterQueryString != null) {
+                var parser = new Parsers.AreaFilterParser();
+                parser.ValueHandler = delegate(object val)
+                {
+                    return "@" + this.Parameters.AddValue(val);
+                };
+                parser.IdHandler = delegate(string name)
+                {
+                    return AreaTypeMappings.GetDatabaseIdColumn(name);
+                };
+                string whereString = parser.Parse(this.AreaFilterQueryString);
+                this.whereList.Add(whereString);
             }
         }
 
@@ -272,7 +266,6 @@ WHERE
 GROUP BY
     {3}
 ";
-
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
                 sbFrom.ToString(),

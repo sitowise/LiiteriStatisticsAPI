@@ -21,13 +21,13 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (string) this.GetParameter("@NameIs");
+                return (string) this.Parameters["NameIs"].Value;
             }
             set
             {
                 if (value == null) return;
                 this.whereList.Add("T.name = @NameIs");
-                this.AddParameter("@NameIs", value);
+                this.Parameters.Add("NameIs", value);
             }
         }
 
@@ -35,13 +35,13 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (string) this.GetParameter("@NameLike");
+                return (string) this.Parameters["NameLike"].Value;
             }
             set
             {
                 if (value == null) return;
                 this.whereList.Add("T.name LIKE @NameLike");
-                this.AddParameter("@NameLike", value);
+                this.Parameters.Add("NameLike", value);
             }
         }
 
@@ -49,12 +49,12 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (int) this.GetParameter("@IdIs");
+                return (int) this.Parameters["IdIs"].Value;
             }
             set
             {
                 this.whereList.Add("T.id = @IdIs");
-                this.AddParameter("@IdIs", value);
+                this.Parameters.Add("IdIs", value);
             }
         }
 
@@ -62,12 +62,12 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (int) this.GetParameter("@ParentIdIs");
+                return (int) this.Parameters["ParentIdIs"].Value;
             }
             set
             {
                 this.whereList.Add("T.parent_id = @ParentIdIs");
-                this.AddParameter("@ParentIdIs", value);
+                this.Parameters.Add("ParentIdIs", value);
             }
         }
 
@@ -89,7 +89,6 @@ namespace LiiteriStatisticsCore.Queries
                 sb.Append(string.Join(" AND ", whereList));
             }
 
-            Debug.WriteLine(sb.ToString());
             return sb.ToString();
         }
     }

@@ -46,22 +46,22 @@ namespace LiiteriStatisticsCore.Repositories
                 cmd.CommandText = query.GetQueryString();
                 cmd.CommandTimeout = 600;
 
-                foreach (KeyValuePair<string, object> param in
+                foreach (Infrastructure.Parameter param in
                         query.Parameters) {
                     if (param.Value.GetType().Equals(typeof(int))) {
                         Debug.WriteLine(string.Format(
                             "Using special parameter type for {0}",
-                            param.Key));
+                            param.Name));
                         SqlParameter p = new SqlParameter(
-                            param.Key, System.Data.SqlDbType.Int);
+                            "@" + param.Name, System.Data.SqlDbType.Int);
                         p.Value = param.Value;
                         cmd.Parameters.Add(p);
                     } else {
                         Debug.WriteLine(string.Format(
                             "Using default parameter type for {0}",
-                            param.Key));
+                            param.Name));
                         cmd.Parameters.Add(
-                            new SqlParameter(param.Key, param.Value));
+                            new SqlParameter("@" + param.Name, param.Value));
                     }
                 }
 

@@ -21,13 +21,13 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (int) this.GetParameter("@IdIs");
+                return (int) this.Parameters["IdIs"].Value;
             }
             set
             {
                 if (value == null) return;
                 this.whereList.Add("T.Tilasto_Id = @IdIs");
-                this.AddParameter("@IdIs", value);
+                this.Parameters.Add("IdIs", value);
             }
         }
 
@@ -35,13 +35,13 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (string) this.GetParameter("@NameIs");
+                return (string) this.Parameters["NameIs"].Value;
             }
             set
             {
                 if (value == null) return;
                 this.whereList.Add("T.Nimi = @NameIs");
-                this.AddParameter("@NameIs", value);
+                this.Parameters.Add("NameIs", value);
             }
         }
 
@@ -49,13 +49,13 @@ namespace LiiteriStatisticsCore.Queries
         {
             get
             {
-                return (string) this.GetParameter("@NameLike");
+                return (string) this.Parameters["NameLike"].Value;
             }
             set
             {
                 if (value == null) return;
                 this.whereList.Add("T.Nimi LIKE @NameLike");
-                this.AddParameter("@NameLike", value);
+                this.Parameters.Add("NameLike", value);
             }
         }
 

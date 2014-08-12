@@ -7,35 +7,17 @@ namespace LiiteriStatisticsCore.Queries
 {
     public interface ISqlQuery
     {
-        IEnumerable<KeyValuePair<string, object>> Parameters { get; }
+        Infrastructure.ParameterCollection Parameters { get; set; }
         string GetQueryString();
     }
 
     public abstract class SqlQuery : ISqlQuery
     {
-        public Dictionary<string, object> Parameters {get; set;}
-
-        IEnumerable<KeyValuePair<string, object>> ISqlQuery.Parameters
-        {
-            get { return Parameters;  }
-        }
+        public Infrastructure.ParameterCollection Parameters { get; set; }
 
         public SqlQuery()
         {
-            this.Parameters = new Dictionary<string, object>();
-        }
-
-        public void AddParameter(string key, object value)
-        {
-            this.Parameters[key] = value;
-        }
-
-        public object GetParameter(string key)
-        {
-            if (!this.Parameters.ContainsKey(key)) {
-                return null;
-            }
-            return this.Parameters[key];
+            this.Parameters = new Infrastructure.ParameterCollection();
         }
 
         public abstract string GetQueryString();

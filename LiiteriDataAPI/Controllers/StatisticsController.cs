@@ -89,23 +89,10 @@ namespace LiiteriDataAPI.Controllers
             string group = null,
             string filter = null)
         {
-            /* allow parameters like filter=municipality:4 */
-            string filterAreaTypeId = null;
-            int? filterAreaId = null;
-            if (filter != null) {
-                string[] filters = filter.Split(',');
-                if (filters.Length > 0) {
-                    filterAreaTypeId = filters.First().Split(':')[0].ToString();
-                    filterAreaId = Convert.ToInt32(filters.First().Split(':')[1]);
-                }
-            }
-
             logger.Debug(string.Format("statisticsId={0}", statisticsId));
-            logger.Debug(string.Format("group={0}", group));
             logger.Debug(string.Format("years={0}", years));
-            logger.Debug(string.Format("filterAreaTypeId={0}",
-                filterAreaTypeId == null ? "null" : filterAreaTypeId));
-            logger.Debug(string.Format("filterAreaId={0}", filterAreaId.ToString()));
+            logger.Debug(string.Format("group={0}", group));
+            logger.Debug(string.Format("filter={0}", filter));
 
             using (DbConnection db = this.GetDbConnection()) {
 
@@ -166,11 +153,8 @@ namespace LiiteriDataAPI.Controllers
                     Debug.WriteLine(debugString);
 
                     statisticsQuery.GroupByAreaTypeIdIs = group;
-
                     statisticsQuery.YearIs = year;
-
-                    statisticsQuery.FilterAreaIdIs = filterAreaId;
-                    statisticsQuery.FilterAreaTypeIdIs = filterAreaTypeId;
+                    statisticsQuery.AreaFilterQueryString = filter;
 
                     queries.Add(statisticsQuery);
                 }
