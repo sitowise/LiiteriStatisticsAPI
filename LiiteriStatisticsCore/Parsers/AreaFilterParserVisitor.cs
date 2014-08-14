@@ -69,8 +69,27 @@ namespace LiiteriStatisticsCore.Parsers
                 string retval = string.Format("{0} = {1}", left, right);
                 Debug.WriteLine(string.Format(" will return {0}", retval));
                 return retval;
+            } else if (context.NOTEQUALS() != null) {
+                string left = Visit(context.id());
+                string right = Visit(context.value());
+                string retval = string.Format("{0} <> {1}", left, right);
+                Debug.WriteLine(string.Format(" will return {0}", retval));
+                return retval;
             } else {
-                throw new Exception("Error, should have 3 things here!");
+                throw new Exception("Error! Unhandled relational expression!");
+            }
+        }
+
+        public override string VisitNullExpr(
+            SimpleQueryLanguageParser.NullExprContext context)
+        {
+            if (context.ISNULL() != null) {
+                string left = Visit(context.id());
+                string retval = string.Format("{0} IS NULL", left);
+                Debug.WriteLine(string.Format(" will return {0}", retval));
+                return retval;
+            } else {
+                throw new Exception("Error! Unhandled null expression!");
             }
         }
 
@@ -100,6 +119,19 @@ namespace LiiteriStatisticsCore.Parsers
                 "VisitOr, will return {0}",
                 retval));
             return retval;
+        }
+
+        public override string VisitNotExpression(
+            SimpleQueryLanguageParser.NotExpressionContext context)
+        {
+            if (context.NOT() != null) {
+                string expr = Visit(context.expr());
+                string retval = string.Format("NOT ({0})", expr);
+                Debug.WriteLine(string.Format(" will return {0}", retval));
+                return retval;
+            } else {
+                throw new Exception("Error! Unhandled NOT expression!");
+            }
         }
 
         public override string VisitExpressionExpression(

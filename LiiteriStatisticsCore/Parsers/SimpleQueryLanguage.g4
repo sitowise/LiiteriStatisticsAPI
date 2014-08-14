@@ -15,12 +15,20 @@ compileUnit
 prog: expr;
 
 expr : relationalExpr   # relationalExpression
-     | expr OR expr     # orExpression
+     | nullExpr         # nullExpression
+     | NOT expr         # notExpression
      | expr AND expr    # andExpression
+     | expr OR expr     # orExpression
      | '(' expr ')'     # expressionExpression
      ;
  
+/*
+sExpr : relationalExpr
+      | nullExpr;
+*/
+
 relationalExpr : id (EQUALS|NOTEQUALS) value;
+nullExpr : id ISNULL;
 
 /* atom : value | ID; */
 value : INT;
@@ -30,10 +38,12 @@ id : ID;
 /*
  * Lexer Rules
  */
+NOT : 'NOT';
 AND : 'AND';
 OR : 'OR';
 EQUALS : '=';
-NOTEQUALS : '!=';
+NOTEQUALS : '<>';
+ISNULL : ' IS NULL';
 INT : [0-9]+;
 ID : [a-zA-Z_]+;
 

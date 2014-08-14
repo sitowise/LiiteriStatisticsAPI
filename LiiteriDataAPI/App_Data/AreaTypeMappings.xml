@@ -25,7 +25,7 @@
         <Description>Kaupunkiseutu</Description>
         <DatabaseIdColumn>A.Kaupunkiseutu_Alue_ID</DatabaseIdColumn>
         <DatabaseNameColumn>A2.KseutuNimi</DatabaseNameColumn>
-        <DatabaseJoinQuery>INNER JOIN DimKaupunkiseutu A2 ON (A2.Alue_ID = A.Kaupunkiseutu_Alue_ID AND A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)</DatabaseJoinQuery>
+        <DatabaseJoinQuery>INNER JOIN DimKaupunkiseutu A2 ON (A2.Alue_ID = A.Kaupunkiseutu_Alue_ID AND (A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID))</DatabaseJoinQuery>
         <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.KseutuNimi AS AreaName, A.KseutuNro AS AlternativeId, A.Jakso_ID AS Year FROM DimKaupunkiseutu A</DatabaseListQuery>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -107,6 +107,97 @@
             <DatabaseAreaType id="16" name="Maakunta" />
             <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="planned_area">
+        <Description>Asemakaavoitettu alue</Description>
+        <DatabaseIdColumn>A.AsemakaavoitettuAlue_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.KaavaNro</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimAsemakaavoitettuAlue A2 ON (A2.Alue_ID = A.AsemakaavoitettuAlue_Alue_ID AND A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.KaavaNro AS AreaName, A.KaavaNro AS AlternativeId, A.Jakso_ID AS Year FROM DimAsemakaavoitettuAlue A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="neighborhood_type">
+        <Description>Asutusalueen tyyppi</Description>
+        <DatabaseIdColumn>A.AsutusalueTyyppi_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.AsutusalueTyyppiSelite</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimAsutusalueTyyppi A2 ON A2.Asutusaluetyyppi_ID = A.AsutusalueTyyppi_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Asutusaluetyyppi_ID AS AreaId, A.AsutusalueTyyppiSelite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimAsutusalueTyyppi A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="administrative_law_area">
+        <Description>Hallinto-oikeus</Description>
+        <DatabaseIdColumn>A.HallintoOikeus_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Nimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimHallintoOikeus A2 ON A2.Alue_ID = A.HallintoOikeus_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.Nimi AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimHallintoOikeus A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="shop_area">
+        <Description>Kaupan alue</Description>
+        <DatabaseIdColumn>A.KaupanAlue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>(KT.Selite + ' (' + A2.Alue_ID + ')')</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKaupanAlue A2 ON A2.Alue_ID = A.KaupanAlue_ID INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.KeskustaTyyppi_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, (KT.Selite + ' (' + CONVERT(varchar(max), A.Alue_ID) + ')') AS AreaName, NULL AS AlternativeId, A.Jakso_ID AS Year FROM DimKaupanAlue A INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A.Keskustatyyppi_ID</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_rural_area_type">
+        <Description>Kaupunkimaaseutuluokitustyyppi</Description>
+        <DatabaseIdColumn>A.KaupunkiMaaseutuTyyppi_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Selite</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi A2 ON A2.Kaupunkimaaseutu_Tyyppi_ID = A.KaupunkiMaaseutuTyyppi_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.KaupunkimaaseutuTyyppi_ID AS AreaId, A.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKaupunkiMaaseutuTyyppi A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="urban_area_type">
+        <Description>Kaupunkiseutu-tyyppi</Description>
+        <DatabaseIdColumn>A.KaupunkiseutuTyyppi_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Selite</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKaupunkiseutuTyyppi A2 ON A2.KaupunkiseutuTyyppi_ID = A.KaupunkiseutuTyyppi_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.KaupunkiseutuTyyppi_ID AS AreaId, A.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKaupunkiseutuTyyppi A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_central_area">
+        <Description>Keskusta-alue</Description>
+        <DatabaseIdColumn>A.Keskusta_Alue_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.KeskustaNimi</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKeskusta A2 ON (A2.Alue_ID = A.Keskusta_Alue_ID AND (A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID))</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Alue_ID AS AreaId, A.KeskustaNimi AS AreaName, NULL AS AlternativeId, A.Jakso_ID AS Year FROM DimKeskusta A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_central_type">
+        <Description>Keskustatyyppi</Description>
+        <DatabaseIdColumn>A.KeskustaTyyppi_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Selite</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimKeskustatyyppi A2 ON A2.Alue_ID = A.Keskusta_Alue_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.Keskustatyyppi_ID AS AreaId, A.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKeskustatyyppi A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_density_type">
+        <Description>Taajama harva/tiheä -tyyppi</Description>
+        <DatabaseIdColumn>A.TaajamaHarvaTiheaTyyppi_ID</DatabaseIdColumn>
+        <DatabaseNameColumn>A2.Selite</DatabaseNameColumn>
+        <DatabaseJoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi A2 ON A2.Alue_ID = A.TaajamaHarvaTiheaTyyppi_ID</DatabaseJoinQuery>
+        <DatabaseListQuery>SELECT A.TaajamaHarvaTiheaTyyppi_ID AS AreaId, A.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimTaajamaHarvaTiheaTyyppi A</DatabaseListQuery>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
 </SelectionAreaTypes>
