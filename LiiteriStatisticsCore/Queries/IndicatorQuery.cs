@@ -80,6 +80,9 @@ namespace LiiteriStatisticsCore.Queries
             fields["T.Lisatieto"] = "AdditionalInformation";
             fields["T.TilastoLaskentatyyppi_ID"] = "CalculationType";
 
+            fields["MY.MittayksikkoLyhenne"] = "Unit";
+            fields["AJV.AjallinenVaiheKuvaus"] = "ProcessingStage";
+
             /* This is used by TimePeriod */
             fields["J.Jakso_ID"] = "PeriodId";
 
@@ -117,6 +120,18 @@ OUTER APPLY (
     ORDER BY
         TL.Alkaen_Jakso_ID DESC
     ) TL
+",
+                ConfigurationManager.AppSettings["DbDataMarts"]));
+
+            sb.Append(string.Format(@"
+LEFT OUTER JOIN [LiiteriDataMarts]..[DimMittayksikko] MY ON
+    T.MittayksikkoEsitys_Mittayksikko_ID = MY.Mittayksikko_ID
+",
+                ConfigurationManager.AppSettings["DbDataMarts"]));
+
+            sb.Append(string.Format(@"
+LEFT OUTER JOIN [LiiteriDataMarts]..[DimAjallinenVaihe] AJV ON
+    T.AjallinenVaihe_ID = AJV.AjallinenVaihe_ID
 ",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
 

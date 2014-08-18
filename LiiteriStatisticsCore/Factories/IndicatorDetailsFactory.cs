@@ -19,9 +19,11 @@ namespace LiiteriStatisticsCore.Factories
 
             obj.DisplayUnitId = (int) rdr["DisplayUnitId"];
             obj.InternalUnitId = (int) rdr["InternalUnitId"];
+            obj.Unit = (string) rdr["Unit"];
             obj.Description = rdr["Description"].ToString(); ;
             obj.AdditionalInformation = rdr["AdditionalInformation"].ToString(); ;
             obj.CalculationType = (int) rdr["CalculationType"];
+            obj.ProcessingStage = (string) rdr["ProcessingStage"];
 
             return obj;
         }

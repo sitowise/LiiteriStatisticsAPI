@@ -9,10 +9,8 @@ namespace LiiteriStatisticsCore.Models
 {
     public class IndicatorDetails : IndicatorBrief, ILiiteriEntity
     {
-        //public int? Group { get; set; }
-        //public string Unit { get; set; }
-        //public int? StatisticId { get; set; }
-        //public string ProcessingStage { get; set; }
+        public string Unit { get; set; }
+        public string ProcessingStage { get; set; }
         //public string TimeSpan { get; set; }
         public int? DecimalCount { get; set; }
 
