@@ -65,6 +65,19 @@ namespace LiiteriStatisticsCore.Util
             return this.GetValue(areaTypeId, "DatabaseListQuery");
         }
 
+        public bool GetDatabaseListAddAreaTable(string areaTypeId)
+        {
+            var queryElem = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element("DatabaseListQuery")).Single();
+            if (queryElem.Attribute("addAreaTable") != null &&
+                    queryElem.Attribute("addAreaTable").Value == "true") {
+                return true;
+            }
+            return false;
+        }
+
         private string GetValue(string areaTypeId, string key)
         {
             return (
