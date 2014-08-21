@@ -87,21 +87,31 @@ namespace LiiteriStatisticsCore.Queries
         {
             /* add the proper table that we are grouping by */
             if (this.GroupByAreaTypeIdIs != null) {
-                string idColumn = AreaTypeMappings.GetDatabaseIdColumn(
+                var schema = AreaTypeMappings.GetDatabaseSchema(
                     this.GroupByAreaTypeIdIs);
+
+                string idColumn = schema["MainIdColumn"];
                 this.fields[idColumn] = "AreaId";
                 this.groups.Add(idColumn);
 
-                string nameColumn = AreaTypeMappings.GetDatabaseNameColumn(
-                    this.GroupByAreaTypeIdIs);
+                string nameColumn = schema["SubNameColumn"];
                 this.fields[nameColumn] = "AreaName";
                 this.groups.Add(nameColumn);
 
-                sbFrom.Append(AreaTypeMappings.GetDatabaseJoinQuery(
-                    this.GroupByAreaTypeIdIs));
+                string alternativeIdColumn = schema["SubAlternativeIdColumn"];
+                if (alternativeIdColumn != null && alternativeIdColumn.Length > 0) {
+                    this.fields[alternativeIdColumn] = "AlternativeId";
+                    this.groups.Add(alternativeIdColumn);
+                } else {
+                    this.fields["NULL"] = "AlternativeId";
+                }
+
+                string joinQuery = schema["JoinQuery"];
+                sbFrom.Append(joinQuery);
             } else {
                 this.fields["NULL"] = "AreaId";
                 this.fields["NULL"] = "AreaName";
+                this.fields["NULL"] = "AlternativeId";
             }
         }
 
@@ -115,7 +125,8 @@ namespace LiiteriStatisticsCore.Queries
                 };
                 parser.IdHandler = delegate(string name)
                 {
-                    return AreaTypeMappings.GetDatabaseIdColumn(name);
+                    return AreaTypeMappings.GetDatabaseSchema(
+                        name)["MainIdColumn"];
                 };
                 string whereString = parser.Parse(this.AreaFilterQueryString);
                 this.whereList.Add(whereString);

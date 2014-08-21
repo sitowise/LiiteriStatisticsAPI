@@ -45,37 +45,47 @@ namespace LiiteriStatisticsCore.Util
             this.xdoc = XDocument.Load(XmlFile);
         }
 
-        public string GetDatabaseIdColumn(string areaTypeId)
-        {
-            return this.GetValue(areaTypeId, "DatabaseIdColumn");
-        }
-
-        public string GetDatabaseNameColumn(string areaTypeId)
-        {
-            return this.GetValue(areaTypeId, "DatabaseNameColumn");
-        }
-
-        public string GetDatabaseJoinQuery(string areaTypeId)
-        {
-            return this.GetValue(areaTypeId, "DatabaseJoinQuery");
-        }
-
-        public string GetDatabaseListQuery(string areaTypeId)
-        {
-            return this.GetValue(areaTypeId, "DatabaseListQuery");
-        }
-
         public bool GetDatabaseListAddAreaTable(string areaTypeId)
         {
             var queryElem = (
                 from d in this.xdoc.Root.Descendants("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
-                select d.Element("DatabaseListQuery")).Single();
+                select d.Element("DatabaseSchema").Element("SubFromString")
+                ).Single();
+            if (queryElem == null) return false;
             if (queryElem.Attribute("addAreaTable") != null &&
                     queryElem.Attribute("addAreaTable").Value == "true") {
                 return true;
             }
             return false;
+        }
+
+        public Dictionary<string, string> GetDatabaseSchema(string areaTypeId)
+        {
+            var queryElem = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element("DatabaseSchema")
+                ).Single();
+            Dictionary<string, string> schema =
+                new Dictionary<string, string>();
+            foreach (string key in new string[]{
+                    "MainIdColumn",
+                    "SubIdColumn",
+                    "SubNameColumn",
+                    "SubAlternativeIdColumn",
+                    "SubYearColumn",
+                    "SubFromString",
+                    "JoinQuery",
+                    "ListQuery",
+                    }) {
+                if (queryElem.Element(key) != null) {
+                    schema[key] = queryElem.Element(key).Value.ToString();
+                } else {
+                    schema[key] = null;
+                }
+            }
+            return schema;
         }
 
         private string GetValue(string areaTypeId, string key)

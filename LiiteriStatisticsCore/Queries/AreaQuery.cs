@@ -23,13 +23,52 @@ namespace LiiteriStatisticsCore.Queries
 
         public override string GetQueryString()
         {
-            string queryString =
-                AreaTypeMappings.GetDatabaseListQuery(this.AreaTypeIdIs);
-
-            var fields = new List<string>();
-            fields.Add(string.Format("'{0}' AS AreaType", this.AreaTypeIdIs));
+            Dictionary<string, string> schema =
+                AreaTypeMappings.GetDatabaseSchema(this.AreaTypeIdIs);
 
             var fromList = new List<string>();
+            var fields = new List<string>();
+
+            fields.Add(string.Format("'{0}' AS AreaType", this.AreaTypeIdIs));
+
+            string queryString = "SELECT {0} {1} {2}";
+
+            if (schema["SubIdColumn"] != null &&
+                    schema["SubIdColumn"].Length > 0) {
+                fields.Add(string.Format(
+                    "{0} AS AreaId", schema["SubIdColumn"]));
+            } else {
+                fields.Add("NULL AS AreaId");
+            }
+
+            if (schema["SubNameColumn"] != null &&
+                    schema["SubNameColumn"].Length > 0) {
+                fields.Add(string.Format(
+                    "{0} AS AreaName", schema["SubNameColumn"]));
+            } else {
+                fields.Add("NULL AS AreaName");
+            }
+
+            if (schema["SubAlternativeIdColumn"] != null &&
+                    schema["SubAlternativeIdColumn"].Length > 0) {
+                fields.Add(string.Format(
+                    "{0} AS AlternativeId", schema["SubAlternativeIdColumn"]));
+            } else {
+                fields.Add("NULL AS AlternativeId");
+            }
+
+            if (schema["SubYearColumn"] != null &&
+                    schema["SubYearColumn"].Length > 0) {
+                fields.Add(string.Format(
+                    "{0} AS Year", schema["SubYearColumn"]));
+            } else {
+                fields.Add("NULL AS Year");
+            }
+
+            if (schema["SubFromString"] != null &&
+                    schema["SubFromString"].Length > 0) {
+                fromList.Add(schema["SubFromString"]);
+            }
 
             string fieldString = ""; // SELECT xxx, yyy
             string fromString = ""; // FROM xxx yyy
@@ -38,12 +77,13 @@ namespace LiiteriStatisticsCore.Queries
             bool addAreaTable =
                 AreaTypeMappings.GetDatabaseListAddAreaTable(this.AreaTypeIdIs);
             if (addAreaTable) {
-                fromString += "LEFT OUTER JOIN DimAlue A ON A.Alue_ID = A2.Alue_ID";
+                fromList.Add(
+                    "LEFT OUTER JOIN DimAlue A ON A.Alue_ID = A2.Alue_ID");
                 foreach (Models.AreaType areaType in
                         AreaTypeMappings.GetAreaTypes()) {
                     string areaTypeName = areaType.Id;
-                    string columnName1 = AreaTypeMappings.GetDatabaseIdColumn(
-                        areaTypeName);
+                    string columnName1 = AreaTypeMappings.GetDatabaseSchema(
+                        areaTypeName)["MainIdColumn"];
                     string columnName2 = "parent_" + areaTypeName;
                     if (columnName1 == "NULL") continue;
                     fields.Add(string.Format("{0} AS {1}",
@@ -52,13 +92,13 @@ namespace LiiteriStatisticsCore.Queries
             }
 
             if (fields.Count > 0) {
-                fieldString = string.Join(", ", fields) + ", ";
+                fieldString = string.Join(", ", fields);
             }
             if (fromList.Count > 0) {
-                fromString = string.Join(" ", fromList);
+                fromString = " FROM " + string.Join(" ", fromList);
             }
             if (this.whereList.Count > 0) {
-                whereString = " AND " + string.Join(", ", fromList);
+                whereString = " WHERE " + string.Join(", ", fromList);
             }
             queryString = string.Format(queryString,
                 fieldString, fromString, whereString);
