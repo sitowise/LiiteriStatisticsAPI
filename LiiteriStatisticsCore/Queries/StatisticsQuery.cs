@@ -50,18 +50,6 @@ namespace LiiteriStatisticsCore.Queries
             }
         }
 
-        public int DatabaseAreaTypeIdIs
-        {
-            get
-            {
-                return (int) this.Parameters["DatabaseAreaTypeIdIs"].Value;
-            }
-            set
-            {
-                this.Parameters.Add("DatabaseAreaTypeIdIs", value);
-            }
-        }
-
         public int YearIs
         {
             get
@@ -82,6 +70,25 @@ namespace LiiteriStatisticsCore.Queries
 
         /* Grouping */
         public string GroupByAreaTypeIdIs { get; set; }
+
+        private void ReduceUsableAreaTypes(string areaType)
+        {
+            int[] dbAreaTypes =
+                AreaTypeMappings.GetDatabaseAreaTypes(areaType);
+            Debug.WriteLine(string.Format(
+                "For [{0}], we could use one of these [{1}]",
+                areaType, string.Join(", ", dbAreaTypes)));
+            Debug.WriteLine(string.Format(
+                "UsableAreaTypes was: [{0}]",
+                string.Join(", ", this.UsableAreaTypes)));
+            this.UsableAreaTypes = (
+                from a in this.UsableAreaTypes
+                where dbAreaTypes.Contains<int>(a)
+                select a).ToArray();
+            Debug.WriteLine(string.Format(
+                "UsableAreaTypes has become: [{0}]",
+                string.Join(", ", this.UsableAreaTypes)));
+        }
 
         private void SetGroups()
         {
@@ -108,12 +115,37 @@ namespace LiiteriStatisticsCore.Queries
 
                 string joinQuery = schema["JoinQuery"];
                 sbFrom.Append(joinQuery);
+
+                this.ReduceUsableAreaTypes(this.GroupByAreaTypeIdIs);
+
             } else {
                 this.fields["NULL"] = "AreaId";
                 this.fields["NULL"] = "AreaName";
                 this.fields["NULL"] = "AlternativeId";
             }
         }
+
+        /* This is a list of DatabaseAreaTypes that this statistic has
+         * data for in the database. Based on group and filter selections,
+         * we will find the proper DatabaseAreaType to use from this list. */
+        private int[] _AvailableAreaTypes;
+        public int[] AvailableAreaTypes {
+            get
+            {
+                return this._AvailableAreaTypes;
+            }
+            set
+            {
+                this._AvailableAreaTypes = value;
+
+                //this.UsableAreaTypes = this._AvailableAreaTypes.ToList<int>();
+                this.UsableAreaTypes = this._AvailableAreaTypes.ToArray();
+            }
+        }
+
+        /* This list will start with AvailableAreaTypes, and will be modified
+         * by filter and group settings */
+        private int[] UsableAreaTypes { get; set; }
 
         private void SetFilters()
         {
@@ -125,6 +157,7 @@ namespace LiiteriStatisticsCore.Queries
                 };
                 parser.IdHandler = delegate(string name)
                 {
+                    this.ReduceUsableAreaTypes(name);
                     return AreaTypeMappings.GetDatabaseSchema(
                         name)["MainIdColumn"];
                 };
@@ -155,6 +188,24 @@ namespace LiiteriStatisticsCore.Queries
             return string.Join<string>(", ", this.groups);
         }
 
+        /* This should be called after Filters & Groups have been processed */
+        private void SetDatabaseAreaTypeId()
+        {
+            if (this.UsableAreaTypes.Length == 0) {
+                throw new Exception(
+                    "No suitable DatabaseAreaType could be determined with the supplied parameters");
+            }
+            /* Here we pick our preferred DatabaseAreaType by simply picking
+             * the largest number. However, it may be necessary to start
+             * using some priority value instead */
+            Array.Sort(this.UsableAreaTypes);
+            int dbAreaType = this.UsableAreaTypes.Last();
+            Debug.WriteLine(string.Format(
+                "From this list: [{0}], we decided to pick [{1}]",
+                string.Join(", ", this.UsableAreaTypes), dbAreaType));
+            this.Parameters.Add("DatabaseAreaTypeIdIs", dbAreaType);
+        }
+
         private string GetQueryString_DerivedDivided()
         {
             this.fields["T1.Jakso_ID"] = "Year";
@@ -164,6 +215,7 @@ namespace LiiteriStatisticsCore.Queries
 
             this.SetFilters();
             this.SetGroups();
+            this.SetDatabaseAreaTypeId();
 
             string queryString = @"
 SELECT
@@ -215,6 +267,7 @@ GROUP BY
 
             this.SetFilters();
             this.SetGroups();
+            this.SetDatabaseAreaTypeId();
 
             string queryString = @"
 SELECT
@@ -257,6 +310,7 @@ GROUP BY
 
             this.SetFilters();
             this.SetGroups();
+            this.SetDatabaseAreaTypeId();
 
             string queryString = @"
 SELECT
@@ -289,6 +343,10 @@ GROUP BY
         public override string GetQueryString()
         {
             string queryString;
+
+            Debug.WriteLine(string.Format(
+                "We have these areaTypes available: [{0}]",
+                string.Join(",", this.AvailableAreaTypes)));
 
             switch (this.CalculationTypeIdIs) {
                 case 1: // normal

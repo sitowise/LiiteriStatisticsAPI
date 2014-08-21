@@ -13,7 +13,6 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
-            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="neighborhood">
@@ -30,7 +29,6 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
-            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="urban_area">
@@ -47,7 +45,6 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
-            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="municipality">
@@ -64,6 +61,7 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="sub_region">
@@ -81,6 +79,7 @@
         <DatabaseAreaTypes>
             <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="region">
@@ -99,6 +98,7 @@
             <DatabaseAreaType id="16" name="Maakunta" />
             <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="ely_e">
@@ -115,6 +115,7 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="ely_l">
@@ -131,6 +132,7 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="ely_y">
@@ -147,6 +149,7 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="finland">
@@ -166,6 +169,7 @@
             <DatabaseAreaType id="16" name="Maakunta" />
             <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="planned_area">
@@ -182,7 +186,6 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
-            <DatabaseAreaType id="12" name="Ruutu 250m asemakaavoitettu osa" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="neighborhood_type">

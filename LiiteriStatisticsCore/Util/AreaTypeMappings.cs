@@ -118,6 +118,23 @@ namespace LiiteriStatisticsCore.Util
             return null;
         }
 
+        public int[] GetDatabaseAreaTypes(
+            string areaTypeId)
+        {
+            if (areaTypeId == null) {
+                throw new ArgumentNullException("areaTypeId must not be null!");
+            }
+            var databaseAreaTypes = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element("DatabaseAreaTypes")).Single();
+            int[] retval = (
+                from d in databaseAreaTypes.Descendants("DatabaseAreaType")
+                select Convert.ToInt32(d.Attribute("id").Value)
+                ).ToArray();
+            return retval;
+        }
+
         public IEnumerable<Models.AreaType> GetAreaTypes()
         {
             var factory = new Factories.AreaTypeFactory();

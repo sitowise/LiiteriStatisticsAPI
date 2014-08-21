@@ -15,8 +15,7 @@ namespace LiiteriStatisticsCore.Factories
             obj.Value = (decimal) ((double) this.GetValueOrNull(rdr, "Value"));
             obj.AreaId = (int) rdr["AreaId"];
             obj.AreaName = (string) rdr["AreaName"].ToString();
-            obj.AlternativeId = (string)
-                this.GetValueOrNull(rdr, "AlternativeId").ToString();
+            obj.AlternativeId = (string) rdr["AlternativeId"].ToString();
             obj.Year = (int) rdr["Year"];
             return obj;
         }

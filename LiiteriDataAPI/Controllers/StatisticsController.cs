@@ -125,33 +125,11 @@ namespace LiiteriDataAPI.Controllers
                         from a in timePeriod.DataAreaTypes
                         select a.Id).ToArray();
 
-                    /* So we want to group by "group", and we have to search
-                     * by using one of availableAreaTypes */
-
-                    /* We have to decide which one of availableAreaTypes
-                     * (databaseAreaType) will be used */
-
                     var statisticsQuery = new LiiteriStatisticsCore.Queries
                         .StatisticsQuery(statisticsId);
+
                     statisticsQuery.CalculationTypeIdIs = details.CalculationType;
-
-                    //statisticsQuery.DatabaseAreaTypeIdIs = availableAreaTypes[0];
-
-                    statisticsQuery.DatabaseAreaTypeIdIs =
-                        (int) Controllers.StatisticController.
-                        AreaTypeMappings.GetDatabaseAreaType(
-                            group != null ? group : "finland",
-                            availableAreaTypes);
-
-                    string debugString = string.Format(
-                        "Resolving group={0} to areaType={1}, " +
-                        "availableAreaTypes={2}",
-                        group,
-                        statisticsQuery.DatabaseAreaTypeIdIs,
-                        string.Join(", ", availableAreaTypes));
-                    logger.Debug(debugString);
-                    Debug.WriteLine(debugString);
-
+                    statisticsQuery.AvailableAreaTypes = availableAreaTypes;
                     statisticsQuery.GroupByAreaTypeIdIs = group;
                     statisticsQuery.YearIs = year;
                     statisticsQuery.AreaFilterQueryString = filter;
