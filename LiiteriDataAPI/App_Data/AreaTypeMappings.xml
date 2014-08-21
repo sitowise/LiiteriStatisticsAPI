@@ -6,7 +6,7 @@
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.Nimi</SubNameColumn>
             <SubAlternativeIdColumn/>
-            <SubYearColumn/>
+            <SubYearColumn>A2.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimTaajama A2</SubFromString>
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, A2.Nimi AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimTaajama A2 {1} WHERE 1=1 {2}</ListQuery>
             <JoinQuery>INNER JOIN DimTaajama A2 ON (A2.Alue_ID = A.Taajama_Alue_ID AND A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)</JoinQuery>

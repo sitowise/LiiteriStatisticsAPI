@@ -103,7 +103,6 @@ namespace LiiteriStatisticsCore.Queries
             queryString = string.Format(queryString,
                 fieldString, fromString, whereString);
 
-            Debug.WriteLine(queryString);
             if (queryString == null || queryString.Length == 0) {
                 throw new Exception("No area list available for this area type!");
             }
