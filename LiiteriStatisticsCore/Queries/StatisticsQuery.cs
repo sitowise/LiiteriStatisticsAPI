@@ -20,7 +20,8 @@ namespace LiiteriStatisticsCore.Queries
         private List<string> whereList;
 
         // these will be added as fields for SELECT
-        IDictionary<string, string> fields;
+        //IDictionary<string, string> fields;
+        List<string> fields;
 
         // these will be added to GROUP BY
         List<string> groups;
@@ -33,7 +34,8 @@ namespace LiiteriStatisticsCore.Queries
             this.IdIs = id;
 
             this.whereList = new List<string>();
-            this.fields = new Dictionary<string, string>();
+            //this.fields = new Dictionary<string, string>();
+            this.fields = new List<string>();
             this.groups = new List<string>();
             this.sbFrom = new StringBuilder();
         }
@@ -98,19 +100,28 @@ namespace LiiteriStatisticsCore.Queries
                     this.GroupByAreaTypeIdIs);
 
                 string idColumn = schema["MainIdColumn"];
-                this.fields[idColumn] = "AreaId";
-                this.groups.Add(idColumn);
+                if (idColumn != null && idColumn.Length > 0) {
+                    this.fields.Add(string.Format("{0} AS AreaId", idColumn));
+                    this.groups.Add(idColumn);
+                } else {
+                    this.fields.Add("-1 AS AreaId");
+                }
 
                 string nameColumn = schema["SubNameColumn"];
-                this.fields[nameColumn] = "AreaName";
-                this.groups.Add(nameColumn);
+                if (nameColumn != null && idColumn.Length > 0) {
+                    this.fields.Add(string.Format("{0} AS AreaName", nameColumn));
+                    this.groups.Add(nameColumn);
+                } else {
+                    this.fields.Add("NULL AS AreaName");
+                }
 
                 string alternativeIdColumn = schema["SubAlternativeIdColumn"];
                 if (alternativeIdColumn != null && alternativeIdColumn.Length > 0) {
-                    this.fields[alternativeIdColumn] = "AlternativeId";
+                    this.fields.Add(string.Format(
+                        "{0} AS AlternativeId", alternativeIdColumn));
                     this.groups.Add(alternativeIdColumn);
                 } else {
-                    this.fields["NULL"] = "AlternativeId";
+                    this.fields.Add("NULL AS AlternativeId");
                 }
 
                 string joinQuery = schema["JoinQuery"];
@@ -119,9 +130,9 @@ namespace LiiteriStatisticsCore.Queries
                 this.ReduceUsableAreaTypes(this.GroupByAreaTypeIdIs);
 
             } else {
-                this.fields["NULL"] = "AreaId";
-                this.fields["NULL"] = "AreaName";
-                this.fields["NULL"] = "AlternativeId";
+                this.fields.Add("NULL AS AreaId");
+                this.fields.Add("NULL AS AreaName");
+                this.fields.Add("NULL AS AlternativeId");
             }
         }
 
@@ -177,10 +188,7 @@ namespace LiiteriStatisticsCore.Queries
 
         private string GetFieldsString()
         {
-            return string.Join<string>(", ", (
-                    from pair in this.fields
-                    select string.Format("{0} AS {1}", pair.Key, pair.Value)
-                ).ToArray());
+            return string.Join(", ", this.fields);
         }
 
         private string GetGroupString()
@@ -208,10 +216,10 @@ namespace LiiteriStatisticsCore.Queries
 
         private string GetQueryString_DerivedDivided()
         {
-            this.fields["T1.Jakso_ID"] = "Year";
+            this.fields.Add("T1.Jakso_ID AS Year");
             this.groups.Add("T1.Jakso_ID");
 
-            this.fields["(SUM(T1.Arvo) / SUM(T2.Arvo))"] = "Value";
+            this.fields.Add("(SUM(T1.Arvo) / SUM(T2.Arvo)) AS Value");
 
             this.SetFilters();
             this.SetGroups();
@@ -260,10 +268,10 @@ GROUP BY
 
         private string GetQueryString_DerivedSummed()
         {
-            this.fields["T.Jakso_ID"] = "Year";
+            this.fields.Add("T.Jakso_ID AS Year");
             this.groups.Add("T.Jakso_ID");
 
-            this.fields["SUM(T.Arvo)"] = "Value";
+            this.fields.Add("SUM(T.Arvo) AS Value");
 
             this.SetFilters();
             this.SetGroups();
@@ -303,10 +311,10 @@ GROUP BY
         private string GetQueryString_Normal()
         {
 
-            this.fields["T.Jakso_ID"] = "Year";
+            this.fields.Add("T.Jakso_ID AS Year");
             this.groups.Add("T.Jakso_ID");
 
-            this.fields["SUM(T.Arvo)"] = "Value";
+            this.fields.Add("SUM(T.Arvo) AS Value");
 
             this.SetFilters();
             this.SetGroups();

@@ -155,9 +155,9 @@
     <SelectionAreaType id="finland">
         <Description>Suomi</Description>
         <DatabaseSchema>
-            <MainIdColumn>-1</MainIdColumn>
-            <SubIdColumn>-1</SubIdColumn>
-            <SubNameColumn>'Suomi'</SubNameColumn>
+            <MainIdColumn/>
+            <SubIdColumn/>
+            <SubNameColumn/>
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <JoinQuery/>

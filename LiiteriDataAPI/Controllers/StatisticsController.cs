@@ -130,6 +130,8 @@ namespace LiiteriDataAPI.Controllers
 
                     statisticsQuery.CalculationTypeIdIs = details.CalculationType;
                     statisticsQuery.AvailableAreaTypes = availableAreaTypes;
+
+                    if (group == null) group = "finland";
                     statisticsQuery.GroupByAreaTypeIdIs = group;
                     statisticsQuery.YearIs = year;
                     statisticsQuery.AreaFilterQueryString = filter;
