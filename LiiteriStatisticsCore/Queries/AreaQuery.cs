@@ -38,7 +38,7 @@ namespace LiiteriStatisticsCore.Queries
                 fields.Add(string.Format(
                     "{0} AS AreaId", schema["SubIdColumn"]));
             } else {
-                fields.Add("NULL AS AreaId");
+                fields.Add("-1 AS AreaId");
             }
 
             if (schema["SubNameColumn"] != null &&
@@ -85,7 +85,9 @@ namespace LiiteriStatisticsCore.Queries
                     string columnName1 = AreaTypeMappings.GetDatabaseSchema(
                         areaTypeName)["MainIdColumn"];
                     string columnName2 = "parent_" + areaTypeName;
-                    if (columnName1 == "NULL") continue;
+                    if (columnName1 == null ||
+                        columnName1.Length == 0 ||
+                        columnName1 == "NULL") continue;
                     fields.Add(string.Format("{0} AS {1}",
                         columnName1, columnName2));
                 }
