@@ -10,8 +10,13 @@ namespace LiiteriStatisticsCore.Models
     public class IndicatorDetails : IndicatorBrief, ILiiteriEntity
     {
         public string Unit { get; set; }
+
+        // ProcessingStage only exists in the Excel file!
         public string ProcessingStage { get; set; }
-        //public string TimeSpan { get; set; }
+
+        public string TimeSpan { get; set; }
+        public string TimeSpanDetails { get; set; }
+
         public int? DecimalCount { get; set; }
 
         /* unit of measurement */

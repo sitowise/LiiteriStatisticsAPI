@@ -23,7 +23,10 @@ namespace LiiteriStatisticsCore.Factories
             obj.Description = rdr["Description"].ToString(); ;
             obj.AdditionalInformation = rdr["AdditionalInformation"].ToString(); ;
             obj.CalculationType = (int) rdr["CalculationType"];
-            obj.ProcessingStage = (string) rdr["ProcessingStage"];
+
+            obj.ProcessingStage = null;
+            obj.TimeSpan = (string) rdr["TimeSpan"];
+            obj.TimeSpanDetails = (string) rdr["TimeSpanDetails"];
 
             return obj;
         }

@@ -81,7 +81,12 @@ namespace LiiteriStatisticsCore.Queries
             fields["T.TilastoLaskentatyyppi_ID"] = "CalculationType";
 
             fields["MY.MittayksikkoLyhenne"] = "Unit";
-            fields["AJV.AjallinenVaiheKuvaus"] = "ProcessingStage";
+
+            // ProcessingStage only exists in the Excel file!
+            //fields["???"] = "ProcessingStage";
+
+            fields["AJV.AjallinenVaiheKuvaus"] = "TimeSpanDetails";
+            fields["AJV.AjallinenVaiheLyhenne"] = "TimeSpan";
 
             /* This is used by TimePeriod */
             fields["J.Jakso_ID"] = "PeriodId";
