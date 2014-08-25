@@ -123,7 +123,7 @@
         <DatabaseSchema>
             <MainIdColumn>A.ELY_L_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
-            <SubNameColumn>A2.LiikenneElyNimi</SubNameColumn>
+            <SubNameColumn>COALESCE(A2.LiikenneElyNimi, A2.Nimi)</SubNameColumn>
             <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY A2</SubFromString>
@@ -140,7 +140,7 @@
         <DatabaseSchema>
             <MainIdColumn>A.ELY_Y_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
-            <SubNameColumn>A2.YmparistoElyNimi</SubNameColumn>
+            <SubNameColumn>COALESCE(A2.YmparistoElyNimi, A2.Nimi)</SubNameColumn>
             <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY A2</SubFromString>
