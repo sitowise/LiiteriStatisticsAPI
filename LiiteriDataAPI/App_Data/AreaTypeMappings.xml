@@ -25,7 +25,6 @@
             <SubYearColumn/>
             <SubFromString>DimAsutusAlueTyyppi A2</SubFromString>
             <JoinQuery>INNER JOIN DimAsutusAlueTyyppi A2 ON A2.Asutusaluetyyppi_ID = A.AsutusalueTyyppi_ID</JoinQuery>
-            <ListQuery>SELECT {0} A2.AsutusalueTyyppi_ID AS AreaId, A2.AsutusalueTyyppiSelite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimAsutusalueTyyppi A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -37,7 +36,7 @@
             <MainIdColumn>A.Kaupunkiseutu_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.KseutuNimi</SubNameColumn>
-            <SubAlternativeIdColumn>A2.KseutuNro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.KseutuNro)</SubAlternativeIdColumn>
             <SubYearColumn>A2.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimKaupunkiseutu A2</SubFromString>
             <JoinQuery>INNER JOIN DimKaupunkiseutu A2 ON (A2.Alue_ID = A.Kaupunkiseutu_Alue_ID AND (A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID))</JoinQuery>
@@ -53,7 +52,7 @@
             <MainIdColumn>A.Kunta_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.Nimi</SubNameColumn>
-            <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimKunta A2</SubFromString>
             <JoinQuery>INNER JOIN DimKunta A2 ON A2.Alue_ID = A.Kunta_Alue_ID</JoinQuery>
@@ -70,7 +69,7 @@
             <MainIdColumn>A.Seutukunta_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.Nimi</SubNameColumn>
-            <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimSeutukunta A2</SubFromString>
             <JoinQuery>INNER JOIN DimSeutukunta A2 ON A2.Alue_ID = A.Seutukunta_Alue_ID</JoinQuery>
@@ -88,7 +87,7 @@
             <MainIdColumn>A.Maakunta_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.Nimi</SubNameColumn>
-            <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimMaakunta A2</SubFromString>
             <JoinQuery>INNER JOIN DimMaakunta A2 ON A2.Alue_ID = A.Maakunta_Alue_ID</JoinQuery>
@@ -107,7 +106,7 @@
             <MainIdColumn>A.ELY_E_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.Nimi</SubNameColumn>
-            <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY A2</SubFromString>
             <JoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_E_Alue_ID</JoinQuery>
@@ -124,7 +123,7 @@
             <MainIdColumn>A.ELY_L_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>COALESCE(A2.LiikenneElyNimi, A2.Nimi)</SubNameColumn>
-            <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY A2</SubFromString>
             <JoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_L_Alue_ID</JoinQuery>
@@ -141,7 +140,7 @@
             <MainIdColumn>A.ELY_Y_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>COALESCE(A2.YmparistoElyNimi, A2.Nimi)</SubNameColumn>
-            <SubAlternativeIdColumn>A2.Nro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY A2</SubFromString>
             <JoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_Y_Alue_ID</JoinQuery>
@@ -161,7 +160,6 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <JoinQuery/>
-            <ListQuery>SELECT {0} -1 AS AreaId, 'Suomi' AS AreaName, NULL AS AlternativeId, NULL AS Year</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="21" name="Suomi" />
@@ -178,7 +176,7 @@
             <MainIdColumn>A.AsemakaavoitettuAlue_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A2.KaavaNro</SubNameColumn>
-            <SubAlternativeIdColumn>A2.KaavaNro</SubAlternativeIdColumn>
+            <SubAlternativeIdColumn>CONVERT(INT, A2.KaavaNro)</SubAlternativeIdColumn>
             <SubYearColumn>A2.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimAsemakaavoitettuAlue A2</SubFromString>
             <JoinQuery>INNER JOIN DimAsemakaavoitettuAlue A2 ON (A2.Alue_ID = A.AsemakaavoitettuAlue_Alue_ID AND A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)</JoinQuery>
@@ -198,7 +196,6 @@
             <SubYearColumn/>
             <SubFromString>DimAsutusalueTyyppi A2</SubFromString>
             <JoinQuery>INNER JOIN DimAsutusalueTyyppi A2 ON A2.Asutusaluetyyppi_ID = A.AsutusalueTyyppi_ID</JoinQuery>
-            <ListQuery>SELECT {0} A2.Asutusaluetyyppi_ID AS AreaId, A2.AsutusalueTyyppiSelite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimAsutusalueTyyppi A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -229,7 +226,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn>A2.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimKaupanAlue A2 INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.Keskustatyyppi_ID</SubFromString>
-            <JoinQuery>INNER JOIN DimKaupanAlue A2 ON A2.Alue_ID = A.KaupanAlue_ID INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.KeskustaTyyppi_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimKaupanAlue A2 ON A2.Alue_ID = A.KaupanAlue_Alue_ID INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.KeskustaTyyppi_ID</JoinQuery>
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, (KT.Selite + ' (' + CONVERT(varchar(max), A2.Alue_ID) + ')') AS AreaName, NULL AS AlternativeId, A2.Jakso_ID AS Year FROM DimKaupanAlue A2 INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.Keskustatyyppi_ID {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -245,8 +242,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKaupunkiMaaseutuTyyppi A2</SubFromString>
-            <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi A2 ON A2.Kaupunkimaaseutu_Tyyppi_ID = A.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
-            <ListQuery>SELECT {0} A2.KaupunkimaaseutuTyyppi_ID AS AreaId, A2.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKaupunkiMaaseutuTyyppi A2 {1} WHERE 1=1 {2}</ListQuery>
+            <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi A2 ON A2.KaupunkimaaseutuTyyppi_ID = A.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -262,7 +258,6 @@
             <SubYearColumn/>
             <SubFromString>DimKaupunkiseutuTyyppi A2</SubFromString>
             <JoinQuery>INNER JOIN DimKaupunkiseutuTyyppi A2 ON A2.KaupunkiseutuTyyppi_ID = A.KaupunkiseutuTyyppi_ID</JoinQuery>
-            <ListQuery>SELECT {0} A2.KaupunkiseutuTyyppi_ID AS AreaId, A2.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKaupunkiseutuTyyppi A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -294,7 +289,6 @@
             <SubYearColumn/>
             <SubFromString>DimKeskustatyyppi A2</SubFromString>
             <JoinQuery>INNER JOIN DimKeskustatyyppi A2 ON A2.Keskustatyyppi_ID = A.KeskustaTyyppi_ID</JoinQuery>
-            <ListQuery>SELECT {0} A2.Keskustatyyppi_ID AS AreaId, A2.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKeskustatyyppi A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -310,7 +304,23 @@
             <SubYearColumn/>
             <SubFromString>DimTaajamaHarvaTiheaTyyppi A2</SubFromString>
             <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi A2 ON A2.TaajamaHarvaTiheaTyyppi_ID = A.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
-            <ListQuery>SELECT {0} A2.TaajamaHarvaTiheaTyyppi_ID AS AreaId, A2.Selite AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimTaajamaHarvaTiheaTyyppi A2 {1} WHERE 1=1 {2}</ListQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid250m">
+        <Description>Ruutu 250m</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_Alue_ID</MainIdColumn>
+            <SubIdColumn>A.Ruutu_Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <GeometryColumn>G1_grid250m.KoordsGeom</GeometryColumn>
+            <GeometryJoin>INNER JOIN DimRuutu G1_grid250m ON G1_grid250m.Alue_ID = A.Alue_ID</GeometryJoin>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID LEFT OUTER JOIN Geometry_Ruutu G ON G.Alue_ID = A2.Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />

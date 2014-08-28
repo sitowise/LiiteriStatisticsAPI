@@ -38,6 +38,10 @@ namespace LiiteriStatisticsCore.Queries
             this.fields = new List<string>();
             this.groups = new List<string>();
             this.sbFrom = new StringBuilder();
+
+            /* this is just to avoid adding multiple joins of
+             * the same areaType */
+            this.GeometryJoins = new List<string>();
         }
 
         public int IdIs
@@ -75,8 +79,7 @@ namespace LiiteriStatisticsCore.Queries
 
         private void ReduceUsableAreaTypes(string areaType)
         {
-            int[] dbAreaTypes =
-                AreaTypeMappings.GetDatabaseAreaTypes(areaType);
+            int[] dbAreaTypes = AreaTypeMappings.GetDatabaseAreaTypes(areaType);
             Debug.WriteLine(string.Format(
                 "For [{0}], we could use one of these [{1}]",
                 areaType, string.Join(", ", dbAreaTypes)));
@@ -125,7 +128,10 @@ namespace LiiteriStatisticsCore.Queries
                 }
 
                 string joinQuery = schema["JoinQuery"];
-                sbFrom.Append(joinQuery);
+                if (schema["JoinQuery"] != null) {
+                    this.sbFrom.Append(" ");
+                    this.sbFrom.Append(joinQuery);
+                }
 
                 this.ReduceUsableAreaTypes(this.GroupByAreaTypeIdIs);
 
@@ -158,6 +164,27 @@ namespace LiiteriStatisticsCore.Queries
          * by filter and group settings */
         private int[] UsableAreaTypes { get; set; }
 
+        /* this is just to avoid adding multiple joins of
+         * the same areaType */
+        private List<string> GeometryJoins;
+
+        /* add proper INNER JOIN when using geometry filters */
+        void AddGeometryJoin(string areaType)
+        {
+            if (this.GeometryJoins.Contains(areaType)) return;
+            this.GeometryJoins.Add(areaType);
+
+            var schema = AreaTypeMappings.GetDatabaseSchema(areaType);
+            if (schema["GeometryJoin"] == null ||
+                    schema["GeometryJoin"].Length == 0) {
+                return;
+            }
+
+            string joinQuery = schema["GeometryJoin"];
+            this.sbFrom.Append(" ");
+            this.sbFrom.Append(joinQuery);
+        }
+
         private void SetFilters()
         {
             if (this.AreaFilterQueryString != null) {
@@ -171,6 +198,13 @@ namespace LiiteriStatisticsCore.Queries
                     this.ReduceUsableAreaTypes(name);
                     return AreaTypeMappings.GetDatabaseSchema(
                         name)["MainIdColumn"];
+                };
+                parser.SpatialIdHandler = delegate(string name)
+                {
+                    this.ReduceUsableAreaTypes(name);
+                    this.AddGeometryJoin(name);
+                    return AreaTypeMappings.GetDatabaseSchema(
+                        name)["GeometryColumn"];
                 };
                 string whereString = parser.Parse(this.AreaFilterQueryString);
                 this.whereList.Add(whereString);
@@ -249,17 +283,17 @@ FROM
     {1}
 WHERE
     J.Tilasto_ID = @IdIs AND
-	T1.Arvo IS NOT NULL AND
-	T2.Arvo IS NOT NULL AND
-	T1.Arvo > 0 AND
-	T2.Arvo > 0
+    T1.Arvo IS NOT NULL AND
+        T2.Arvo IS NOT NULL AND
+        T1.Arvo > 0 AND
+        T2.Arvo > 0
     {2}
 GROUP BY
     {3}
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
-                sbFrom.ToString(),
+                this.sbFrom.ToString(),
                 this.GetWhereString(),
                 this.GetGroupString());
 
@@ -281,7 +315,7 @@ GROUP BY
 SELECT
     {0}
 FROM
-	DimTilasto_JohdettuTilasto_Summa TS
+    DimTilasto_JohdettuTilasto_Summa TS
 
     INNER JOIN FactTilastoarvo T ON
         T.Tilasto_ID = TS.Yhteenlaskettava_Tilasto_ID AND
@@ -301,7 +335,7 @@ GROUP BY
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
-                sbFrom.ToString(),
+                this.sbFrom.ToString(),
                 this.GetWhereString(),
                 this.GetGroupString());
 
@@ -324,16 +358,16 @@ GROUP BY
 SELECT
     {0}
 FROM
-	FactTilastoArvo T
+    FactTilastoArvo T
     INNER JOIN DimAlue A ON
         A.Alue_ID = T.Alue_ID AND
         @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
         A.AlueTaso_ID = @DatabaseAreaTypeIdIs
     {1}
 WHERE
-	T.Tilasto_ID = @IdIs AND
-	T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
-	T.Arvo IS NOT NULL AND 
+    T.Tilasto_ID = @IdIs AND
+    T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+    T.Arvo IS NOT NULL AND 
     T.Jakso_ID = @YearIs
     {2}
 GROUP BY
@@ -341,7 +375,7 @@ GROUP BY
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
-                sbFrom.ToString(),
+                this.sbFrom.ToString(),
                 this.GetWhereString(),
                 this.GetGroupString());
 

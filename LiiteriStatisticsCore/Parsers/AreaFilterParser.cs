@@ -15,11 +15,15 @@ namespace LiiteriStatisticsCore.Parsers
         public AreaFilterParserVisitor.IdHandlerDelegate
             IdHandler { get; set; }
 
+        public AreaFilterParserVisitor.SpatialIdHandlerDelegate
+            SpatialIdHandler { get; set; }
+
         public override string Parse(string inputString)
         {
             var visitor = new AreaFilterParserVisitor();
             visitor.ValueHandler = this.ValueHandler;
             visitor.IdHandler = this.IdHandler;
+            visitor.SpatialIdHandler = this.SpatialIdHandler;
 
             return this.Parse(inputString, visitor);
         }

@@ -23,6 +23,10 @@ namespace LiiteriStatisticsCore.Queries
 
         public override string GetQueryString()
         {
+            if (AreaTypeMappings.GetDatabaseListDisabled(this.AreaTypeIdIs)) {
+                throw new Exception("Listing disabled for this areaType!");
+            }
+
             Dictionary<string, string> schema =
                 AreaTypeMappings.GetDatabaseSchema(this.AreaTypeIdIs);
 

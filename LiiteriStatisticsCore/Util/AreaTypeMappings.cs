@@ -60,6 +60,21 @@ namespace LiiteriStatisticsCore.Util
             return false;
         }
 
+        public bool GetDatabaseListDisabled(string areaTypeId)
+        {
+            var queryElem = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element("DatabaseSchema").Element("SubFromString")
+                ).Single();
+            if (queryElem == null) return false;
+            if (queryElem.Attribute("disableList") != null &&
+                    queryElem.Attribute("disableList").Value == "true") {
+                return true;
+            }
+            return false;
+        }
+
         public Dictionary<string, string> GetDatabaseSchema(string areaTypeId)
         {
             var queryElem = (
@@ -75,6 +90,8 @@ namespace LiiteriStatisticsCore.Util
                     "SubNameColumn",
                     "SubAlternativeIdColumn",
                     "SubYearColumn",
+                    "GeometryColumn",
+                    "GeometryJoin",
                     "SubFromString",
                     "JoinQuery",
                     "ListQuery",
