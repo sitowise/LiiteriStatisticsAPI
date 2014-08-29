@@ -8,12 +8,13 @@ using System.Web.Http;
 using System.Data.SqlClient;
 using System.Data.Common;
 
-using System.Xml;
-using System.Xml.Linq;
-
 using System.Diagnostics;
-
 using System.Configuration;
+
+using LiiteriStatisticsCore.Util;
+using LiiteriStatisticsCore.Models;
+using LiiteriStatisticsCore.Queries;
+using LiiteriStatisticsCore.Repositories;
 
 /* These are for V0 only, and will be replaced */
 
@@ -34,56 +35,14 @@ namespace LiiteriDataAPI.Controllers
             return db;
         }
 
-        [Route("v0/indicators/")]
-        [HttpGet]
-        public IEnumerable<Models.StatisticIndexBrief>
-            GetIndices(string searchKey = null)
-        {
-            var factory = new StatisticIndexBriefFactory();
-            var result = factory.GetStatisticIndexBriefsByName(searchKey);
-            return result;
-        }
-
-        [Route("v0/indicators/{id}")]
-        [HttpGet]
-        public Models.StatisticIndexDetails GetIndex(int id)
-        {
-            var factory = new StatisticIndexDetailsFactory();
-            var result = factory.GetStatisticIndexDetailsById(id);
-            return result;
-        }
-
-        [Route("v0/statistics/{id}")]
-        [HttpGet]
-        public IEnumerable<Models.StatisticsResult> GetStatistics(
-            int id,
-            string year)
-        {
-            Models.StatisticIndexDetails details =
-                new StatisticIndexDetailsFactory().GetStatisticIndexDetailsById(id);
-            var factory = new StatisticsResultFactory();
-            return factory.GetStatisticsResults(
-                id,
-                year,
-                details);
-        }
-
-        [Route("v0/regions/")]
-        [HttpGet]
-        public IEnumerable<Models.Region> GetRegions()
-        {
-            var factory = new RegionFactory();
-            return factory.GetRegions();
-        }
-
-        private static LiiteriStatisticsCore.Util.AreaTypeMappings
-            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
+        private static AreaTypeMappings
+            AreaTypeMappings = new AreaTypeMappings();
 
         /* V1 features below */
 
         [Route("v1/statistics/{statisticsId}/")]
         [HttpGet]
-        public IEnumerable<LiiteriStatisticsCore.Models.StatisticsResult> GetStatisticsV1(
+        public IEnumerable<StatisticsResult> GetStatisticsV1(
             int[] years,
             int statisticsId,
             string group = null,
@@ -98,18 +57,15 @@ namespace LiiteriDataAPI.Controllers
 
                 /* Step 1: Fetch IndicatorDetails */
 
-                var indicatorQuery =
-                    new LiiteriStatisticsCore.Queries.IndicatorQuery();
+                var indicatorQuery = new IndicatorQuery();
                 indicatorQuery.IdIs = statisticsId;
 
-                var indicatorDetailsRepository = new LiiteriStatisticsCore.
-                    Repositories.IndicatorDetailsRepository(db);
-                var details = (LiiteriStatisticsCore.Models.IndicatorDetails)
+                var indicatorDetailsRepository = new IndicatorDetailsRepository(db);
+                var details = (IndicatorDetails)
                     indicatorDetailsRepository.Single(indicatorQuery);
 
                 /* Step 2: Create one or more StatisticsQuery objects */
-                var queries =
-                    new List<LiiteriStatisticsCore.Queries.StatisticsQuery>();
+                var queries = new List<StatisticsQuery>();
 
                 /* although StatisticsQuery could implement .YearIn, which 
                  * would accept a list of years, what about if different years
@@ -117,7 +73,7 @@ namespace LiiteriDataAPI.Controllers
                  * For this reason, let's just loop the years and create
                  * multiple queries */
                 foreach (int year in years) {
-                    LiiteriStatisticsCore.Models.TimePeriod timePeriod = (
+                    TimePeriod timePeriod = (
                         from p in details.TimePeriods
                         where p.Id == year
                         select p).Single();
@@ -125,8 +81,7 @@ namespace LiiteriDataAPI.Controllers
                         from a in timePeriod.DataAreaTypes
                         select a.Id).ToArray();
 
-                    var statisticsQuery = new LiiteriStatisticsCore.Queries
-                        .StatisticsQuery(statisticsId);
+                    var statisticsQuery = new StatisticsQuery(statisticsId);
 
                     statisticsQuery.CalculationTypeIdIs = details.CalculationType;
                     statisticsQuery.AvailableAreaTypes = availableAreaTypes;
@@ -141,33 +96,27 @@ namespace LiiteriDataAPI.Controllers
 
                 /* Step 3: Fetch StatisticsResult */
 
-                var repository = new LiiteriStatisticsCore.Repositories.
-                    StatisticsResultRepository(db);
-                return (List<LiiteriStatisticsCore.Models.StatisticsResult>)
-                    repository.FindAll(queries);
+                var repository = new StatisticsResultRepository(db);
+                return (List<StatisticsResult>) repository.FindAll(queries);
             }
         }
 
         [Route("v1/areaTypes/")]
         [HttpGet]
-        public IEnumerable<LiiteriStatisticsCore.Models.AreaType>
-            GetAreaTypesV1()
+        public IEnumerable<AreaType> GetAreaTypesV1()
         {
             return AreaTypeMappings.GetAreaTypes();
         }
 
         [Route("v1/areaTypes/{areaTypeId}/areas/")]
         [HttpGet]
-        public IEnumerable<LiiteriStatisticsCore.Models.Area>
-            GetAreasV1(string areaTypeId)
+        public IEnumerable<Area> GetAreasV1(string areaTypeId)
         {
-            var query = new LiiteriStatisticsCore.Queries.AreaQuery();
+            var query = new AreaQuery();
             query.AreaTypeIdIs = areaTypeId;
             using (DbConnection db = this.GetDbConnection()) {
-                var repository =
-                    new LiiteriStatisticsCore.Repositories.AreaRepository(db);
-                return (List<LiiteriStatisticsCore.Models.Area>)
-                    repository.FindAll(query);
+                var repository = new AreaRepository(db);
+                return (List<Area>) repository.FindAll(query);
             }
         }
     }
