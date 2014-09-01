@@ -54,7 +54,7 @@ namespace LiiteriStatisticsCore.Util
                 ).Single();
             if (queryElem == null) return false;
             if (queryElem.Attribute("addAreaTable") != null &&
-                    queryElem.Attribute("addAreaTable").Value == "true") {
+                    queryElem.Attribute("addAreaTable").Value.ToLower() == "true") {
                 return true;
             }
             return false;
@@ -69,7 +69,7 @@ namespace LiiteriStatisticsCore.Util
                 ).Single();
             if (queryElem == null) return false;
             if (queryElem.Attribute("disableList") != null &&
-                    queryElem.Attribute("disableList").Value == "true") {
+                    queryElem.Attribute("disableList").Value.ToLower() == "true") {
                 return true;
             }
             return false;
@@ -150,6 +150,29 @@ namespace LiiteriStatisticsCore.Util
                 select Convert.ToInt32(d.Attribute("id").Value)
                 ).ToArray();
             return retval;
+        }
+
+        public int GetPrimaryDatabaseAreaType(string areaTypeId)
+        {
+            if (areaTypeId == null) {
+                throw new ArgumentNullException("areaTypeId must not be null!");
+            }
+            var databaseAreaTypes = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element("DatabaseAreaTypes")).Single();
+            var retval = (
+                from d in databaseAreaTypes.Descendants("DatabaseAreaType")
+                where (
+                    d.Attribute("primary") != null &&
+                    d.Attribute("primary").Value.ToLower() == "true")
+                select Convert.ToInt32(d.Attribute("id").Value)
+                );
+            if (retval.Count() == 0) {
+                throw new Exception(
+                    "No primary DatabaseAreaType for this areaType!");
+            }
+            return (int) retval.Single();
         }
 
         public IEnumerable<Models.AreaType> GetAreaTypes()

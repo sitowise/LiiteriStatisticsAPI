@@ -59,7 +59,7 @@
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, A2.Nimi AS AreaName, NULL AS AlternativeId, NULL AS Year FROM DimKunta A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType primary="true" id="2" name="Kunta" />
             <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
@@ -76,7 +76,7 @@
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, A2.Nimi AS AreaName, A2.Nro AS AlternativeId, NULL AS Year FROM DimSeutukunta A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="17" name="Seutukunta" primary="true"/>
             <DatabaseAreaType id="2" name="Kunta" />
             <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
@@ -94,7 +94,7 @@
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, A2.Nimi AS AreaName, A2.Nro AS AlternativeId, NULL AS Year FROM DimMaakunta A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="16" name="Maakunta" />
+            <DatabaseAreaType id="16" name="Maakunta" primary="true" />
             <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -162,7 +162,7 @@
             <JoinQuery/>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="21" name="Suomi" />
+            <DatabaseAreaType id="21" name="Suomi" primary="true" />
             <DatabaseAreaType id="18" name="ELY" />
             <DatabaseAreaType id="16" name="Maakunta" />
             <DatabaseAreaType id="17" name="Seutukunta" />
@@ -323,7 +323,7 @@
             <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID LEFT OUTER JOIN Geometry_Ruutu G ON G.Alue_ID = A2.Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" primary="true" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
 </SelectionAreaTypes>

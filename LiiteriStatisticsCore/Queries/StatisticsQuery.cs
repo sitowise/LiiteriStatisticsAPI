@@ -77,6 +77,19 @@ namespace LiiteriStatisticsCore.Queries
         /* Grouping */
         public string GroupByAreaTypeIdIs { get; set; }
 
+        /* prevent CalculationType=4 from being aggregated */
+        private bool RelaxedAreaTypes = true;
+        private int[] GetDatabaseAreaTypes(string areaType)
+        {
+            if (!this.RelaxedAreaTypes) {
+                return new int[] {
+                    AreaTypeMappings.GetPrimaryDatabaseAreaType(areaType),
+                };
+            } else {
+                return AreaTypeMappings.GetDatabaseAreaTypes(areaType);
+            }
+        }
+
         private void ReduceUsableAreaTypes(string areaType)
         {
             int[] dbAreaTypes = AreaTypeMappings.GetDatabaseAreaTypes(areaType);
@@ -342,9 +355,52 @@ GROUP BY
             return queryString;
         }
 
+        private string GetQueryString_Special()
+        {
+            int primaryDbAreaType = AreaTypeMappings.GetPrimaryDatabaseAreaType(
+                    this.GroupByAreaTypeIdIs);
+            if (!this.AvailableAreaTypes.Contains(primaryDbAreaType)) {
+                throw new Exception("Supplied grouping areaType not suitable for this statistics data!");
+            }
+
+            this.fields.Add("T.Jakso_ID AS Year");
+            //this.groups.Add("T1.Jakso_ID");
+
+            this.fields.Add("T.Arvo AS Value");
+
+            /* don't allow any other areaType to be selected for this */
+            this.RelaxedAreaTypes = false;
+
+            this.SetFilters();
+            this.SetGroups(); // nothing should be grouped in this query
+            this.SetDatabaseAreaTypeId();
+
+            string queryString = @"
+SELECT
+    {0}
+FROM
+    FactTilastoArvo T
+    INNER JOIN DimAlue A ON
+        A.Alue_ID = T.Alue_ID AND
+        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs
+    {1}
+WHERE
+    T.Tilasto_ID = @IdIs AND
+    T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+    T.Jakso_ID = @YearIs
+    {2}
+";
+            queryString = string.Format(queryString,
+                this.GetFieldsString(),
+                this.sbFrom.ToString(),
+                this.GetWhereString());
+
+            return queryString;
+        }
+
         private string GetQueryString_Normal()
         {
-
             this.fields.Add("T.Jakso_ID AS Year");
             this.groups.Add("T.Jakso_ID");
 
@@ -398,6 +454,10 @@ GROUP BY
                 case 3: // derived & divided
                     logger.Debug("Statistics query: derived/divided");
                     queryString = this.GetQueryString_DerivedDivided();
+                    break;
+                case 4: // special
+                    logger.Debug("Statistics query: special");
+                    queryString = this.GetQueryString_Special();
                     break;
                 case 5: // derived & summed
                     logger.Debug("Statistics query: derived/summed");
