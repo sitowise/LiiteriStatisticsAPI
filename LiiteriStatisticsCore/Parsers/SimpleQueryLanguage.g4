@@ -1,6 +1,12 @@
 grammar SimpleQueryLanguage;
 
 /*
+ * Disable warnings about CLSCompliant attribute
+ */
+@parser::header {#pragma warning disable 3021}
+@lexer::header {#pragma warning disable 3021}
+
+/*
  * Parser Rules
  */
 
