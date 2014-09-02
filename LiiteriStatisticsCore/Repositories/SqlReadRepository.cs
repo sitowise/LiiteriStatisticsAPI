@@ -23,6 +23,9 @@ namespace LiiteriStatisticsCore.Repositories
             this.dbConnection = dbConnection;
         }
 
+        public delegate T ModifierDelegate(T obj);
+        public List<ModifierDelegate> Modifiers = new List<ModifierDelegate>();
+
         public IEnumerable<T> FindAll(
             Queries.ISqlQuery query,
             Factories.IFactory factory)
@@ -32,6 +35,13 @@ namespace LiiteriStatisticsCore.Repositories
             using (DbDataReader rdr = this.GetDbDataReader(query)) {
                 while (rdr.Read()) {
                     T p = (T) factory.Create(rdr);
+
+                    if (this.Modifiers != null) {
+                        foreach (var d in this.Modifiers) {
+                            p = d(p);
+                        }
+                    }
+
                     entityList.Add(p);
                 }
             }

@@ -97,6 +97,9 @@ namespace LiiteriDataAPI.Controllers
                 /* Step 3: Fetch StatisticsResult */
 
                 var repository = new StatisticsResultRepository(db);
+                /* when IndictorDetails is passed to the repository, it will
+                 * know how to do unit conversions */
+                repository.Indicator = details;
                 return (List<StatisticsResult>) repository.FindAll(queries);
             }
         }
