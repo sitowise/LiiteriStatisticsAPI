@@ -100,7 +100,10 @@ namespace LiiteriDataAPI.Controllers
                 /* when IndictorDetails is passed to the repository, it will
                  * know how to do unit conversions */
                 repository.Indicator = details;
-                return (List<StatisticsResult>) repository.FindAll(queries);
+
+                foreach (StatisticsResult r in repository.FindAll(queries)) {
+                    yield return r;
+                }
             }
         }
 
@@ -119,7 +122,9 @@ namespace LiiteriDataAPI.Controllers
             query.AreaTypeIdIs = areaTypeId;
             using (DbConnection db = this.GetDbConnection()) {
                 var repository = new AreaRepository(db);
-                return (List<Area>) repository.FindAll(query);
+                foreach (Area r in repository.FindAll(query)) {
+                    yield return r;
+                }
             }
         }
     }

@@ -72,11 +72,11 @@ namespace LiiteriStatisticsCore.Repositories
         public IEnumerable<Models.StatisticsResult> FindAll(
             IEnumerable<Queries.ISqlQuery> queries)
         {
-            var entityList = new List<Models.StatisticsResult>();
             foreach (Queries.ISqlQuery query in queries) {
-                entityList.AddRange(this.FindAll(query));
+                foreach (Models.StatisticsResult r in this.FindAll(query)) {
+                    yield return r;
+                }
             }
-            return entityList;
         }
 
         public override IEnumerable<Models.StatisticsResult>

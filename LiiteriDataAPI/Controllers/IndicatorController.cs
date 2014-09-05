@@ -36,7 +36,9 @@ namespace LiiteriDataAPI.Controllers
 
             using (DbConnection db = this.GetDbConnection()) {
                 var repository = new IndicatorBriefRepository(db);
-                return (List<IndicatorBrief>) repository.FindAll(query);
+                foreach (IndicatorBrief r in repository.FindAll(query)) {
+                    yield return r;
+                }
             }
         }
 

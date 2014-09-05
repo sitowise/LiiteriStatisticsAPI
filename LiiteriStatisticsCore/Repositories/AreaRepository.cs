@@ -13,16 +13,18 @@ namespace LiiteriStatisticsCore.Repositories
         private static LiiteriStatisticsCore.Util.AreaTypeMappings
             AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
 
-        private Dictionary<string, List<Models.Area>> areaLists;
+        private Dictionary<string, IEnumerable<Models.Area>> areaLists;
 
         public AreaRepository(DbConnection dbConnection) :
             base(dbConnection)
         {
-
             /* this is a bit ugly, but the full lists are also good caches */
-            this.areaLists = new Dictionary<string, List<Models.Area>>();
+            this.areaLists = new Dictionary<string, IEnumerable<Models.Area>>();
         }
 
+        /*
+         * Consider reimplementing this
+         */
         private void AddParents(Models.Area area, DbDataReader rdr)
         {
             List<Models.Area> parentAreas = new List<Models.Area>();
@@ -41,8 +43,11 @@ namespace LiiteriStatisticsCore.Repositories
                 if (!this.areaLists.Keys.Contains(areaTypeName)) {
                     Queries.AreaQuery query = new Queries.AreaQuery();
                     query.AreaTypeIdIs = areaTypeName;
+
+                    // ToList() iterates the generator here, else
+                    // things will be slow
                     this.areaLists[areaTypeName] =
-                        (List<Models.Area>) this.FindAll(query, true);
+                        (IEnumerable<Models.Area>) this.FindAll(query, true).ToList();
                 }
                 IEnumerable<Models.Area> parentArea = (
                     from a in this.areaLists[areaTypeName]
@@ -68,10 +73,9 @@ namespace LiiteriStatisticsCore.Repositories
                     if (!noParents) {
                         this.AddParents(area, rdr);
                     }
-                    entityList.Add(area);
+                    yield return area;
                 }
             }
-            return entityList;
         }
 
         public override IEnumerable<Models.Area> FindAll(Queries.ISqlQuery query)

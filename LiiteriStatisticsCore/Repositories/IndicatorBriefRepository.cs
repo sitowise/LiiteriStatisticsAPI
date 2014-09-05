@@ -33,14 +33,9 @@ namespace LiiteriStatisticsCore.Repositories
                         continue;
                     }
                     brief = (Models.IndicatorBrief) briefFactory.Create(rdr);
-                    entityList.Add(brief);
+                    yield return brief;
                 }
             }
-
-            return entityList;
-
-            /* return this.FindAll(query,
-                new Factories.IndicatorBriefFactory()); */
         }
 
         public override Models.IndicatorBrief Single(Queries.ISqlQuery query)

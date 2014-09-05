@@ -30,8 +30,6 @@ namespace LiiteriStatisticsCore.Repositories
             Queries.ISqlQuery query,
             Factories.IFactory factory)
         {
-            var entityList = new List<T>();
-
             using (DbDataReader rdr = this.GetDbDataReader(query)) {
                 while (rdr.Read()) {
                     T p = (T) factory.Create(rdr);
@@ -42,11 +40,9 @@ namespace LiiteriStatisticsCore.Repositories
                         }
                     }
 
-                    entityList.Add(p);
+                    yield return p;
                 }
             }
-
-            return entityList;
         }
 
         public DbDataReader GetDbDataReader(
