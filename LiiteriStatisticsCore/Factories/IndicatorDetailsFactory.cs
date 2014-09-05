@@ -28,6 +28,8 @@ namespace LiiteriStatisticsCore.Factories
             obj.TimeSpan = (string) rdr["TimeSpan"];
             obj.TimeSpanDetails = (string) rdr["TimeSpanDetails"];
 
+            obj.PrivacyLimit = null;
+
             return obj;
         }
     }

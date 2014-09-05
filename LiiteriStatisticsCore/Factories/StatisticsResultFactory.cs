@@ -17,6 +17,7 @@ namespace LiiteriStatisticsCore.Factories
             obj.AreaName = (string) rdr["AreaName"].ToString();
             obj.AlternativeId = (string) rdr["AlternativeId"].ToString();
             obj.Year = (int) rdr["Year"];
+            obj.PrivacyLimitTriggered = false;
             return obj;
         }
     }

@@ -28,12 +28,27 @@ namespace LiiteriStatisticsCore.Repositories
                 if (!this.Modifiers.Contains(this.SetDecimalCount)) {
                     this.Modifiers.Add(this.SetDecimalCount);
                 }
+
+                if (value.PrivacyLimit != null &&
+                        !this.Modifiers.Contains(this.ApplyPrivacyLimits)) {
+                    this.Modifiers.Add(this.ApplyPrivacyLimits);
+                }
             }
         }
 
         public StatisticsResultRepository(DbConnection dbConnection) :
             base(dbConnection)
         {
+        }
+
+        private Models.StatisticsResult ApplyPrivacyLimits(
+            Models.StatisticsResult obj)
+        {
+            if (obj.Value < this.Indicator.PrivacyLimit) {
+                obj.Value = null;
+                obj.PrivacyLimitTriggered = true;
+            }
+            return obj;
         }
 
         private Models.StatisticsResult MakeUnitConversions(
@@ -61,10 +76,11 @@ namespace LiiteriStatisticsCore.Repositories
         private Models.StatisticsResult SetDecimalCount(
             Models.StatisticsResult obj)
         {
-            if (this.Indicator.DecimalCount == null) {
+            if (obj.Value == null ||
+                    this.Indicator.DecimalCount == null) {
                 return obj;
             }
-            obj.Value = decimal.Round(obj.Value,
+            obj.Value = decimal.Round((decimal) obj.Value,
                 (int) this.Indicator.DecimalCount);
             return obj;
         }

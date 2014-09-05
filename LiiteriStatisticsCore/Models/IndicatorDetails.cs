@@ -31,6 +31,8 @@ namespace LiiteriStatisticsCore.Models
         //[IgnoreDataMember]
         public int CalculationType { get; set; }
 
+        public decimal? PrivacyLimit { get; set; }
+
         public IEnumerable<TimePeriod> TimePeriods;
     }
 }
