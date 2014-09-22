@@ -142,7 +142,7 @@ namespace LiiteriStatisticsCore.Queries
 
                 string joinQuery = schema["JoinQuery"];
                 if (schema["JoinQuery"] != null) {
-                    this.sbFrom.Append(" ");
+                    this.sbFrom.Append("\n    ");
                     this.sbFrom.Append(joinQuery);
                 }
 
@@ -194,7 +194,7 @@ namespace LiiteriStatisticsCore.Queries
             }
 
             string joinQuery = schema["GeometryJoin"];
-            this.sbFrom.Append(" ");
+            this.sbFrom.Append("\n    ");
             this.sbFrom.Append(joinQuery);
         }
 
@@ -235,12 +235,12 @@ namespace LiiteriStatisticsCore.Queries
 
         private string GetFieldsString()
         {
-            return string.Join(", ", this.fields);
-        }
+            return string.Join(",\n    ", this.fields);
+       }
 
         private string GetGroupString()
         {
-            return string.Join<string>(", ", this.groups);
+            return string.Join<string>(",\n    ", this.groups);
         }
 
         /* This should be called after Filters & Groups have been processed */

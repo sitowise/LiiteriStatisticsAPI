@@ -89,6 +89,7 @@
     <Compile Include="Binders\IntegerArrayModelBinder.cs" />
     <Compile Include="Controllers\IndicatorController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
+    <Compile Include="Formatters\TextPlainFormatter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

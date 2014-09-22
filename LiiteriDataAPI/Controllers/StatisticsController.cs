@@ -38,21 +38,15 @@ namespace LiiteriDataAPI.Controllers
         private static AreaTypeMappings
             AreaTypeMappings = new AreaTypeMappings();
 
-        /* V1 features below */
-
         [Route("v1/statistics/{statisticsId}/")]
         [HttpGet]
-        public IEnumerable<StatisticsResult> GetStatisticsV1(
+        public HttpResponseMessage GetStatisticsV1(
             int[] years,
             int statisticsId,
             string group = null,
-            string filter = null)
+            string filter = null,
+            bool debug = false)
         {
-            logger.Debug(string.Format("statisticsId={0}", statisticsId));
-            logger.Debug(string.Format("years={0}", years));
-            logger.Debug(string.Format("group={0}", group));
-            logger.Debug(string.Format("filter={0}", filter));
-
             using (DbConnection db = this.GetDbConnection()) {
 
                 /* Step 1: Fetch IndicatorDetails */
@@ -94,6 +88,16 @@ namespace LiiteriDataAPI.Controllers
                     queries.Add(statisticsQuery);
                 }
 
+                /* this debug output is the reason we've declared the
+                 * entire controller as HttpResponseMessage */
+                if (debug) {
+                    var debugOuptut = new DebugOutput(queries);
+                    return Request.CreateResponse(
+                        HttpStatusCode.OK,
+                        debugOuptut.ToString(),
+                        new Formatters.TextPlainFormatter());
+                }
+
                 /* Step 3: Fetch StatisticsResult */
 
                 var repository = new StatisticsResultRepository(db);
@@ -101,9 +105,12 @@ namespace LiiteriDataAPI.Controllers
                  * know how to do unit conversions */
                 repository.Indicator = details;
 
-                foreach (StatisticsResult r in repository.FindAll(queries)) {
-                    yield return r;
-                }
+                /* Note: we are iterating the generator here, could be
+                 * memory-inefficient */
+                return Request.CreateResponse(
+                    HttpStatusCode.OK,
+                    (IList<StatisticsResult>)
+                        repository.FindAll(queries).ToList());
             }
         }
 
