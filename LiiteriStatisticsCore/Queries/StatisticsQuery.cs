@@ -283,7 +283,7 @@ namespace LiiteriStatisticsCore.Queries
             this.fields.Add("ATJ.Jakso_ID AS Year");
             this.groups.Add("ATJ.Jakso_ID");
 
-            this.fields.Add("(SUM(T1.Arvo) / SUM(T2.Arvo)) AS Value");
+            this.fields.Add("(SUM(COALESCE(T1.Arvo, 0)) / SUM(COALESCE(T2.Arvo, 0))) AS Value");
 
             this.SetFilters();
             this.SetGroups();
