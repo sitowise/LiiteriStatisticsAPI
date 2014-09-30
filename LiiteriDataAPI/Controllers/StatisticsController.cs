@@ -61,6 +61,19 @@ namespace LiiteriDataAPI.Controllers
                 /* Step 2: Create one or more StatisticsQuery objects */
                 var queries = new List<StatisticsQuery>();
 
+                /* For privacy limits, we do some extra stuff */
+                IndicatorQuery refIndicatorQuery;
+                IndicatorDetails refDetails = null;
+                IList<Tuple<ISqlQuery, ISqlQuery>> querypairs = null;
+
+                if (details.PrivacyLimit != null) {
+                    refIndicatorQuery = new IndicatorQuery();
+                    refIndicatorQuery.IdIs = details.PrivacyLimit.RefId;
+                    refDetails = (IndicatorDetails)
+                        indicatorDetailsRepository.Single(refIndicatorQuery);
+                    querypairs = new List<Tuple<ISqlQuery, ISqlQuery>>();
+                }
+
                 /* although StatisticsQuery could implement .YearIn, which 
                  * would accept a list of years, what about if different years
                  * end up having different DatabaseAreaTypes?
@@ -85,16 +98,45 @@ namespace LiiteriDataAPI.Controllers
                     statisticsQuery.YearIs = year;
                     statisticsQuery.AreaFilterQueryString = filter;
 
-                    queries.Add(statisticsQuery);
+                    if (details.PrivacyLimit == null) {
+                        queries.Add(statisticsQuery);
+                    } else {
+                        /* For privacy limits, we need to do a parallel
+                         * query and compare the results side-by-side
+                         * in the repository */
+                        StatisticsQuery refQuery = new StatisticsQuery(
+                            details.PrivacyLimit.RefId);
+                        /* TODO: implement cloning?
+                         * (StatisticsQuery state may be too uncertain, though)
+                         */
+                        refQuery.CalculationTypeIdIs =
+                            refDetails.CalculationType;
+                        refQuery.AvailableAreaTypes =
+                            statisticsQuery.AvailableAreaTypes;
+                        refQuery.GroupByAreaTypeIdIs =
+                            statisticsQuery.GroupByAreaTypeIdIs;
+                        refQuery.YearIs = statisticsQuery.YearIs;
+                        refQuery.AreaFilterQueryString =
+                            statisticsQuery.AreaFilterQueryString;
+                        querypairs.Add(new Tuple<ISqlQuery, ISqlQuery>(
+                            statisticsQuery, refQuery));
+                    }
                 }
 
                 /* this debug output is the reason we've declared the
                  * entire controller as HttpResponseMessage */
                 if (debug) {
-                    var debugOuptut = new DebugOutput(queries);
+                    DebugOutput debugOutput;
+                    if (queries.Count > 0) {
+                        debugOutput = new DebugOutput(queries);
+                    } else if (querypairs.Count > 0) {
+                        debugOutput = new DebugOutput(querypairs);
+                    } else {
+                        throw new Exception("No statistics queries specified!");
+                    }
                     return Request.CreateResponse(
                         HttpStatusCode.OK,
-                        debugOuptut.ToString(),
+                        debugOutput.ToString(),
                         new Formatters.TextPlainFormatter());
                 }
 
@@ -105,12 +147,20 @@ namespace LiiteriDataAPI.Controllers
                  * know how to do unit conversions */
                 repository.Indicator = details;
 
+                IEnumerable<StatisticsResult> results;
+                if (queries.Count > 0) {
+                    results = repository.FindAll(queries);
+                } else if (querypairs.Count > 0) {
+                    results = repository.FindAll(querypairs);
+                } else {
+                    throw new Exception("No statistics queries specified!");
+                }
+
                 /* Note: we are iterating the generator here, could be
                  * memory-inefficient */
                 return Request.CreateResponse(
                     HttpStatusCode.OK,
-                    (IList<StatisticsResult>)
-                        repository.FindAll(queries).ToList());
+                    results.ToList());
             }
         }
 

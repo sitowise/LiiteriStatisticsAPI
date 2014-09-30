@@ -23,6 +23,18 @@ namespace LiiteriStatisticsCore.Util
             this.SqlQueries = queries;
         }
 
+        public DebugOutput(
+            IEnumerable<Tuple<Queries.ISqlQuery, Queries.ISqlQuery>> querypairs)
+        {
+            var queries = new List<Queries.ISqlQuery>();
+            foreach (Tuple<Queries.ISqlQuery, Queries.ISqlQuery> pair in
+                    querypairs) {
+                queries.Add(pair.Item1);
+                queries.Add(pair.Item2);
+            }
+            this.SqlQueries = queries;
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

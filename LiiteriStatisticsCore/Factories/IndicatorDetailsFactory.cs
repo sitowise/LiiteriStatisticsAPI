@@ -28,7 +28,15 @@ namespace LiiteriStatisticsCore.Factories
             obj.TimeSpan = (string) rdr["TimeSpan"];
             obj.TimeSpanDetails = (string) rdr["TimeSpanDetails"];
 
-            obj.PrivacyLimit = null;
+            int? privacyLimitStatisticsId =
+                (int?) this.GetValueOrNull(rdr, "PrivacyLimitStatisticsId");
+            if (privacyLimitStatisticsId != null) {
+                obj.PrivacyLimit = new Models.PrivacyLimit();
+                obj.PrivacyLimit.RefId = (int) privacyLimitStatisticsId;
+                obj.PrivacyLimit.GreaterThan = (int) rdr["PrivacyLimitGreaterThan"];
+            } else {
+                obj.PrivacyLimit = null;
+            }
 
             return obj;
         }

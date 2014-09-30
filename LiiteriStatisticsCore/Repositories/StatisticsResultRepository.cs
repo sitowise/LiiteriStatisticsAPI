@@ -28,11 +28,6 @@ namespace LiiteriStatisticsCore.Repositories
                 if (!this.Modifiers.Contains(this.SetDecimalCount)) {
                     this.Modifiers.Add(this.SetDecimalCount);
                 }
-
-                if (value.PrivacyLimit != null &&
-                        !this.Modifiers.Contains(this.ApplyPrivacyLimits)) {
-                    this.Modifiers.Add(this.ApplyPrivacyLimits);
-                }
             }
         }
 
@@ -42,11 +37,19 @@ namespace LiiteriStatisticsCore.Repositories
         }
 
         private Models.StatisticsResult ApplyPrivacyLimits(
-            Models.StatisticsResult obj)
+            Models.StatisticsResult obj, Models.StatisticsResult refobj)
         {
-            if (obj.Value < this.Indicator.PrivacyLimit) {
-                obj.Value = null;
-                obj.PrivacyLimitTriggered = true;
+            if (this.Indicator.PrivacyLimit == null) {
+                /* shouldn't even be here */
+                Debug.WriteLine(
+                    "We were asked to apply privacy limits, but the indicator has the PrivacyLimit member set to NULL!");
+                return obj;
+            }
+            if (this.Indicator.PrivacyLimit.GreaterThan != null) {
+                if (refobj.Value < this.Indicator.PrivacyLimit.GreaterThan) {
+                    obj.Value = null;
+                    obj.PrivacyLimitTriggered = true;
+                }
             }
             return obj;
         }
@@ -91,6 +94,43 @@ namespace LiiteriStatisticsCore.Repositories
             foreach (Queries.ISqlQuery query in queries) {
                 foreach (Models.StatisticsResult r in this.FindAll(query)) {
                     yield return r;
+                }
+            }
+        }
+
+        /* pairs of queries:
+         * left = actual query,
+         * right = reference query for privacy limits */
+        public IEnumerable<Models.StatisticsResult> FindAll(
+            IEnumerable<Tuple<Queries.ISqlQuery, Queries.ISqlQuery>> queries)
+        {
+            foreach (Tuple<Queries.ISqlQuery, Queries.ISqlQuery> querypair
+                    in queries) {
+                /* Actual statistics */
+                Queries.ISqlQuery query1 = querypair.Item1;
+                /* Reference statistics used for checking privacy limits */
+                Queries.ISqlQuery query2 = querypair.Item2;
+
+                using (IEnumerator<Models.StatisticsResult> e1 =
+                        this.FindAll(query1).GetEnumerator())
+                using (IEnumerator<Models.StatisticsResult> e2 =
+                        this.FindAll(query2).GetEnumerator()) {
+                    while (e1.MoveNext() && e2.MoveNext()) {
+                        /* NOTE: e2 (reference statistics) will also 
+                         * have modifier methods applied on it by
+                         * the repository */
+                        Models.StatisticsResult r1 = e1.Current;
+                        Models.StatisticsResult r2 = e2.Current;
+                        /* We are supposed to be comparing two result tables
+                         * side-by-side, check here that we are doing so */
+                        if (r1.AreaId != r2.AreaId ||
+                                r1.Year != r2.Year) {
+                            throw new Exception(
+                                "Parallel result checking de-sync!");
+                        }
+                        r1 = this.ApplyPrivacyLimits(r1, r2);
+                        yield return r1;
+                    }
                 }
             }
         }

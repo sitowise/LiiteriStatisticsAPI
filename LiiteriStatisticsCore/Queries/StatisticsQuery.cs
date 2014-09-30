@@ -26,6 +26,9 @@ namespace LiiteriStatisticsCore.Queries
         // these will be added to GROUP BY
         List<string> groups;
 
+        // these will be added to ORDER BY
+        List<string> orders;
+
         // this is for JOINs and such
         StringBuilder sbFrom;
 
@@ -37,6 +40,7 @@ namespace LiiteriStatisticsCore.Queries
             //this.fields = new Dictionary<string, string>();
             this.fields = new List<string>();
             this.groups = new List<string>();
+            this.orders = new List<string>();
             this.sbFrom = new StringBuilder();
 
             /* this is just to avoid adding multiple joins of
@@ -119,6 +123,9 @@ namespace LiiteriStatisticsCore.Queries
                 if (idColumn != null && idColumn.Length > 0) {
                     this.fields.Add(string.Format("{0} AS AreaId", idColumn));
                     this.groups.Add(idColumn);
+                    /* ordering is important to assure side-by-side queries
+                     * are handled properly */
+                    this.orders.Add(idColumn);
                 } else {
                     this.fields.Add("-1 AS AreaId");
                 }
@@ -243,6 +250,11 @@ namespace LiiteriStatisticsCore.Queries
             return string.Join<string>(",\n    ", this.groups);
         }
 
+        private string GetOrderString()
+        {
+            return string.Join<string>(",\n    ", this.orders);
+        }
+
         /* This should be called after Filters & Groups have been processed */
         private void SetDatabaseAreaTypeId()
         {
@@ -329,12 +341,15 @@ WHERE
 GROUP BY
     {3}
 
+ORDER BY
+    {4}
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
-                this.GetGroupString());
+                this.GetGroupString(),
+                this.GetOrderString());
 
             return queryString;
         }
@@ -389,12 +404,16 @@ WHERE
 
 GROUP BY
     {3}
+
+ORDER BY
+    {4}
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
-                this.GetGroupString());
+                this.GetGroupString(),
+                this.GetOrderString());
 
             return queryString;
         }
@@ -447,11 +466,15 @@ FROM
 WHERE
     ATJ.Jakso_ID = @YearIs
     {2}
+
+ORDER BY
+    {4}
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
                 this.sbFrom.ToString(),
-                this.GetWhereString());
+                this.GetWhereString(),
+                this.GetOrderString());
 
             return queryString;
         }
@@ -501,12 +524,15 @@ WHERE
     {2}
 GROUP BY
     {3}
+ORDER BY
+    {4}
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
-                this.GetGroupString());
+                this.GetGroupString(),
+                this.GetOrderString());
 
             return queryString;
         }

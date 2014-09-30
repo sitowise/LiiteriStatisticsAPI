@@ -95,6 +95,10 @@ namespace LiiteriStatisticsCore.Queries
             fields["J.AlueTaso_ID"] = "AreaTypeId";
             fields["TL.Tietolahde"] = "DataSource";
 
+            /* Privacy limits */
+            fields["TS.Ref_Tilasto_ID"] = "PrivacyLimitStatisticsId";
+            fields["TS.GreaterThan"] = "PrivacyLimitGreaterThan";
+
             sb.Append(
                 string.Join<string>(", ", (
                     from pair in fields
@@ -117,7 +121,7 @@ OUTER APPLY (
     SELECT
         TOP 1 TL.Tietolahde
     FROM
-        [LiiteriDataMarts]..[FactTilastoTietolahde] TL
+        [{0}]..[FactTilastoTietolahde] TL
     WHERE
         J.Jakso_ID >= TL.Alkaen_Jakso_ID AND
         J.AlueTaso_ID = TL.AlueTaso_ID AND
@@ -129,14 +133,20 @@ OUTER APPLY (
                 ConfigurationManager.AppSettings["DbDataMarts"]));
 
             sb.Append(string.Format(@"
-LEFT OUTER JOIN [LiiteriDataMarts]..[DimMittayksikko] MY ON
+LEFT OUTER JOIN [{0}]..[DimMittayksikko] MY ON
     T.MittayksikkoEsitys_Mittayksikko_ID = MY.Mittayksikko_ID
 ",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
 
             sb.Append(string.Format(@"
-LEFT OUTER JOIN [LiiteriDataMarts]..[DimAjallinenVaihe] AJV ON
+LEFT OUTER JOIN [{0}]..[DimAjallinenVaihe] AJV ON
     T.AjallinenVaihe_ID = AJV.AjallinenVaihe_ID
+",
+                ConfigurationManager.AppSettings["DbDataMarts"]));
+
+            sb.Append(string.Format(@"
+LEFT OUTER JOIN [{0}]..[Tietosuojaraja] TS ON
+    TS.Tilasto_ID = T.Tilasto_ID
 ",
                 ConfigurationManager.AppSettings["DbDataMarts"]));
 
