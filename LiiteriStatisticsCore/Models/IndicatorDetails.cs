@@ -33,7 +33,7 @@ namespace LiiteriStatisticsCore.Models
 
         public IEnumerable<TimePeriod> TimePeriods;
 
-        [IgnoreDataMember]
+        //[IgnoreDataMember] // may be useful in the UI?
         public PrivacyLimit PrivacyLimit = null;
     }
 }

@@ -46,7 +46,7 @@ namespace LiiteriStatisticsCore.Repositories
                 return obj;
             }
             if (this.Indicator.PrivacyLimit.GreaterThan != null) {
-                if (refobj.Value < this.Indicator.PrivacyLimit.GreaterThan) {
+                if (refobj.Value <= this.Indicator.PrivacyLimit.GreaterThan) {
                     obj.Value = null;
                     obj.PrivacyLimitTriggered = true;
                 }

@@ -11,7 +11,7 @@ namespace LiiteriStatisticsCore.Models
         /* statistics id used for comparing privacy limits to */
         public int RefId { get; set;}
 
-        /* minimum value from RefId output */
+        /* value condition */
         public int? GreaterThan { get; set; }
     }
 }
