@@ -252,7 +252,14 @@ namespace LiiteriStatisticsCore.Queries
 
         private string GetOrderString()
         {
-            return string.Join<string>(",\n    ", this.orders);
+            if (this.orders.Count == 0) {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.Append("\nORDER BY");
+            sb.Append("\n    ");
+            sb.Append(string.Join<string>(",\n    ", this.orders));
+            return sb.ToString();
         }
 
         /* This should be called after Filters & Groups have been processed */
@@ -340,8 +347,6 @@ WHERE
 
 GROUP BY
     {3}
-
-ORDER BY
     {4}
 ";
             queryString = string.Format(queryString,
@@ -404,8 +409,6 @@ WHERE
 
 GROUP BY
     {3}
-
-ORDER BY
     {4}
 ";
             queryString = string.Format(queryString,
@@ -466,8 +469,6 @@ FROM
 WHERE
     ATJ.Jakso_ID = @YearIs
     {2}
-
-ORDER BY
     {4}
 ";
             queryString = string.Format(queryString,
@@ -524,7 +525,6 @@ WHERE
     {2}
 GROUP BY
     {3}
-ORDER BY
     {4}
 ";
             queryString = string.Format(queryString,
