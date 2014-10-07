@@ -15,21 +15,6 @@
             <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
-    <SelectionAreaType id="neighborhood">
-        <Description>Asutusalue</Description>
-        <DatabaseSchema>
-            <MainIdColumn>A.AsutusalueTyyppi_ID</MainIdColumn>
-            <SubIdColumn>A2.Asutusaluetyyppi_ID</SubIdColumn>
-            <SubNameColumn>A2.AsutusalueTyyppiSelite</SubNameColumn>
-            <SubAlternativeIdColumn/>
-            <SubYearColumn/>
-            <SubFromString>DimAsutusAlueTyyppi A2</SubFromString>
-            <JoinQuery>INNER JOIN DimAsutusAlueTyyppi A2 ON A2.Asutusaluetyyppi_ID = A.AsutusalueTyyppi_ID</JoinQuery>
-        </DatabaseSchema>
-        <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
-        </DatabaseAreaTypes>
-    </SelectionAreaType>
     <SelectionAreaType id="urban_area">
         <Description>Kaupunkiseutu</Description>
         <DatabaseSchema>
@@ -313,12 +298,11 @@
         <Description>Ruutu 250m</Description>
         <DatabaseSchema>
             <MainIdColumn>A.Ruutu_Alue_ID</MainIdColumn>
-            <SubIdColumn>A.Ruutu_Alue_ID</SubIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A.Ruutu_Alue_ID</SubNameColumn>
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
-            <GeometryColumn>G1_grid250m.KoordsGeom</GeometryColumn>
-            <GeometryJoin>INNER JOIN DimRuutu G1_grid250m ON G1_grid250m.Alue_ID = A.Alue_ID</GeometryJoin>
+            <GeometryColumn>A2.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID LEFT OUTER JOIN Geometry_Ruutu G ON G.Alue_ID = A2.Alue_ID</JoinQuery>
         </DatabaseSchema>

@@ -21,16 +21,20 @@ namespace LiiteriStatisticsCore.Queries
 
         // these will be added as fields for SELECT
         //IDictionary<string, string> fields;
-        List<string> fields;
+        private List<string> fields;
 
         // these will be added to GROUP BY
-        List<string> groups;
+        private List<string> groups;
 
         // these will be added to ORDER BY
-        List<string> orders;
+        private List<string> orders;
 
         // this is for JOINs and such
-        StringBuilder sbFrom;
+        private StringBuilder sbFrom;
+
+        /* Dynamic custom declarations/queries before the main query
+         * Intended to be used with geometry stuff */
+        private StringBuilder sbPreQuery;
 
         public StatisticsQuery(int id) : base()
         {
@@ -42,10 +46,7 @@ namespace LiiteriStatisticsCore.Queries
             this.groups = new List<string>();
             this.orders = new List<string>();
             this.sbFrom = new StringBuilder();
-
-            /* this is just to avoid adding multiple joins of
-             * the same areaType */
-            this.GeometryJoins = new List<string>();
+            this.sbPreQuery = new StringBuilder();
         }
 
         public int IdIs
@@ -184,26 +185,8 @@ namespace LiiteriStatisticsCore.Queries
          * by filter and group settings */
         private int[] UsableAreaTypes { get; set; }
 
-        /* this is just to avoid adding multiple joins of
-         * the same areaType */
-        private List<string> GeometryJoins;
-
-        /* add proper INNER JOIN when using geometry filters */
-        void AddGeometryJoin(string areaType)
-        {
-            if (this.GeometryJoins.Contains(areaType)) return;
-            this.GeometryJoins.Add(areaType);
-
-            var schema = AreaTypeMappings.GetDatabaseSchema(areaType);
-            if (schema["GeometryJoin"] == null ||
-                    schema["GeometryJoin"].Length == 0) {
-                return;
-            }
-
-            string joinQuery = schema["GeometryJoin"];
-            this.sbFrom.Append("\n    ");
-            this.sbFrom.Append(joinQuery);
-        }
+        /* Keep track of special parameter names for geometry operations */
+        private int GeometryParameterCount = 0;
 
         private void SetFilters()
         {
@@ -219,12 +202,60 @@ namespace LiiteriStatisticsCore.Queries
                     return AreaTypeMappings.GetDatabaseSchema(
                         name)["MainIdColumn"];
                 };
-                parser.SpatialIdHandler = delegate(string name)
+
+                /* We get both spatial atoms here (geom1, geom2),
+                 * one of them is the raw areaType, and another is the
+                 * SQL server geometry. At this point it is not known
+                 * which is which. */
+                parser.SpatialHandler = delegate(
+                    string geom1,
+                    string geom2,
+                    string func)
                 {
-                    this.ReduceUsableAreaTypes(name);
-                    this.AddGeometryJoin(name);
-                    return AreaTypeMappings.GetDatabaseSchema(
-                        name)["GeometryColumn"];
+                    string areaType;
+                    Dictionary<string, string> schema;
+
+                    /* guess which one is geometry, so the other one
+                     * should be areaType */
+                    /* NOTE: areaType is user input, handle carefully! */
+                    if (geom1.StartsWith("geometry::") ||
+                            geom1.StartsWith("@")) {
+                        areaType = geom2;
+                        schema = AreaTypeMappings.GetDatabaseSchema(areaType);
+
+                        geom2 = schema["GeometryColumn"];
+                        // geom1 should be geometry
+                    } else {
+                        areaType = geom1;
+                        schema = AreaTypeMappings.GetDatabaseSchema(areaType);
+
+                        geom1 = schema["GeometryColumn"];
+                        // geom2 should be geometry
+                    }
+
+                    this.ReduceUsableAreaTypes(areaType);
+
+                    string paramName =
+                        "SpatialParam_" +
+                        (++this.GeometryParameterCount).ToString();
+                    this.sbPreQuery.Append(string.Format(
+                        "DECLARE @{0} TABLE (id INT NOT NULL)\n",
+                        paramName));
+                    this.sbPreQuery.Append(string.Format(
+                        "INSERT INTO @{0} SELECT {1} FROM {2} WHERE {3}.{4}({5}) = 1\n",
+                        paramName,
+                        schema["SubIdColumn"],
+                        schema["SubFromString"],
+                        geom1,
+                        func,
+                        geom2));
+
+                    string expr = string.Format(
+                        "{0} IN (SELECT id FROM @{1})",
+                        schema["MainIdColumn"],
+                        paramName);
+
+                    return expr;
                 };
                 string whereString = parser.Parse(this.AreaFilterQueryString);
                 this.whereList.Add(whereString);
@@ -569,6 +600,10 @@ GROUP BY
                     logger.Error(errMsg);
                     throw new Exception(errMsg);
             }
+
+            /* preQuery stuff (which are geometry declarations at the moment)
+             * should be common for all query types, let's prepend it here */
+            queryString = this.sbPreQuery.ToString() + "\n" + queryString;
 
             return queryString;
         }

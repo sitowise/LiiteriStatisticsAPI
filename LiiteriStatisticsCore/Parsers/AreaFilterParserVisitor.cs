@@ -33,11 +33,13 @@ namespace LiiteriStatisticsCore.Parsers
         public delegate string IdHandlerDelegate(string value);
         public IdHandlerDelegate IdHandler = null;
 
-        /* if we are doing a spatial expression, we want to give the
-         * caller the option of using a separate geometry column,
-         * thus we provide a separate delegate function */
-        public delegate string SpatialIdHandlerDelegate(string value);
-        public SpatialIdHandlerDelegate SpatialIdHandler = null;
+        /* this callback is supposed to create the entire spatial
+         * expression with possible subqueries and such, so let's have
+         * the original caller do that, since it knows all the necessary
+         * column names, etc */
+        public delegate string SpatialHandlerDelegate(
+            string geom1, string geom2, string func);
+        public SpatialHandlerDelegate SpatialHandler = null;
 
         public override string VisitValue(
             SimpleQueryLanguageParser.ValueContext context)
@@ -95,8 +97,7 @@ namespace LiiteriStatisticsCore.Parsers
                     "Error! Unhandled spatial expression!");
             }
 
-            string retval = string.Format("{0}.{1}({2}) = 1",
-                left, fname, right);
+            string retval = this.SpatialHandler(left, right, fname);
             Debug.WriteLine(string.Format(" will return {0}", retval));
             return retval;
         }
@@ -120,8 +121,9 @@ namespace LiiteriStatisticsCore.Parsers
                 return geomExpr;
             } else if (context.ID() != null) {
                 string name = context.ID().GetText().ToString();
-                string dbColumn = this.SpatialIdHandler(name);
-                return dbColumn;
+                /* SpatialHandler delegate will want the original
+                 * areaType name to figure out column names, etc */
+                return name;
             } else {
                 throw new Exception("Error! Unhandled spatial atom!");
             }
