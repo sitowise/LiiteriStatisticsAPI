@@ -16,5 +16,18 @@ namespace LiiteriStatisticsCore.Factories
             obj.Description = element.Element("Description").Value.ToString();
             return obj;
         }
+
+        /* Special factory method used when constructing AreaTypes in the
+         * indicator */
+        public Models.ILiiteriMarker Create(
+            Models.AreaType areaType,
+            DbDataReader rdr)
+        {
+            var obj = new Models.AreaType();
+            obj.Id = areaType.Id;
+            obj.Description = areaType.Description;
+            obj.DataSource = (string) rdr["DataSource"].ToString();
+            return obj;
+        }
     }
 }

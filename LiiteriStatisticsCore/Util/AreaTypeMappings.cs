@@ -207,5 +207,44 @@ namespace LiiteriStatisticsCore.Util
                 select (Models.AreaType) factory.Create(d));
             return areaTypes;
         }
+
+        /* This is used for when we know statistics data is stored in one
+         * databaseAreaType (for example (int) 2), and we want to know
+         * what virtualAreaTypes (for example (string) "municipality") can be
+         * used to query that statistic */
+        public IEnumerable<Models.AreaType> GetAreaTypes(int databaseAreaType)
+        {
+            /* Debug.WriteLine(string.Format(
+                "Getting virtualAreaTypes for databaseAreaType:{0}",
+                databaseAreaType)); */
+
+            var factory = new Factories.AreaTypeFactory();
+            IList<Models.AreaType> areaTypes = new List<Models.AreaType>();
+
+            foreach (var sAreaType in this.xdoc.Root
+                    .Descendants("SelectionAreaType")) {
+                /* Debug.WriteLine(string.Format(
+                    "Checking virtualAreaType:{0}",
+                    sAreaType.Attribute("id").Value)); */
+                bool found = false;
+                foreach (var dAreaType in sAreaType
+                        .Descendants("DatabaseAreaTypes")
+                        .Descendants("DatabaseAreaType")) {
+                    int id = Convert.ToInt32(dAreaType.Attribute("id").Value);
+                    /* Debug.WriteLine(string.Format(
+                        "  Checking databaseAreaType:{0}", id)); */
+                    if (id == databaseAreaType) {
+                        // Debug.WriteLine("    Match! breaking...");
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    // Debug.WriteLine("Some stuff was found, add to areaTypes");
+                    areaTypes.Add((Models.AreaType) factory.Create(sAreaType));
+                }
+            }
+            return areaTypes;
+        }
     }
 }

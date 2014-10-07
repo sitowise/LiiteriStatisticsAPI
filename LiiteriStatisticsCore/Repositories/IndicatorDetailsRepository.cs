@@ -13,6 +13,9 @@ namespace LiiteriStatisticsCore.Repositories
     public class IndicatorDetailsRepository :
         SqlReadRepository<Models.IndicatorDetails>
     {
+        private static LiiteriStatisticsCore.Util.AreaTypeMappings
+            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
+
         public IndicatorDetailsRepository(DbConnection dbConnection) :
             base(dbConnection)
         {
@@ -30,14 +33,19 @@ namespace LiiteriStatisticsCore.Repositories
             int prevPeriodId = 0;
             var detailsFactory = new Factories.IndicatorDetailsFactory();
             var periodFactory = new Factories.TimePeriodFactory();
-            var areaTypeFactory = new Factories.DataAreaTypeFactory();
+            var dataAreaTypeFactory = new Factories.DataAreaTypeFactory();
+            var areaTypeFactory = new Factories.AreaTypeFactory();
 
             Models.IndicatorDetails details = null;
             Models.TimePeriod timePeriod = null;
-            Models.DataAreaType areaType = null;
 
             List<Models.TimePeriod> timePeriods = null;
-            List<Models.DataAreaType> areaTypes = null;
+
+            /* DataAreaType (or "database areatype") used internally
+             * AreaType is provided via API for the client to use */
+            Models.DataAreaType dataAreaType = null;
+            List<Models.DataAreaType> dataAreaTypes = null;
+            List<Models.AreaType> areaTypes = null;
 
             using (DbDataReader rdr = this.GetDbDataReader(query)) {
                 while (rdr.Read()) {
@@ -59,16 +67,28 @@ namespace LiiteriStatisticsCore.Repositories
                         timePeriod = (Models.TimePeriod)
                             periodFactory.Create(rdr);
 
-                        areaTypes = new List<Models.DataAreaType>();
-                        timePeriod.DataAreaTypes = areaTypes;
+                        dataAreaTypes = new List<Models.DataAreaType>();
+                        areaTypes = new List<Models.AreaType>();
+                        timePeriod.DataAreaTypes = dataAreaTypes;
+                        timePeriod.AreaTypes = areaTypes;
 
                         timePeriods.Add(timePeriod);
                     }
 
-                    /* and here are the AreaTypes, which contain
-                     * nothing special */
-                    areaType = (Models.DataAreaType) areaTypeFactory.Create(rdr);
-                    areaTypes.Add(areaType);
+                    int databaseAreaType = (int) rdr["AreaTypeId"];
+
+                    /* AreaTypes are exposed by the API */
+                    foreach (Models.AreaType a in
+                            AreaTypeMappings.GetAreaTypes(databaseAreaType)) {
+                        areaTypes.Add((Models.AreaType)
+                            areaTypeFactory.Create(a, rdr));
+                    }
+                    
+                    /* DataAreaTypes (or "database areatypes") are not
+                     * exposed by the API, but are used internally */
+                    dataAreaType = (Models.DataAreaType)
+                        dataAreaTypeFactory.Create(rdr);
+                    dataAreaTypes.Add(dataAreaType);
                 }
             }
             return entityList;
