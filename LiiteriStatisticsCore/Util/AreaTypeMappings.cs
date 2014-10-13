@@ -93,6 +93,7 @@ namespace LiiteriStatisticsCore.Util
                     "GeometryColumn",
                     "GeometryJoin",
                     "SubFromString",
+                    "SubWhereString",
                     "JoinQuery",
                     "ListQuery",
                     }) {

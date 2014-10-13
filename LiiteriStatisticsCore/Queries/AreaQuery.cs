@@ -74,6 +74,11 @@ namespace LiiteriStatisticsCore.Queries
                 fromList.Add(schema["SubFromString"]);
             }
 
+            if (schema["SubWhereString"] != null &&
+                    schema["SubWhereString"].Length > 0) {
+                this.whereList.Add("(" + schema["SubWhereString"] + ")");
+            }
+
             string fieldString = ""; // SELECT xxx, yyy
             string fromString = ""; // FROM xxx yyy
             string whereString = ""; // WHERE xxx, yyy
@@ -104,7 +109,7 @@ namespace LiiteriStatisticsCore.Queries
                 fromString = " FROM " + string.Join(" ", fromList);
             }
             if (this.whereList.Count > 0) {
-                whereString = " WHERE " + string.Join(", ", fromList);
+                whereString = " WHERE " + string.Join(", ", whereList);
             }
             queryString = string.Format(queryString,
                 fieldString, fromString, whereString);

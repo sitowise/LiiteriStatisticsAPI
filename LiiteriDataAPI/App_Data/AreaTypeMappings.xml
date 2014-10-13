@@ -124,10 +124,11 @@
         <DatabaseSchema>
             <MainIdColumn>A.ELY_Y_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
-            <SubNameColumn>COALESCE(A2.YmparistoElyNimi, A2.Nimi)</SubNameColumn>
+            <SubNameColumn>A2.YmparistoElyNimi</SubNameColumn>
             <SubAlternativeIdColumn>CONVERT(INT, A2.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY A2</SubFromString>
+            <SubWhereString>A2.YmparistoElyNimi IS NOT NULL</SubWhereString>
             <JoinQuery>INNER JOIN DimEly A2 ON A2.Alue_ID = A.ELY_Y_Alue_ID</JoinQuery>
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, COALESCE(A2.YmparistoElyNimi, A2.Nimi) AS AreaName, A2.Nro AS AlternativeId, NULL AS Year FROM DimELY A2 {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
