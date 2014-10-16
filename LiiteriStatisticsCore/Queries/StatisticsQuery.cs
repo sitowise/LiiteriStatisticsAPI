@@ -463,10 +463,10 @@ GROUP BY
                 throw new Exception("Supplied grouping areaType not suitable for this statistics data!");
             }
 
-            this.fields.Add("T.Jakso_ID AS Year");
+            this.fields.Add("ATJ.Jakso_ID AS Year");
             //this.groups.Add("T1.Jakso_ID");
 
-            this.fields.Add("T.Arvo AS Value");
+            this.fields.Add("COALESCE(T.Arvo, 0) AS Value");
 
             /* don't allow any other areaType to be selected for this */
             this.RelaxedAreaTypes = false;
@@ -500,7 +500,7 @@ FROM
 WHERE
     ATJ.Jakso_ID = @YearIs
     {2}
-    {4}
+    {3}
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
