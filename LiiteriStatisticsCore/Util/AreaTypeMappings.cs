@@ -176,6 +176,46 @@ namespace LiiteriStatisticsCore.Util
             return (int) retval.Single();
         }
 
+        /* Get primary virtual areatype for database areaType
+         * e.g. 2 -> municipality
+         * Used by the special statistics indicators */
+        public Models.AreaType GetPrimaryAreaType(int databaseAreaTypeId)
+        {
+            /* Debug.WriteLine(string.Format(
+                "We need to find primary virtualAreaType for databaseAreaType {0}",
+                databaseAreaTypeId)); */
+
+            var factory = new Factories.AreaTypeFactory();
+
+            var areaTypes = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                select d);
+            foreach (var areaType in areaTypes) {
+                /* Debug.WriteLine(string.Format(
+                    "Let's consider {0}",
+                    areaType.Attribute("id").Value)); */
+                var found = (
+                    from d in areaType
+                        .Descendants("DatabaseAreaTypes")
+                        .Descendants("DatabaseAreaType")
+                    where
+                        d.Attribute("primary") != null &&
+                        d.Attribute("primary").Value.ToLower() == "true"
+                    select d);
+                if (found.Count() > 0) {
+                    /* Debug.WriteLine(string.Format(
+                        "We consider {0} to be found",
+                        found.Single().Attribute("id").Value.ToString())); */
+                    return (Models.AreaType) factory.Create(areaType);
+                } else {
+                    /* Debug.WriteLine(string.Format(
+                        "No match, keep looking")); */
+                }
+            }
+            throw new Exception(
+                "No primary virtual areaType for this databaseAreaType!");
+        }
+
         public string GetAvailabilityExpression(
             string areaTypeId,
             int databaseAreaTypeId)

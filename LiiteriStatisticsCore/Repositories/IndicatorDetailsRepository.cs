@@ -75,11 +75,24 @@ namespace LiiteriStatisticsCore.Repositories
                         timePeriods.Add(timePeriod);
                     }
 
+                    /* AreaTypes are exposed by the API */
+
                     int databaseAreaType = (int) rdr["AreaTypeId"];
 
-                    /* AreaTypes are exposed by the API */
-                    foreach (Models.AreaType a in
-                            AreaTypeMappings.GetAreaTypes(databaseAreaType)) {
+                    IEnumerable<Models.AreaType> applicableAreaTypes;
+                    /* special statistics should only return
+                     * one available areaType */
+                    if (details.CalculationType == 4) {
+                        applicableAreaTypes =
+                            new List<Models.AreaType>() {
+                                AreaTypeMappings.GetPrimaryAreaType(databaseAreaType)
+                            };
+                    } else {
+                        applicableAreaTypes =
+                            AreaTypeMappings.GetAreaTypes(databaseAreaType);
+                    }
+
+                    foreach (Models.AreaType a in applicableAreaTypes) {
                         areaTypes.Add((Models.AreaType)
                             areaTypeFactory.Create(a, rdr));
                     }
