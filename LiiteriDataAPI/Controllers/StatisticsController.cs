@@ -20,6 +20,14 @@ using LiiteriStatisticsCore.Repositories;
 
 namespace LiiteriDataAPI.Controllers
 {
+    public class StatisticsRequest
+    {
+        public int[] years { get; set; }
+        public string group { get; set; }
+        public string filter { get; set; }
+    }
+
+    [RoutePrefix("v1")]
     public class StatisticController : ApiController
     {
         public static readonly log4net.ILog logger =
@@ -38,7 +46,20 @@ namespace LiiteriDataAPI.Controllers
         private static AreaTypeMappings
             AreaTypeMappings = new AreaTypeMappings();
 
-        [Route("v1/statistics/{statisticsId}/")]
+        [Route("statistics/{statisticsId}/")]
+        [HttpPost]
+        public HttpResponseMessage GetStatisticsV1(
+            int statisticsId,
+            [FromBody] StatisticsRequest reqobj)
+        {
+            return this.GetStatisticsV1(
+                reqobj.years,
+                statisticsId,
+                reqobj.group,
+                reqobj.filter);
+        }
+
+        [Route("statistics/{statisticsId}/")]
         [HttpGet]
         public HttpResponseMessage GetStatisticsV1(
             int[] years,
@@ -164,14 +185,14 @@ namespace LiiteriDataAPI.Controllers
             }
         }
 
-        [Route("v1/areaTypes/")]
+        [Route("areaTypes/")]
         [HttpGet]
         public IEnumerable<AreaType> GetAreaTypesV1()
         {
             return AreaTypeMappings.GetAreaTypes();
         }
 
-        [Route("v1/areaTypes/{areaTypeId}/areas/")]
+        [Route("areaTypes/{areaTypeId}/areas/")]
         [HttpGet]
         public IEnumerable<Area> GetAreasV1(string areaTypeId)
         {
