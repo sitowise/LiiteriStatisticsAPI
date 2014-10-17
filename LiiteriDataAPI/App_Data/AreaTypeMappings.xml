@@ -212,7 +212,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn>A2.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimKaupanAlue A2 INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.Keskustatyyppi_ID</SubFromString>
-            <JoinQuery>INNER JOIN DimKaupanAlue A2 ON A2.Alue_ID = A.KaupanAlue_Alue_ID INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.KeskustaTyyppi_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimKaupanAlue A2 ON A2.Alue_ID = A.KaupanAlue_Alue_ID AND (A2.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID) INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.KeskustaTyyppi_ID</JoinQuery>
             <ListQuery addAreaTable="true">SELECT {0} A2.Alue_ID AS AreaId, (KT.Selite + ' (' + CONVERT(varchar(max), A2.Alue_ID) + ')') AS AreaName, NULL AS AlternativeId, A2.Jakso_ID AS Year FROM DimKaupanAlue A2 INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = A2.Keskustatyyppi_ID {1} WHERE 1=1 {2}</ListQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
