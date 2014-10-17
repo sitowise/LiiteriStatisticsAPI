@@ -52,11 +52,15 @@ namespace LiiteriDataAPI.Controllers
             int statisticsId,
             [FromBody] StatisticsRequest reqobj)
         {
+            string filter = reqobj.filter;
+            if (filter != null && filter.Length == 0) {
+                filter = null;
+            }
             return this.GetStatisticsV1(
                 reqobj.years,
                 statisticsId,
                 reqobj.group,
-                reqobj.filter);
+                filter);
         }
 
         [Route("statistics/{statisticsId}/")]
