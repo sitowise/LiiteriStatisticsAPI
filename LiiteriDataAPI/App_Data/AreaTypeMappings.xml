@@ -311,4 +311,100 @@
             <DatabaseAreaType id="1" name="Ruutu 250m" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
+    <SelectionAreaType id="grid500m">
+        <Description>Ruutu 500m</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_500m_Alue_ID</MainIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_500m_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="7" name="Ruutu 500m" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid1km">
+        <Description>Ruutu 1km</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_1km_Alue_ID</MainIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_1km_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="22" name="Ruutu 1km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid2km">
+        <Description>Ruutu 1km</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_2km_Alue_ID</MainIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_2km_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="23" name="Ruutu 2km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid5km">
+        <Description>Ruutu 1km</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_5km_Alue_ID</MainIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_5km_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="24" name="Ruutu 5km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid10km">
+        <Description>Ruutu 1km</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_10km_Alue_ID</MainIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_10km_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="25" name="Ruutu 10km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid20km">
+        <Description>Ruutu 1km</Description>
+        <DatabaseSchema>
+            <MainIdColumn>A.Ruutu_20km_Alue_ID</MainIdColumn>
+            <SubIdColumn>A2.Alue_ID</SubIdColumn>
+            <SubNameColumn>A.Ruutu_20km_Alue_ID</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
+            <JoinQuery>INNER JOIN DimRuutu A2 ON A2.Alue_ID = A.Ruutu_Alue_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="26" name="Ruutu 20km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
 </SelectionAreaTypes>
