@@ -301,7 +301,7 @@
             <MainIdColumn>A.Ruutu_Alue_ID</MainIdColumn>
             <SubIdColumn>A2.Alue_ID</SubIdColumn>
             <SubNameColumn>A.Ruutu_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>A2.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <GeometryColumn>A2.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu A2</SubFromString>
