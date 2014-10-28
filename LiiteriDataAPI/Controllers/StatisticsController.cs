@@ -52,15 +52,11 @@ namespace LiiteriDataAPI.Controllers
             int statisticsId,
             [FromBody] StatisticsRequest reqobj)
         {
-            string filter = reqobj.filter;
-            if (filter != null && filter.Length == 0) {
-                filter = null;
-            }
             return this.GetStatisticsV1(
                 reqobj.years,
                 statisticsId,
                 reqobj.group,
-                filter);
+                reqobj.filter);
         }
 
         [Route("statistics/{statisticsId}/")]
@@ -121,6 +117,10 @@ namespace LiiteriDataAPI.Controllers
                     if (group == null) group = "finland";
                     statisticsQuery.GroupByAreaTypeIdIs = group;
                     statisticsQuery.YearIs = year;
+
+                    if (filter != null && filter.Length == 0) {
+                        filter = null;
+                    }
                     statisticsQuery.AreaFilterQueryString = filter;
 
                     if (details.PrivacyLimit == null) {
