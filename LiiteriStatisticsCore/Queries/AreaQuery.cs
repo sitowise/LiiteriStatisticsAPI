@@ -21,6 +21,16 @@ namespace LiiteriStatisticsCore.Queries
 
         public string AreaTypeIdIs { get; set; }
 
+        /* The column aliases are different for statistics and
+         * commuteStatistics, so AreaTypeMappings only provides
+         * string templates for various settings */
+        private static string SchemaDataFormat(string str)
+        {
+            return string.Format(str,
+                "A2", // {0}: sub-table (e.g. DimKunta or DimRuutu)
+                "A"); // {1}: main table (DimAlue)
+        }
+
         public override string GetQueryString()
         {
             if (AreaTypeMappings.GetDatabaseListDisabled(this.AreaTypeIdIs)) {
@@ -39,44 +49,45 @@ namespace LiiteriStatisticsCore.Queries
 
             if (schema["SubIdColumn"] != null &&
                     schema["SubIdColumn"].Length > 0) {
-                fields.Add(string.Format(
-                    "{0} AS AreaId", schema["SubIdColumn"]));
+                fields.Add(string.Format("{0} AS AreaId",
+                    SchemaDataFormat(schema["SubIdColumn"])));
             } else {
                 fields.Add("-1 AS AreaId");
             }
 
             if (schema["SubNameColumn"] != null &&
                     schema["SubNameColumn"].Length > 0) {
-                fields.Add(string.Format(
-                    "{0} AS AreaName", schema["SubNameColumn"]));
+                fields.Add(string.Format("{0} AS AreaName",
+                    SchemaDataFormat(schema["SubNameColumn"])));
             } else {
                 fields.Add("NULL AS AreaName");
             }
 
             if (schema["SubAlternativeIdColumn"] != null &&
                     schema["SubAlternativeIdColumn"].Length > 0) {
-                fields.Add(string.Format(
-                    "{0} AS AlternativeId", schema["SubAlternativeIdColumn"]));
+                fields.Add(string.Format("{0} AS AlternativeId",
+                    SchemaDataFormat(schema["SubAlternativeIdColumn"])));
             } else {
                 fields.Add("NULL AS AlternativeId");
             }
 
             if (schema["SubYearColumn"] != null &&
                     schema["SubYearColumn"].Length > 0) {
-                fields.Add(string.Format(
-                    "{0} AS Year", schema["SubYearColumn"]));
+                fields.Add(string.Format("{0} AS Year",
+                    SchemaDataFormat(schema["SubYearColumn"])));
             } else {
                 fields.Add("NULL AS Year");
             }
 
             if (schema["SubFromString"] != null &&
                     schema["SubFromString"].Length > 0) {
-                fromList.Add(schema["SubFromString"]);
+                fromList.Add(SchemaDataFormat(schema["SubFromString"]));
             }
 
             if (schema["SubWhereString"] != null &&
                     schema["SubWhereString"].Length > 0) {
-                this.whereList.Add("(" + schema["SubWhereString"] + ")");
+                this.whereList.Add(string.Format("({0})",
+                    SchemaDataFormat(schema["SubWhereString"])));
             }
 
             string fieldString = ""; // SELECT xxx, yyy
@@ -93,6 +104,7 @@ namespace LiiteriStatisticsCore.Queries
                     string areaTypeName = areaType.Id;
                     string columnName1 = AreaTypeMappings.GetDatabaseSchema(
                         areaTypeName)["MainIdColumn"];
+                    columnName1 = SchemaDataFormat(columnName1);
                     string columnName2 = "parent_" + areaTypeName;
                     if (columnName1 == null ||
                         columnName1.Length == 0 ||

@@ -14,5 +14,10 @@ namespace LiiteriStatisticsCore.Models
         public string AlternativeId { get; set; }
         public int Year { get; set; }
         public bool PrivacyLimitTriggered { get; set; }
+
+        /* If we end up adding something like this, consider
+         * using a nullable class instead */
+        //public int? AreaPointLat { get; set; }
+        //public int? AreaPointLon { get; set; }
     }
 }

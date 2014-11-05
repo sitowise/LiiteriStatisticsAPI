@@ -88,6 +88,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Binders\DateRangeModelBinder.cs" />
     <Compile Include="Binders\IntegerArrayModelBinder.cs" />
+    <Compile Include="Controllers\CommuteStatisticsController.cs" />
     <Compile Include="Controllers\IndicatorController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\VersionController.cs" />

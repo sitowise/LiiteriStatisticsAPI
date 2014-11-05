@@ -14,8 +14,8 @@ namespace LiiteriStatisticsCore.Queries
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static LiiteriStatisticsCore.Util.AreaTypeMappings
-            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
+        private static Util.AreaTypeMappings AreaTypeMappings =
+            new Util.AreaTypeMappings();
 
         private List<string> whereList;
 
@@ -122,6 +122,7 @@ namespace LiiteriStatisticsCore.Queries
 
                 string idColumn = schema["MainIdColumn"];
                 if (idColumn != null && idColumn.Length > 0) {
+                    idColumn = SchemaDataFormat(idColumn);
                     this.fields.Add(string.Format("{0} AS AreaId", idColumn));
                     this.groups.Add(idColumn);
                     /* ordering is important to assure side-by-side queries
@@ -132,7 +133,8 @@ namespace LiiteriStatisticsCore.Queries
                 }
 
                 string nameColumn = schema["SubNameColumn"];
-                if (nameColumn != null && idColumn.Length > 0) {
+                if (nameColumn != null && nameColumn.Length > 0) {
+                    nameColumn = SchemaDataFormat(nameColumn);
                     this.fields.Add(string.Format("{0} AS AreaName", nameColumn));
                     this.groups.Add(nameColumn);
                 } else {
@@ -141,6 +143,7 @@ namespace LiiteriStatisticsCore.Queries
 
                 string alternativeIdColumn = schema["SubAlternativeIdColumn"];
                 if (alternativeIdColumn != null && alternativeIdColumn.Length > 0) {
+                    alternativeIdColumn = SchemaDataFormat(alternativeIdColumn);
                     this.fields.Add(string.Format(
                         "{0} AS AlternativeId", alternativeIdColumn));
                     this.groups.Add(alternativeIdColumn);
@@ -148,8 +151,12 @@ namespace LiiteriStatisticsCore.Queries
                     this.fields.Add("NULL AS AlternativeId");
                 }
 
-                string joinQuery = schema["JoinQuery"];
                 if (schema["JoinQuery"] != null) {
+                    /* alias substitutions are needed because the names
+                     * will be different in CommuteStatistics */
+                    string joinQuery = schema["JoinQuery"];
+                    joinQuery = SchemaDataFormat(joinQuery);
+
                     this.sbFrom.Append("\n    ");
                     this.sbFrom.Append(joinQuery);
                 }
@@ -188,6 +195,16 @@ namespace LiiteriStatisticsCore.Queries
         /* Keep track of special parameter names for geometry operations */
         private int GeometryParameterCount = 0;
 
+        /* The column aliases are different for statistics and
+         * commuteStatistics, so AreaTypeMappings only provides
+         * string templates for various settings */
+        private static string SchemaDataFormat(string str)
+        {
+            return string.Format(str,
+                "A2", // {0}: sub-table (e.g. DimKunta or DimRuutu)
+                "A"); // {1}: main table (DimAlue)
+        }
+
         private void SetFilters()
         {
             if (this.AreaFilterQueryString != null) {
@@ -199,8 +216,10 @@ namespace LiiteriStatisticsCore.Queries
                 parser.IdHandler = delegate(string name)
                 {
                     this.ReduceUsableAreaTypes(name);
-                    return AreaTypeMappings.GetDatabaseSchema(
-                        name)["MainIdColumn"];
+                    var schema = AreaTypeMappings.GetDatabaseSchema(name);
+                    string idColumn = schema["MainIdColumn"];
+                    idColumn = SchemaDataFormat(idColumn);
+                    return idColumn;
                 };
 
                 /* We get both spatial atoms here (geom1, geom2),
@@ -223,13 +242,13 @@ namespace LiiteriStatisticsCore.Queries
                         areaType = geom2;
                         schema = AreaTypeMappings.GetDatabaseSchema(areaType);
 
-                        geom2 = schema["GeometryColumn"];
+                        geom2 = SchemaDataFormat(schema["GeometryColumn"]);
                         // geom1 should be geometry
                     } else {
                         areaType = geom1;
                         schema = AreaTypeMappings.GetDatabaseSchema(areaType);
 
-                        geom1 = schema["GeometryColumn"];
+                        geom1 = SchemaDataFormat(schema["GeometryColumn"]);
                         // geom2 should be geometry
                     }
 
@@ -244,15 +263,15 @@ namespace LiiteriStatisticsCore.Queries
                     this.sbPreQuery.Append(string.Format(
                         "INSERT INTO @{0} SELECT {1} FROM {2} WHERE {3}.{4}({5}) = 1\n",
                         paramName,
-                        schema["SubIdColumn"],
-                        schema["SubFromString"],
+                        SchemaDataFormat(schema["SubIdColumn"]),
+                        SchemaDataFormat(schema["SubFromString"]),
                         geom1,
                         func,
                         geom2));
 
                     string expr = string.Format(
                         "{0} IN (SELECT id FROM @{1})",
-                        schema["MainIdColumn"],
+                        SchemaDataFormat(schema["MainIdColumn"]),
                         paramName);
 
                     return expr;
@@ -575,6 +594,20 @@ GROUP BY
             Debug.WriteLine(string.Format(
                 "We have these areaTypes available: [{0}]",
                 string.Join(",", this.AvailableAreaTypes)));
+
+            /*
+            var schema = AreaTypeMappings.GetDatabaseSchema(this.GroupByAreaTypeIdIs);
+            if (schema["GeometryColumn"] != null &&
+                    schema["GeometryColumn"].Length > 0) {
+                this.fields.Add("A2.KoordErTmPohj AS AreaPointLat");
+                this.groups.Add("A2.KoordErTmPohj");
+                this.fields.Add("A2.KoordErTmIta AS AreaPointLon");
+                this.groups.Add("A2.KoordErTmIta");
+            } else {
+                this.fields.Add("NULL AS AreaPointLat");
+                this.fields.Add("NULL AS AreaPointLon");
+            }
+            */
 
             switch (this.CalculationTypeIdIs) {
                 case 1: // normal

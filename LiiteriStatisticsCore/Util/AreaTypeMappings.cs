@@ -91,11 +91,9 @@ namespace LiiteriStatisticsCore.Util
                     "SubAlternativeIdColumn",
                     "SubYearColumn",
                     "GeometryColumn",
-                    "GeometryJoin",
                     "SubFromString",
                     "SubWhereString",
                     "JoinQuery",
-                    "ListQuery",
                     }) {
                 if (queryElem.Element(key) != null) {
                     schema[key] = queryElem.Element(key).Value.ToString();

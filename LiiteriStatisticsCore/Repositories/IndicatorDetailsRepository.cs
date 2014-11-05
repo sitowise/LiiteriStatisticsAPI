@@ -96,7 +96,7 @@ namespace LiiteriStatisticsCore.Repositories
                         areaTypes.Add((Models.AreaType)
                             areaTypeFactory.Create(a, rdr));
                     }
-                    
+
                     /* DataAreaTypes (or "database areatypes") are not
                      * exposed by the API, but are used internally */
                     dataAreaType = (Models.DataAreaType)

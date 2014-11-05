@@ -18,6 +18,9 @@ namespace LiiteriStatisticsCore.Factories
             obj.AlternativeId = (string) rdr["AlternativeId"].ToString();
             obj.Year = (int) rdr["Year"];
             obj.PrivacyLimitTriggered = false;
+
+            //obj.AreaPointLat = (int?) this.GetValueOrNull(rdr, "AreaPointLat");
+            //obj.AreaPointLon = (int?) this.GetValueOrNull(rdr, "AreaPointLon");
             return obj;
         }
     }
