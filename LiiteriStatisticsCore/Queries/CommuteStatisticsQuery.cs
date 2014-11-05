@@ -231,6 +231,7 @@ namespace LiiteriStatisticsCore.Queries
                         "t_koti",
                         "u_kvjarj",
                         "x_tuntem",
+                        "distance_avg",
                         }.Contains(value)) {
                     throw new ArgumentException("Unrecognized type: " + value);
                 }
@@ -355,8 +356,16 @@ namespace LiiteriStatisticsCore.Queries
             logger.Debug("Statistics query: commute statistics");
 
             //this.fields.Add(string.Format("SUM({0}) AS Value", this.Type));
-            this.fields.Add(string.Format(
-                "CAST(SUM(yht) AS FLOAT) AS Value", this.Type));
+            switch (this.Type) {
+                case "distance_avg":
+                    this.fields.Add(string.Format(
+                        "AVG(matka) AS Value"));
+                    break;
+                default:
+                    this.fields.Add(string.Format(
+                        "CAST(SUM({0}) AS FLOAT) AS Value", this.Type));
+                    break;
+            }
 
             /*
             this.fields.Add("NULL AS AreaPointLat");
@@ -371,9 +380,13 @@ namespace LiiteriStatisticsCore.Queries
             string tableName;
             if (this.YearIs >= 2008) {
                 tableName = "FactTyomatkaTOL2008_Tyopaikka_Asuinpaikka";
-                this.fields.Add("CAST(T.vuosi AS INTEGER) AS Year");
-                this.groups.Add("T.vuosi");
-                this.whereList.Add("T.vuosi = @YearIs");
+                tableName = "FactTyomatkaTOL2008";
+                //this.fields.Add("CAST(T.vuosi AS INTEGER) AS Year");
+                this.fields.Add("T.Jakso_ID AS Year");
+                //this.groups.Add("T.vuosi");
+                this.groups.Add("T.Jakso_ID");
+                //this.whereList.Add("T.vuosi = @YearIs");
+                this.whereList.Add("T.Jakso_ID = @YearIs");
             } else {
                 tableName = "FactTyomatkaTOL2002";
                 this.fields.Add("T.Jakso_ID AS Year");
