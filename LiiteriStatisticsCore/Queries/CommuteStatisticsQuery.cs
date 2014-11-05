@@ -190,7 +190,7 @@ namespace LiiteriStatisticsCore.Queries
                 parser.SpatialHandler =
                     this.SpatialHandler("A_work", "A2_work");
 
-                string whereString = parser.Parse(this.HomeFilterQueryString);
+                string whereString = parser.Parse(this.WorkFilterQueryString);
                 this.whereList.Add(whereString);
             }
         }
@@ -358,8 +358,10 @@ namespace LiiteriStatisticsCore.Queries
             this.fields.Add(string.Format(
                 "CAST(SUM(yht) AS FLOAT) AS Value", this.Type));
 
+            /*
             this.fields.Add("NULL AS AreaPointLat");
             this.fields.Add("NULL AS AreaPointLon");
+            */
 
             this.SetFilters();
             this.SetGroups();
