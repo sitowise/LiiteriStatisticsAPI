@@ -48,8 +48,90 @@ namespace LiiteriStatisticsCore.Queries
             }
         }
 
+        public int GenderIs
+        {
+            get
+            {
+                return (int) this.Parameters["GenderIs"].Value;
+            }
+            set
+            {
+                if (value >= 0 && value <= 2) {
+                    this.Parameters.Add("GenderIs", value);
+                } else {
+                    logger.Error("Invalid gender value: " + value);
+                    throw new ArgumentException("Invalid gender value");
+                }
+            }
+        }
+
+        private string _Type;
+        public string Type
+        {
+            get
+            {
+                return _Type;
+            }
+
+            set
+            {
+                if (!new string[] {
+                        "yht",
+                        "distance_avg",
+
+                        /* FactTyomatkaTOL2008 */
+                        "a_alkut",
+                        "b_kaivos",
+                        "c_teoll",
+                        "d_infra1",
+                        "e_infra2",
+                        "f_rakent",
+                        "g_kauppa",
+                        "h_kulj",
+                        "i_majrav",
+                        "j_info",
+                        "k_raha",
+                        "l_kiint",
+                        "m_tekn",
+                        "n_halpa",
+                        "o_julk",
+                        "p_koul",
+                        "q_terv",
+                        "r_taide",
+                        "s_muupa",
+                        "t_koti",
+                        "u_kvjarj",
+                        "x_tuntem",
+
+                        /* FactTyomatkaTOL2002 */
+                        "a_alkutuot",
+                        "b_kala",
+                        "c_kaivuu",
+                        "d_teoll",
+                        "e_teknhu",
+                        "f_rakent",
+                        "g_kauppa",
+                        "h_majrav",
+                        "i_liiken",
+                        "j_raha",
+                        "k_kivutu",
+                        "l_julkhal",
+                        "m_koul",
+                        "n_tervsos",
+                        "o_muuyhtk",
+                        "p_tyonant",
+                        "q_kvjarj",
+                        "x_tuntem",
+                        }.Contains(value)) {
+                    throw new ArgumentException("Unrecognized type: " + value);
+                }
+                this._Type = value;
+            }
+        }
+
         /* Grouping */
         #region grouping
+
         private class GroupingInfo
         {
             private string _Type;
@@ -86,6 +168,76 @@ namespace LiiteriStatisticsCore.Queries
                 };
             }
         }
+
+        private void SetGroups()
+        {
+            if (this.GroupByAreaTypeIdIs != null) {
+                string[] group = this.GroupByAreaTypeIdIs.Split(':');
+
+                Func<string, string> dataFormat = str => string.Format(str,
+                    group[0] == "home" ? "A2_home" : "A2_work",
+                    group[0] == "home" ? "A_home" : "A_work");
+
+                var schema = AreaTypeMappings.GetDatabaseSchema(group[1]);
+
+                string idColumn = schema["MainIdColumn"];
+                idColumn = dataFormat(idColumn);
+
+                if (idColumn != null && idColumn.Length > 0) {
+                    this.fields.Add(string.Format("{0} AS AreaId", idColumn));
+                    this.groups.Add(idColumn);
+                    /* ordering is important to assure side-by-side queries
+                     * are handled properly */
+                    this.orders.Add(idColumn);
+                } else {
+                    this.fields.Add("-1 AS AreaId");
+                }
+
+                string nameColumn = schema["SubNameColumn"];
+                if (nameColumn != null && nameColumn.Length > 0) {
+                    nameColumn = dataFormat(nameColumn);
+                    this.fields.Add(string.Format(
+                        "{0} AS AreaName", nameColumn));
+                    this.groups.Add(nameColumn);
+                } else {
+                    this.fields.Add("NULL AS AreaName");
+                }
+
+                string alternativeIdColumn = schema["SubAlternativeIdColumn"];
+                if (alternativeIdColumn != null &&
+                        alternativeIdColumn.Length > 0) {
+                    alternativeIdColumn = dataFormat(alternativeIdColumn);
+                    this.fields.Add(string.Format(
+                        "{0} AS AlternativeId", alternativeIdColumn));
+                    this.groups.Add(alternativeIdColumn);
+                } else {
+                    this.fields.Add("NULL AS AlternativeId");
+                }
+
+                if (schema["JoinQuery"] != null) {
+                    /* alias substitutions are needed because the names
+                     * will be different in CommuteStatistics */
+                    string joinQuery = schema["JoinQuery"];
+                    joinQuery = dataFormat(joinQuery);
+
+                    this.sbFrom.Append("\n    ");
+                    this.sbFrom.Append(joinQuery);
+                }
+
+                if (group[0] == "home") {
+                    this.ReduceUsableAreaTypes_Home(group[1]);
+                } else if (group[0] == "work") {
+                    this.ReduceUsableAreaTypes_Work(group[1]);
+                } else {
+                    throw new Exception("Invalid group type: " + group[0]);
+                }
+            } else {
+                this.fields.Add("NULL AS AreaId");
+                this.fields.Add("NULL AS AreaName");
+                this.fields.Add("NULL AS AlternativeId");
+            }
+        }
+
         #endregion
 
         /* Filters */
@@ -127,6 +279,14 @@ namespace LiiteriStatisticsCore.Queries
                     // geom2 should be geometry
                 }
 
+                if (tableName.EndsWith("work")) {
+                    this.ReduceUsableAreaTypes_Work(areaType);
+                } else if (tableName.EndsWith("home")) {
+                    this.ReduceUsableAreaTypes_Home(areaType);
+                } else {
+                    throw new Exception("Unexpected tableName: " + tableName);
+                }
+
                 string paramName =
                     "SpatialParam_" +
                     (++this.GeometryParameterCount).ToString();
@@ -165,7 +325,7 @@ namespace LiiteriStatisticsCore.Queries
                 parser.ValueHandler = valueHandler;
                 parser.IdHandler = delegate(string name)
                 {
-                    /* StatisticsQuery would call ReduceUsableAreaTypes here */
+                    this.ReduceUsableAreaTypes_Home(name);
                     var schema = AreaTypeMappings.GetDatabaseSchema(name);
                     return string.Format(schema["MainIdColumn"],
                         "A2_home", "A_home");
@@ -182,7 +342,7 @@ namespace LiiteriStatisticsCore.Queries
                 parser.ValueHandler = valueHandler;
                 parser.IdHandler = delegate(string name)
                 {
-                    /* StatisticsQuery would call ReduceUsableAreaTypes here */
+                    this.ReduceUsableAreaTypes_Work(name);
                     var schema = AreaTypeMappings.GetDatabaseSchema(name);
                     return string.Format(schema["MainIdColumn"],
                         "A2_work", "A_work");
@@ -197,46 +357,31 @@ namespace LiiteriStatisticsCore.Queries
 
         #endregion
 
-        private string _Type;
-        public string Type
-        {
-            get
-            {
-                return _Type;
-            }
+        /* At first, we assume both 2(municipality) and 1(grid) are usable
+         * areatypes, and later we will reduce this list based on
+         * filters/groups */
+        //private int[] UsableAreaTypes = new int[] { 2, 1 };
 
-            set
-            {
-                if (!new string[] {
-                        "yht",
-                        "a_alkut",
-                        "b_kaivos",
-                        "c_teoll",
-                        "d_infra1",
-                        "e_infra2",
-                        "f_rakent",
-                        "g_kauppa",
-                        "h_kulj",
-                        "i_majrav",
-                        "j_info",
-                        "k_raha",
-                        "l_kiint",
-                        "m_tekn",
-                        "n_halpa",
-                        "o_julk",
-                        "p_koul",
-                        "q_terv",
-                        "r_taide",
-                        "s_muupa",
-                        "t_koti",
-                        "u_kvjarj",
-                        "x_tuntem",
-                        "distance_avg",
-                        }.Contains(value)) {
-                    throw new ArgumentException("Unrecognized type: " + value);
-                }
-                this._Type = value;
-            }
+        /* Instead of the commented out UsableAreaTypes above, let's
+         * do individual UsableAreaTypes for both work and home */
+        private int[] UsableAreaTypes_Work = new int[] { 2, 1 };
+        private void ReduceUsableAreaTypes_Work(string areaType)
+        {
+            int[] dbAreaTypes = AreaTypeMappings.GetDatabaseAreaTypes(areaType);
+            this.UsableAreaTypes_Work = (
+                from a in this.UsableAreaTypes_Work
+                where dbAreaTypes.Contains<int>(a)
+                select a).ToArray();
+        }
+
+        private int[] UsableAreaTypes_Home = new int[] { 2, 1 };
+        private void ReduceUsableAreaTypes_Home(string areaType)
+        {
+            int[] dbAreaTypes = AreaTypeMappings.GetDatabaseAreaTypes(areaType);
+            this.UsableAreaTypes_Home = (
+                from a in this.UsableAreaTypes_Home
+                where dbAreaTypes.Contains<int>(a)
+                select a).ToArray();
         }
 
         public CommuteStatisticsQuery() : base()
@@ -280,75 +425,29 @@ namespace LiiteriStatisticsCore.Queries
             return sb.ToString();
         }
 
-        private void SetGroups()
-        {
-            if (this.GroupByAreaTypeIdIs != null) {
-                string[] group = this.GroupByAreaTypeIdIs.Split(':');
-
-                Func<string, string> dataFormat = str => string.Format(str,
-                    group[0] == "home" ? "A2_home" : "A2_work",
-                    group[0] == "home" ? "A_home" : "A_work");
-
-                var schema = AreaTypeMappings.GetDatabaseSchema(group[1]);
-
-                string idColumn = schema["MainIdColumn"];
-                idColumn = dataFormat(idColumn);
-
-                if (idColumn != null && idColumn.Length > 0) {
-                    this.fields.Add(string.Format("{0} AS AreaId", idColumn));
-                    this.groups.Add(idColumn);
-                    /* ordering is important to assure side-by-side queries
-                     * are handled properly */
-                    this.orders.Add(idColumn);
-                } else {
-                    this.fields.Add("-1 AS AreaId");
-                }
-
-                string nameColumn = schema["SubNameColumn"];
-                if (nameColumn != null && nameColumn.Length > 0) {
-                    nameColumn = dataFormat(nameColumn);
-                    this.fields.Add(string.Format("{0} AS AreaName", nameColumn));
-                    this.groups.Add(nameColumn);
-                } else {
-                    this.fields.Add("NULL AS AreaName");
-                }
-
-                string alternativeIdColumn = schema["SubAlternativeIdColumn"];
-                if (alternativeIdColumn != null && alternativeIdColumn.Length > 0) {
-                    alternativeIdColumn = dataFormat(alternativeIdColumn);
-                    this.fields.Add(string.Format(
-                        "{0} AS AlternativeId", alternativeIdColumn));
-                    this.groups.Add(alternativeIdColumn);
-                } else {
-                    this.fields.Add("NULL AS AlternativeId");
-                }
-
-                if (schema["JoinQuery"] != null) {
-                    /* alias substitutions are needed because the names
-                     * will be different in CommuteStatistics */
-                    string joinQuery = schema["JoinQuery"];
-                    joinQuery = string.Format(joinQuery,
-                        group[0] == "home" ? "A2_home" : "A2_work",
-                        group[0] == "home" ? "A_home" : "A_work");
-
-                    this.sbFrom.Append("\n    ");
-                    this.sbFrom.Append(joinQuery);
-                }
-            } else {
-                this.fields.Add("NULL AS AreaId");
-                this.fields.Add("NULL AS AreaName");
-                this.fields.Add("NULL AS AlternativeId");
-            }
-
-            /* add SubNameColumn here */
-            /* add SubAlternativeIdColumn here */
-        }
-
-        /* TODO: This only needs to exist if there's a potential choice
-         * between DatabaseAreaTypeIdIs == 1 or 2 */
+        private int DatabaseAreaTypeId_Home;
+        private int DatabaseAreaTypeId_Work;
         private void SetDatabaseAreaTypeId()
         {
-            this.Parameters.Add("DatabaseAreaTypeIdIs", 1);
+            if (this.UsableAreaTypes_Work.Length == 0 ||
+                    this.UsableAreaTypes_Home.Length == 0) {
+                throw new Exception(
+                    "No suitable DatabaseAreaType could be determined with the supplied parameters");
+            }
+
+            /* Here we pick our preferred DatabaseAreaType by simply picking
+             * the largest number. However, it may be necessary to start
+             * using some priority value instead */
+
+            int dbAreaType;
+
+            Array.Sort(this.UsableAreaTypes_Work);
+            dbAreaType = this.UsableAreaTypes_Work.Last();
+            this.DatabaseAreaTypeId_Work = dbAreaType;
+
+            Array.Sort(this.UsableAreaTypes_Home);
+            dbAreaType = this.UsableAreaTypes_Home.Last();
+            this.DatabaseAreaTypeId_Home = dbAreaType;
         }
 
         public override string GetQueryString()
@@ -358,8 +457,7 @@ namespace LiiteriStatisticsCore.Queries
             //this.fields.Add(string.Format("SUM({0}) AS Value", this.Type));
             switch (this.Type) {
                 case "distance_avg":
-                    this.fields.Add(string.Format(
-                        "AVG(matka) AS Value"));
+                    this.fields.Add("AVG(matka) AS Value");
                     break;
                 default:
                     this.fields.Add(string.Format(
@@ -367,14 +465,8 @@ namespace LiiteriStatisticsCore.Queries
                     break;
             }
 
-            /*
-            this.fields.Add("NULL AS AreaPointLat");
-            this.fields.Add("NULL AS AreaPointLon");
-            */
-
             this.SetFilters();
             this.SetGroups();
-
             this.SetDatabaseAreaTypeId();
 
             string tableName;
@@ -396,35 +488,69 @@ namespace LiiteriStatisticsCore.Queries
             logger.Debug(string.Format(
                 "Table determined to be: {0}", tableName));
 
-            string queryString = @"
-SELECT
-    {1}
+            StringBuilder sbAreaJoin = new StringBuilder();
 
-FROM
-    {0} T
-
+            /* Work */
+            if (this.DatabaseAreaTypeId_Work == 1) {
+                sbAreaJoin.Append(@"
     INNER JOIN DimAlue A_work ON
         (A_work.Alue_ID = T.TRuutu_Alue_ID AND
-        A_work.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+        A_work.AlueTaso_ID = 1 AND
         (@YearIs BETWEEN A_work.Alkaen_Jakso_ID AND A_work.Asti_Jakso_ID))
+");
+            } else if (this.DatabaseAreaTypeId_Work == 2) {
+                sbAreaJoin.Append(@"
+    INNER JOIN DimAlue A_work ON
+        (A_work.Alue_ID = T.TKunta_Alue_ID AND
+        A_work.AlueTaso_ID = 2 AND
+        (@YearIs BETWEEN A_work.Alkaen_Jakso_ID AND A_work.Asti_Jakso_ID))
+");
+            } else {
+                throw new Exception("Invalid DatabaseAreaTypeId_Work specified");
+            }
 
+            /* Home */
+            if (this.DatabaseAreaTypeId_Home == 1) {
+                sbAreaJoin.Append(@"
     INNER JOIN DimAlue A_home ON
         (A_home.Alue_ID = T.ARuutu_Alue_ID AND
-        A_home.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+        A_home.AlueTaso_ID = 1 AND
         (@YearIs BETWEEN A_home.Alkaen_Jakso_ID AND A_home.Asti_Jakso_ID))
+");
+            } else if (this.DatabaseAreaTypeId_Home == 2) {
+                sbAreaJoin.Append(@"
+    INNER JOIN DimAlue A_home ON
+        (A_home.Alue_ID = T.AKunta_Alue_ID AND
+        A_home.AlueTaso_ID = 2 AND
+        (@YearIs BETWEEN A_home.Alkaen_Jakso_ID AND A_home.Asti_Jakso_ID))
+");
+            } else {
+                throw new Exception("Invalid DatabaseAreaTypeId_Home specified");
+            }
+
+            this.whereList.Add("T.sp = @GenderIs");
+
+            string queryString = @"
+SELECT
+    {0}
+
+FROM
+    {1} T
 {2}
+{3}
 
 WHERE
-    {3}
-
-GROUP BY
     {4}
 
-{5}
+GROUP BY
+    {5}
+
+{6}
 ";
             queryString = string.Format(queryString,
-                tableName,
                 this.GetFieldsString(),
+                tableName,
+                sbAreaJoin.ToString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
                 this.GetGroupString(),

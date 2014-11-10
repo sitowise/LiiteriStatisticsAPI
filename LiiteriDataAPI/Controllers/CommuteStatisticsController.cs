@@ -42,6 +42,7 @@ namespace LiiteriDataAPI.Controllers
         public HttpResponseMessage GetCommuteStatistics(
             int[] years,
             string type,
+            int gender = 0,
             string group = null,
             string work_filter = null,
             string home_filter = null,
@@ -54,6 +55,7 @@ namespace LiiteriDataAPI.Controllers
                     var query = new CommuteStatisticsQuery();
                     query.GroupByAreaTypeIdIs = group;
                     query.YearIs = years[0];
+                    query.GenderIs = gender;
 
                     if (work_filter != null && work_filter.Length == 0) {
                         work_filter = null;
