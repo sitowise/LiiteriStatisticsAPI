@@ -41,7 +41,7 @@ namespace LiiteriDataAPI.Controllers
         [HttpGet]
         public HttpResponseMessage GetCommuteStatistics(
             int[] years,
-            string type,
+            string type = "yht",
             int gender = 0,
             string group = null,
             string work_filter = null,
