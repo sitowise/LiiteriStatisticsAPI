@@ -39,7 +39,16 @@ namespace LiiteriDataAPI.Controllers
 
         [Route("commuteStatistics/")]
         [HttpGet]
+        public IEnumerable<CommuteStatisticsIndicator>
+            GetCommuteStatisticsIndicators()
+        {
+            return new CommuteStatisticsIndicatorRepository().GetAll();
+        }
+
+        [Route("commuteStatistics/{statisticsId}")]
+        [HttpGet]
         public HttpResponseMessage GetCommuteStatistics(
+            int statisticsId,
             int[] years,
             string type = "yht",
             int gender = 0,
@@ -48,11 +57,15 @@ namespace LiiteriDataAPI.Controllers
             string home_filter = null,
             bool debug = false)
         {
+            var indicator =
+                new CommuteStatisticsIndicatorRepository().Get(statisticsId);
+
             using (DbConnection db = this.GetDbConnection()) {
                 var queries = new List<CommuteStatisticsQuery>();
 
                 foreach (int year in years) {
                     var query = new CommuteStatisticsQuery();
+                    query.TableName = indicator.TableName;
                     query.GroupByAreaTypeIdIs = group;
                     query.YearIs = years[0];
                     query.GenderIs = gender;

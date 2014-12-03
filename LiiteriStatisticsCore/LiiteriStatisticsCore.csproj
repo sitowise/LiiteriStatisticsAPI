@@ -69,6 +69,7 @@
     <Compile Include="Models\AreaType.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\CommuteStatisticsIndicator.cs" />
     <Compile Include="Models\DataAreaType.cs" />
     <Compile Include="Models\ILiiteriEntity.cs" />
     <Compile Include="Models\ILiiteriMarker.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Queries\StatisticsQuery.cs" />
     <Compile Include="Queries\ThemeQuery.cs" />
     <Compile Include="Repositories\AreaRepository.cs" />
+    <Compile Include="Repositories\CommuteStatisticsIndicatorRepository.cs" />
     <Compile Include="Repositories\IndicatorBriefRepository.cs" />
     <Compile Include="Repositories\IndicatorDetailsRepository.cs" />
     <Compile Include="Repositories\IReadRepository.cs" />

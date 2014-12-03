@@ -36,6 +36,8 @@ namespace LiiteriStatisticsCore.Queries
          * Intended to be used with geometry stuff */
         private StringBuilder sbPreQuery;
 
+        public string TableName { get; set; }
+
         public int YearIs
         {
             get
@@ -469,24 +471,13 @@ namespace LiiteriStatisticsCore.Queries
             this.SetGroups();
             this.SetDatabaseAreaTypeId();
 
-            string tableName;
-            if (this.YearIs >= 2008) {
-                tableName = "FactTyomatkaTOL2008_Tyopaikka_Asuinpaikka";
-                tableName = "FactTyomatkaTOL2008";
-                //this.fields.Add("CAST(T.vuosi AS INTEGER) AS Year");
-                this.fields.Add("T.Jakso_ID AS Year");
-                //this.groups.Add("T.vuosi");
-                this.groups.Add("T.Jakso_ID");
-                //this.whereList.Add("T.vuosi = @YearIs");
-                this.whereList.Add("T.Jakso_ID = @YearIs");
-            } else {
-                tableName = "FactTyomatkaTOL2002";
-                this.fields.Add("T.Jakso_ID AS Year");
-                this.groups.Add("T.Jakso_ID");
-                this.whereList.Add("T.Jakso_ID = @YearIs");
-            }
+            /* For different tables this may need to be a variable
+             * set by the CommuteStatisticsIndicator */
+            this.fields.Add("T.Jakso_ID AS Year");
+            this.groups.Add("T.Jakso_ID");
+
             logger.Debug(string.Format(
-                "Table determined to be: {0}", tableName));
+                "Table determined to be: {0}", this.TableName));
 
             StringBuilder sbAreaJoin = new StringBuilder();
 
@@ -549,7 +540,7 @@ GROUP BY
 ";
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
-                tableName,
+                this.TableName,
                 sbAreaJoin.ToString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
