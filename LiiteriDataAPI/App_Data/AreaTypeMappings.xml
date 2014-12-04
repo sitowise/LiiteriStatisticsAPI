@@ -308,7 +308,7 @@
             <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_500m_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="7" name="Ruutu 500m" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
@@ -324,7 +324,7 @@
             <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_1km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="22" name="Ruutu 1km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
@@ -340,7 +340,7 @@
             <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_2km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="23" name="Ruutu 2km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
@@ -356,7 +356,7 @@
             <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_5km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="24" name="Ruutu 5km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
@@ -372,7 +372,7 @@
             <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_10km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="25" name="Ruutu 10km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
@@ -388,7 +388,7 @@
             <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_20km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="26" name="Ruutu 20km" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
