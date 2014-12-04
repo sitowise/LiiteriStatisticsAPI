@@ -305,7 +305,7 @@
             <MainIdColumn>{1}.Ruutu_500m_Alue_ID</MainIdColumn>
             <SubIdColumn>{0}.Alue_ID</SubIdColumn>
             <SubNameColumn>{1}.Ruutu_500m_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
@@ -321,7 +321,7 @@
             <MainIdColumn>{1}.Ruutu_1km_Alue_ID</MainIdColumn>
             <SubIdColumn>{0}.Alue_ID</SubIdColumn>
             <SubNameColumn>{1}.Ruutu_1km_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
@@ -337,7 +337,7 @@
             <MainIdColumn>{1}.Ruutu_2km_Alue_ID</MainIdColumn>
             <SubIdColumn>{0}.Alue_ID</SubIdColumn>
             <SubNameColumn>{1}.Ruutu_2km_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
@@ -353,7 +353,7 @@
             <MainIdColumn>{1}.Ruutu_5km_Alue_ID</MainIdColumn>
             <SubIdColumn>{0}.Alue_ID</SubIdColumn>
             <SubNameColumn>{1}.Ruutu_5km_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
@@ -369,7 +369,7 @@
             <MainIdColumn>{1}.Ruutu_10km_Alue_ID</MainIdColumn>
             <SubIdColumn>{0}.Alue_ID</SubIdColumn>
             <SubNameColumn>{1}.Ruutu_10km_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
@@ -385,7 +385,7 @@
             <MainIdColumn>{1}.Ruutu_20km_Alue_ID</MainIdColumn>
             <SubIdColumn>{0}.Alue_ID</SubIdColumn>
             <SubNameColumn>{1}.Ruutu_20km_Alue_ID</SubNameColumn>
-            <SubAlternativeIdColumn/>
+            <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
