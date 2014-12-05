@@ -46,6 +46,7 @@ namespace LiiteriStatisticsCore.Queries
             }
             set
             {
+                this.whereList.Add("T.Jakso_ID = @YearIs");
                 this.Parameters.Add("YearIs", value);
             }
         }
