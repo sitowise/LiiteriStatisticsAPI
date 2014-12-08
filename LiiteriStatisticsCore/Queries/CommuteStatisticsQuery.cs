@@ -460,7 +460,7 @@ namespace LiiteriStatisticsCore.Queries
             //this.fields.Add(string.Format("SUM({0}) AS Value", this.Type));
             switch (this.Type) {
                 case "distance_avg":
-                    this.fields.Add("AVG(matka) AS Value");
+                    this.fields.Add("ROUND(AVG(matka) / 1000, 0) AS Value");
                     break;
                 default:
                     this.fields.Add(string.Format(
