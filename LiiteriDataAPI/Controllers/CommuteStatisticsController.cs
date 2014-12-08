@@ -60,14 +60,15 @@ namespace LiiteriDataAPI.Controllers
             var indicator =
                 new CommuteStatisticsIndicatorRepository().Get(statisticsId);
 
+
             using (DbConnection db = this.GetDbConnection()) {
                 var queries = new List<CommuteStatisticsQuery>();
 
                 foreach (int year in years) {
                     var query = new CommuteStatisticsQuery();
-                    query.TableName = indicator.TableName;
                     query.GroupByAreaTypeIdIs = group;
-                    query.YearIs = years[0];
+                    query.YearIs = year;
+                    query.TableName = indicator.TableName;
                     query.GenderIs = gender;
 
                     if (work_filter != null && work_filter.Length == 0) {
