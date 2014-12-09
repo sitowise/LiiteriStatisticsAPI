@@ -296,11 +296,16 @@ namespace LiiteriStatisticsCore.Queries
                 this.sbPreQuery.Append(string.Format(
                     "DECLARE @{0} TABLE (id INT NOT NULL)\n",
                     paramName));
+
+                int databaseAreaTypeId =
+                    AreaTypeMappings.GetPrimaryDatabaseAreaType(areaType);
                 this.sbPreQuery.Append(string.Format(
-                    "INSERT INTO @{0} SELECT {1} FROM {2} WHERE {3}.{4}({5}) = 1\n",
+                    "INSERT INTO @{0} SELECT {1} FROM {2} WHERE {3} = {4} AND {5}.{6}({7}) = 1\n",
                     paramName,
                     dataFormat(schema["SubIdColumn"]),
                     dataFormat(schema["SubFromString"]),
+                    dataFormat("{0}.AlueTaso_ID"),
+                    databaseAreaTypeId,
                     geom1,
                     func,
                     geom2));
