@@ -18,6 +18,16 @@ using LiiteriStatisticsCore.Repositories;
 
 namespace LiiteriDataAPI.Controllers
 {
+    public class CommuteStatisticsRequest
+    {
+        public int[] years { get; set; }
+        public string type { get; set; }
+        public int gender { get; set; }
+        public string group { get; set; }
+        public string work_filter { get; set; }
+        public string home_filter { get; set; }
+    }
+
     [RoutePrefix("v1")]
     public class CommuteStatisticsController : ApiController
     {
@@ -45,7 +55,23 @@ namespace LiiteriDataAPI.Controllers
             return new CommuteStatisticsIndicatorRepository().GetAll();
         }
 
-        [Route("commuteStatistics/{statisticsId}")]
+        [Route("commuteStatistics/{statisticsId}/")]
+        [HttpPost]
+        public HttpResponseMessage GetCommuteStatistics(
+            int statisticsId,
+            [FromBody] CommuteStatisticsRequest reqobj)
+        {
+            return this.GetCommuteStatistics(
+                statisticsId,
+                reqobj.years,
+                reqobj.type,
+                reqobj.gender,
+                reqobj.group,
+                reqobj.work_filter,
+                reqobj.home_filter);
+        }
+
+        [Route("commuteStatistics/{statisticsId}/")]
         [HttpGet]
         public HttpResponseMessage GetCommuteStatistics(
             int statisticsId,
@@ -59,7 +85,6 @@ namespace LiiteriDataAPI.Controllers
         {
             var indicator =
                 new CommuteStatisticsIndicatorRepository().Get(statisticsId);
-
 
             using (DbConnection db = this.GetDbConnection()) {
                 var queries = new List<CommuteStatisticsQuery>();
