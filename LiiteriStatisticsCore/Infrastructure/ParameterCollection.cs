@@ -52,5 +52,29 @@ namespace LiiteriStatisticsCore.Infrastructure
         {
             return item.Name;
         }
+
+        public string[] PushParameters(string prefix, int[] parameters)
+        {
+            string[] paramNames = parameters.Select(
+                    (s, i) => prefix + "_" + i.ToString()
+                ).ToArray();
+            for (int i = 0; i < paramNames.Length; i++) {
+                this.Add(paramNames[i], parameters[i]);
+            }
+
+            return paramNames.Select((s) => "@" + s).ToArray();
+        }
+
+        public string[] PushParameters(string prefix, string[] parameters)
+        {
+            string[] paramNames = parameters.Select(
+                    (s, i) => prefix + "_" + i.ToString()
+                ).ToArray();
+            for (int i = 0; i < paramNames.Length; i++) {
+                this.Add(paramNames[i], parameters[i]);
+            }
+
+            return paramNames.Select((s) => "@" + s).ToArray();
+        }
     }
 }
