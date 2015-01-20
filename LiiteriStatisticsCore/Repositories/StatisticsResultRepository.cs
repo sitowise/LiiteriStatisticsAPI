@@ -11,6 +11,10 @@ namespace LiiteriStatisticsCore.Repositories
     public class StatisticsResultRepository :
         SqlReadRepository<Models.StatisticsResult>
     {
+        public static readonly log4net.ILog logger =
+            log4net.LogManager.GetLogger(
+                System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         /* IndicatorDetails is needed so we know how to make unit conversions
          * Alternatively move MakeUnitConversions away from this class */
         private Models.IndicatorDetails _Indicator;
@@ -111,25 +115,54 @@ namespace LiiteriStatisticsCore.Repositories
                 /* Reference statistics used for checking privacy limits */
                 Queries.ISqlQuery query2 = querypair.Item2;
 
+                /* Iterate both actual query and reference query, but
+                 * at varying speeds. The list may not be equal, but both
+                 * should be sorted by AreaId */
+
                 using (IEnumerator<Models.StatisticsResult> e1 =
                         this.FindAll(query1).GetEnumerator())
                 using (IEnumerator<Models.StatisticsResult> e2 =
                         this.FindAll(query2).GetEnumerator()) {
-                    while (e1.MoveNext() && e2.MoveNext()) {
-                        /* NOTE: e2 (reference statistics) will also 
-                         * have modifier methods applied on it by
-                         * the repository */
-                        Models.StatisticsResult r1 = e1.Current;
-                        Models.StatisticsResult r2 = e2.Current;
-                        /* We are supposed to be comparing two result tables
-                         * side-by-side, check here that we are doing so */
-                        if (r1.AreaId != r2.AreaId ||
-                                r1.Year != r2.Year) {
-                            throw new Exception(
-                                "Parallel result checking de-sync!");
+                    Models.StatisticsResult ref_r = null;
+                    e2.MoveNext();
+                    ref_r = e2.Current;
+                    /* logger.Debug(string.Format(
+                        "ref not yet fetched, fetched it now and got {0}",
+                        ref_r.AreaId)); */
+
+                    while (e1.MoveNext()) {
+                        Models.StatisticsResult r = e1.Current;
+                        /* logger.Debug(string.Format(
+                            "stepped forward actual query and got {0}",
+                            r.AreaId)); */
+
+                        /* if actual result is greater than current
+                         * reference result, reference result needs to
+                         * be iterated until is equal to or greater
+                         * than actual result */
+                        while (ref_r.AreaId < r.AreaId && e2.MoveNext()) {
+                            /* logger.Debug(string.Format(
+                                "ref ({0}) was less than actual {1}, so stepping ref forward and got {2}",
+                                ref_r.AreaId, r.AreaId, e2.Current.AreaId)); */
+                            ref_r = e2.Current;
                         }
-                        r1 = this.ApplyPrivacyLimits(r1, r2);
-                        yield return r1;
+
+                        /* if our current reference matches the current result,
+                         * apply privacy limits using it. */
+                        if (ref_r.AreaId == r.AreaId) {
+                            /* logger.Debug(string.Format(
+                                "ref ({0}) matches actual {1}, so applying privacy limits",
+                                ref_r.AreaId, r.AreaId)); */
+                            r = this.ApplyPrivacyLimits(r, ref_r);
+                        /*
+                        } else {
+                            logger.Debug(string.Format(
+                                "ref ({0}) does not match actual {1}, so skipping privacy limits",
+                                ref_r.AreaId, r.AreaId));
+                        */
+                        }
+
+                        yield return r;
                     }
                 }
             }
