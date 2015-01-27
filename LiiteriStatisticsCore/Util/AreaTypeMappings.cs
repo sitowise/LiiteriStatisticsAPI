@@ -214,30 +214,6 @@ namespace LiiteriStatisticsCore.Util
                 "No primary virtual areaType for this databaseAreaType!");
         }
 
-        public string GetAvailabilityExpression(
-            string areaTypeId,
-            int databaseAreaTypeId)
-        {
-            if (areaTypeId == null) {
-                throw new ArgumentNullException("areaTypeId must not be null!");
-            }
-            var databaseAreaTypes = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
-                where d.Attribute("id").Value == areaTypeId
-                select d.Element("DatabaseAreaTypes")).Single();
-            var retval = (
-                from d in databaseAreaTypes.Descendants("DatabaseAreaType")
-                where Convert.ToInt32(d.Attribute("id").Value) == databaseAreaTypeId
-                select d.Attribute("availabilityExpression").Value
-                );
-            if (retval.Count() == 0) {
-                throw new Exception(string.Format(
-                    "No availabilityExpression found for this databaseAreaType on {0}!",
-                    areaTypeId));
-            }
-            return (string) retval.Single().ToString();
-        }
-
         public IEnumerable<Models.AreaType> GetAreaTypes()
         {
             var factory = new Factories.AreaTypeFactory();

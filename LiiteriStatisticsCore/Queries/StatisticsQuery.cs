@@ -340,19 +340,6 @@ namespace LiiteriStatisticsCore.Queries
                 "From this list: [{0}], we decided to pick [{1}]",
                 string.Join(", ", this.UsableAreaTypes), dbAreaType));
             this.Parameters.Add("DatabaseAreaTypeIdIs", dbAreaType);
-
-            /* Now that we have chosen the DatabaseAreaTypeId, let's
-             * select the appropriate availability expression,
-             * which will be something like:
-             *
-             * ATJ.Ruutu_Alue_ID = 1
-             *  meaning:
-             * Apu_AlueTallennusJakso.Ruutu_Alue_ID = 1
-             */
-            string availabilityExpression =
-                AreaTypeMappings.GetAvailabilityExpression(
-                    this.GroupByAreaTypeIdIs, dbAreaType);
-            this.whereList.Add(availabilityExpression);
         }
 
         /*
@@ -361,10 +348,10 @@ namespace LiiteriStatisticsCore.Queries
          */
         private string GetQueryString_DerivedDivided()
         {
-            this.fields.Add("ATJ.Jakso_ID AS Year");
-            this.groups.Add("ATJ.Jakso_ID");
+            this.fields.Add("T1.Jakso_ID AS Year");
+            this.groups.Add("T1.Jakso_ID");
 
-            this.fields.Add("(SUM(COALESCE(T1.Arvo, 0)) / SUM(COALESCE(T2.Arvo, 0))) AS Value");
+            this.fields.Add("(SUM(T1.Arvo) / SUM(T2.Arvo)) AS Value");
 
             this.SetFilters();
             this.SetGroups();
@@ -375,36 +362,32 @@ SELECT
     {0}
 
 FROM
-    Apu_AlueTallennusJakso ATJ
+    DimTilasto_JohdettuTilasto_Jako J
 
-    INNER JOIN Apu_TilastoTallennusJakso TTJ ON
-        (TTJ.Jakso_ID = ATJ.Jakso_ID AND
-        TTJ.Tilasto_ID = @IdIs AND
-        TTJ.AlueTaso_ID = @DatabaseAreaTypeIdIs)
+    INNER JOIN FactTilastoarvo T1 ON
+        T1.Tilasto_ID = J.Osoittaja_Tilasto_ID AND
+        T1.Jakso_ID = @YearIs AND
+        T1.AlueTaso_ID = @DatabaseAreaTypeIdIs
+
+    INNER JOIN FactTilastoarvo T2 ON
+        T2.Tilasto_ID = J.Nimittaja_Tilasto_ID AND
+        T2.Jakso_ID = @YearIs AND
+        T2.AlueTaso_ID = @DatabaseAreaTypeIdIs
 
     INNER JOIN DimAlue A ON
-        (A.AlueTaso_ID = TTJ.AlueTaso_ID AND
-        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
+        A.Alue_ID = T1.Alue_ID AND
+        A.Alue_ID = T2.Alue_ID AND
+        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs
 
     {1}
 
-    LEFT OUTER JOIN DimTilasto_JohdettuTilasto_Jako J ON
-        J.Tilasto_ID = TTJ.Tilasto_ID
-
-    LEFT OUTER JOIN FactTilastoarvo T1 ON
-        (T1.Tilasto_ID = J.Osoittaja_Tilasto_ID AND
-        T1.Alue_ID = A.Alue_ID AND
-        T1.Jakso_ID = TTJ.Jakso_ID AND
-        T1.AlueTaso_ID = TTJ.AlueTaso_ID)
-
-    INNER JOIN FactTilastoarvo T2 ON
-        (T2.Tilasto_ID = J.Nimittaja_Tilasto_ID AND
-        T2.Alue_ID = A.Alue_ID AND
-        T2.Jakso_ID = TTJ.Jakso_ID AND
-        T2.AlueTaso_ID = TTJ.AlueTaso_ID)
-
 WHERE
-    ATJ.Jakso_ID = @YearIs
+    J.Tilasto_ID = @IdIs AND
+    T1.Arvo IS NOT NULL AND
+    T2.Arvo IS NOT NULL AND
+    T1.Arvo > 0 AND
+    T2.Arvo > 0
     {2}
 
 GROUP BY
@@ -427,10 +410,10 @@ GROUP BY
          */
         private string GetQueryString_DerivedSummed()
         {
-            this.fields.Add("ATJ.Jakso_ID AS Year");
-            this.groups.Add("ATJ.Jakso_ID");
+            this.fields.Add("T.Jakso_ID AS Year");
+            this.groups.Add("T.Jakso_ID");
 
-            this.fields.Add("SUM(COALESCE(T.Arvo, 0)) AS Value");
+            this.fields.Add("SUM(T.Arvo) AS Value");
 
             this.SetFilters();
             this.SetGroups();
@@ -441,32 +424,22 @@ SELECT
     {0}
 
 FROM
-    Apu_AlueTallennusJakso ATJ
+    DimTilasto_JohdettuTilasto_Summa TS
 
-    INNER JOIN Apu_TilastoTallennusJakso TTJ ON
-        (TTJ.Jakso_ID = ATJ.Jakso_ID AND
-        TTJ.Tilasto_ID = @IdIs AND
-        TTJ.AlueTaso_ID = @DatabaseAreaTypeIdIs)
+    INNER JOIN FactTilastoarvo T ON
+        T.Tilasto_ID = TS.Yhteenlaskettava_Tilasto_ID AND
+        T.Jakso_ID = @YearIs
 
     INNER JOIN DimAlue A ON
-        (A.AlueTaso_ID = TTJ.AlueTaso_ID AND
-        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
+        A.Alue_ID = T.Alue_ID AND
+        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs
 
     {1}
 
-    LEFT OUTER JOIN DimTilasto_JohdettuTilasto_Summa TS ON
-        (TS.Tilasto_ID = TTJ.Tilasto_ID AND
-        TS.Ryhma_SEQ = 0)
-
-    LEFT OUTER JOIN FactTilastoarvo T ON
-        (T.Tilasto_ID = TS.Yhteenlaskettava_Tilasto_ID AND
-        T.Alue_ID = A.Alue_ID AND
-        TTJ.AlueTaso_ID = TTJ.AlueTaso_ID AND
-        T.Jakso_ID = TTJ.Jakso_ID)
-
 WHERE
-    ATJ.Jakso_ID = @YearIs AND
-    ATJ.Kunta_Alue_ID = 1 /* this column is selected by DatabaseAreaType */
+    TS.Tilasto_ID = @IdIs AND
+    TS.Ryhma_SEQ = 0
     {2}
 
 GROUP BY
@@ -494,7 +467,7 @@ GROUP BY
                 throw new Exception("Supplied grouping areaType not suitable for this statistics data!");
             }
 
-            this.fields.Add("ATJ.Jakso_ID AS Year");
+            this.fields.Add("T.Jakso_ID AS Year");
             //this.groups.Add("T1.Jakso_ID");
 
             this.fields.Add("COALESCE(T.Arvo, 0) AS Value");
@@ -510,26 +483,19 @@ GROUP BY
 SELECT
     {0}
 FROM
-    Apu_AlueTallennusJakso ATJ
-
-    INNER JOIN Apu_TilastoTallennusJakso TTJ ON
-        (TTJ.Jakso_ID = ATJ.Jakso_ID AND
-        TTJ.Tilasto_ID = @IdIs AND
-        TTJ.AlueTaso_ID = @DatabaseAreaTypeIdIs)
+    FactTilastoArvo T
 
     INNER JOIN DimAlue A ON
-        (A.AlueTaso_ID = TTJ.AlueTaso_ID AND
-        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
+        A.Alue_ID = T.Alue_ID AND
+        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs
 
     {1}
 
-    LEFT OUTER JOIN FactTilastoarvo T ON
-        (T.Jakso_ID = TTJ.Jakso_ID AND
-        T.AlueTaso_ID = TTJ.AlueTaso_ID AND
-        T.Alue_ID = A.Alue_ID AND
-        T.Tilasto_ID = TTJ.Tilasto_ID)
 WHERE
-    ATJ.Jakso_ID = @YearIs
+    T.Tilasto_ID = @IdIs AND
+    T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+    T.Jakso_ID = @YearIs
     {2}
     {3}
 ";
@@ -548,10 +514,10 @@ WHERE
          */
         private string GetQueryString_Normal()
         {
-            this.fields.Add("ATJ.Jakso_ID AS Year");
-            this.groups.Add("ATJ.Jakso_ID");
+            this.fields.Add("T.Jakso_ID AS Year");
+            this.groups.Add("T.Jakso_ID");
 
-            this.fields.Add("SUM(COALESCE(T.Arvo, 0)) AS Value");
+            this.fields.Add("SUM(T.Arvo) AS Value");
 
             this.SetFilters();
             this.SetGroups();
@@ -560,31 +526,24 @@ WHERE
             string queryString = @"
 SELECT
     {0}
-FROM
-    /* Jakso_ID, ..._Alue_ID == 1/0 */
-    Apu_AlueTallennusJakso ATJ
 
-    /* Tilasto_ID, Jakso_ID, AlueTaso_ID */
-    INNER JOIN Apu_TilastoTallennusJakso TTJ ON
-        (TTJ.Jakso_ID = ATJ.Jakso_ID AND
-        TTJ.Tilasto_ID = @IdIs AND
-        TTJ.AlueTaso_ID = @DatabaseAreaTypeIdIs)
+FROM
+    FactTilastoArvo T
 
     INNER JOIN DimAlue A ON
-        (A.AlueTaso_ID = TTJ.AlueTaso_ID AND
+        (A.Alue_ID = T.Alue_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
         @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
 
     {1}
 
-    LEFT OUTER JOIN FactTilastoarvo T ON
-        (T.AlueTaso_ID = TTJ.AlueTaso_ID AND
-        T.Tilasto_ID = TTJ.Tilasto_ID AND
-        T.Jakso_ID = TTJ.Jakso_ID AND
-        T.Alue_ID = A.Alue_ID)
 WHERE
-    /* The ATJ column is selected by DatabaseAreaTypeId */
-    ATJ.Jakso_ID = @YearIs
+    T.Tilasto_ID = @IdIs AND
+    T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+    T.Arvo IS NOT NULL AND
+    T.Jakso_ID = @YearIs
     {2}
+
 GROUP BY
     {3}
     {4}

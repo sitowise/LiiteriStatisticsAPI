@@ -11,7 +11,7 @@
             <JoinQuery>INNER JOIN DimTaajama {0} ON ({0}.Alue_ID = {1}.Taajama_Alue_ID AND {0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID)</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="urban_area">
@@ -26,7 +26,7 @@
             <JoinQuery>INNER JOIN DimKaupunkiseutu {0} ON ({0}.Alue_ID = {1}.Kaupunkiseutu_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="municipality">
@@ -41,8 +41,8 @@
             <JoinQuery>INNER JOIN DimKunta {0} ON {0}.Alue_ID = {1}.Kunta_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType primary="true" id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType primary="true" id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="sub_region">
@@ -57,9 +57,9 @@
             <JoinQuery>INNER JOIN DimSeutukunta {0} ON {0}.Alue_ID = {1}.Seutukunta_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="17" name="Seutukunta" primary="true" availabilityExpression="ATJ.Seutukunta = 1" />
-            <DatabaseAreaType id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="17" name="Seutukunta" primary="true" />
+            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="region">
@@ -74,10 +74,10 @@
             <JoinQuery>INNER JOIN DimMaakunta {0} ON {0}.Alue_ID = {1}.Maakunta_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="16" name="Maakunta" primary="true" availabilityExpression="ATJ.Maakunta_Alue_ID = 1" />
-            <DatabaseAreaType id="17" name="Seutukunta" availabilityExpression="ATJ.Seutukunta_Alue_ID = 1" />
-            <DatabaseAreaType id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="16" name="Maakunta" primary="true" />
+            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="ely_e">
@@ -92,8 +92,8 @@
             <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_E_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="ely_l">
@@ -108,8 +108,8 @@
             <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_L_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="ely_y">
@@ -125,8 +125,8 @@
             <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_Y_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="finland">
@@ -141,11 +141,11 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="21" name="Suomi" primary="true" />
-            <DatabaseAreaType id="18" name="ELY" availabilityExpression="ATJ.ELY_L_Alue_ID = 1"/>
-            <DatabaseAreaType id="16" name="Maakunta" availabilityExpression="ATJ.Maakunta_Alue_ID = 1" />
-            <DatabaseAreaType id="17" name="Seutukunta" availabilityExpression="ATJ.Seutukunta_Alue_ID = 1" />
-            <DatabaseAreaType id="2" name="Kunta" availabilityExpression="ATJ.Kunta_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="18" name="ELY"/>
+            <DatabaseAreaType id="16" name="Maakunta" />
+            <DatabaseAreaType id="17" name="Seutukunta" />
+            <DatabaseAreaType id="2" name="Kunta" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="planned_area">
@@ -160,7 +160,7 @@
             <JoinQuery>INNER JOIN DimAsemakaavoitettuAlue {0} ON ({0}.Alue_ID = {1}.AsemakaavoitettuAlue_Alue_ID AND {0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID)</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="neighborhood_type">
@@ -175,7 +175,7 @@
             <JoinQuery>INNER JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="administrative_law_area">
@@ -190,7 +190,7 @@
             <JoinQuery>INNER JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = {1}.HallintoOikeus_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="shop_area">
@@ -205,7 +205,7 @@
             <JoinQuery>INNER JOIN DimKaupanAlue {0} ON {0}.Alue_ID = {1}.KaupanAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID) INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.KeskustaTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="city_rural_area_type">
@@ -220,7 +220,7 @@
             <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="urban_area_type">
@@ -235,7 +235,7 @@
             <JoinQuery>INNER JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="city_central_area">
@@ -250,7 +250,7 @@
             <JoinQuery>INNER JOIN DimKeskusta {0} ON ({0}.Alue_ID = {1}.Keskusta_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="city_central_type">
@@ -265,7 +265,7 @@
             <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="locality_density_type">
@@ -280,7 +280,7 @@
             <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid250m">
@@ -296,7 +296,7 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="1" name="Ruutu 250m" primary="true" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" primary="true" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid500m">
@@ -312,8 +312,8 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_500m_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="7" name="Ruutu 500m" primary="true" availabilityExpression="ATJ.Ruutu_500m_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="7" name="Ruutu 500m" primary="true" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid1km">
@@ -329,8 +329,8 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_1km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="22" name="Ruutu 1km" primary="true" availabilityExpression="ATJ.Ruutu_1km_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="22" name="Ruutu 1km" primary="true" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid2km">
@@ -346,8 +346,8 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_2km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="23" name="Ruutu 2km" primary="true" availabilityExpression="ATJ.Ruutu_2km_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="23" name="Ruutu 2km" primary="true" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid5km">
@@ -363,8 +363,8 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_5km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="24" name="Ruutu 5km" primary="true" availabilityExpression="ATJ.Ruutu_5km_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="24" name="Ruutu 5km" primary="true" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid10km">
@@ -380,8 +380,8 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_10km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="25" name="Ruutu 10km" primary="true" availabilityExpression="ATJ.Ruutu_10km_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="25" name="Ruutu 10km" primary="true" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="grid20km">
@@ -397,8 +397,8 @@
             <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_20km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
-            <DatabaseAreaType id="26" name="Ruutu 20km" primary="true" availabilityExpression="ATJ.Ruutu_20km_Alue_ID = 1" />
-            <DatabaseAreaType id="1" name="Ruutu 250m" availabilityExpression="ATJ.Ruutu_Alue_ID = 1" />
+            <DatabaseAreaType id="26" name="Ruutu 20km" primary="true" />
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
 </SelectionAreaTypes>
