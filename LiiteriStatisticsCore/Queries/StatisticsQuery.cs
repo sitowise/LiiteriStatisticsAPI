@@ -280,6 +280,18 @@ namespace LiiteriStatisticsCore.Queries
                         geom1,
                         func,
                         geom2));
+                    /* only the spatial operation here to make sure we are
+                     * using the spatial index */
+                    /*
+                    this.sbPreQuery.Append(string.Format(
+                        "INSERT INTO @{0} SELECT {1} FROM {2} WHERE {3}.{4}({5}) = 1\n",
+                        paramName,
+                        SchemaDataFormat(schema["SubIdColumn"]),
+                        SchemaDataFormat(schema["SubFromString"]),
+                        geom1,
+                        func,
+                        geom2));
+                    */
 
                     string expr = string.Format(
                         "{0} IN (SELECT id FROM #{1})",
@@ -309,7 +321,15 @@ namespace LiiteriStatisticsCore.Queries
 
         private string GetGroupString()
         {
-            return string.Join<string>(",\n    ", this.groups);
+            var grouplist = new List<string>();
+            foreach (string group in this.groups) {
+                // don't try to group using strings, e.g. 'Finland'
+                if (group.StartsWith("'") && group.EndsWith("'")) {
+                    continue;
+                }
+                grouplist.Add(group);
+            }
+            return string.Join(",\n    ", grouplist);
         }
 
         private string GetOrderString()

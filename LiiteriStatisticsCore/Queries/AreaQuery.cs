@@ -112,6 +112,10 @@ namespace LiiteriStatisticsCore.Queries
                     fields.Add(string.Format("{0} AS {1}",
                         columnName1, columnName2));
                 }
+                if (AreaTypeMappings.GetAreaTypeCategory(this.AreaTypeIdIs) ==
+                        Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                    fields.Add(string.Format("-1 AS parent_finland"));
+                }
             }
 
             if (fields.Count > 0) {

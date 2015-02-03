@@ -18,6 +18,12 @@ namespace LiiteriStatisticsCore.Util
     {
         XDocument xdoc;
 
+        public enum AreaTypeCategory
+        {
+            FunctionalArea,
+            AdministrativeArea,
+        };
+
         public AreaTypeMappings()
         {
             object dataDirectory =
@@ -260,6 +266,25 @@ namespace LiiteriStatisticsCore.Util
                 }
             }
             return areaTypes;
+        }
+
+        public AreaTypeMappings.AreaTypeCategory GetAreaTypeCategory(
+            string areaTypeId)
+        {
+            string category = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Attribute("category").Value.ToString()).Single();
+
+            switch (category) {
+                case "functional":
+                    return AreaTypeMappings.AreaTypeCategory.FunctionalArea;
+                case "administrative":
+                    return AreaTypeMappings.AreaTypeCategory.AdministrativeArea;
+                default:
+                    throw new Exception(
+                        "Unknown areatype category: " + category);
+            }
         }
     }
 }

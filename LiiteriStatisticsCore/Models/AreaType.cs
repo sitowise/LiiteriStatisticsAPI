@@ -17,5 +17,8 @@ namespace LiiteriStatisticsCore.Models
          * NOTE: DataSource only makes sense if connected
          * to a year (TimePeriod) */
         public string DataSource { get; set; }
+
+        // AreaTypeMappings.AreaTypeCategory.*
+        public string Category { get; set; }
     }
 }

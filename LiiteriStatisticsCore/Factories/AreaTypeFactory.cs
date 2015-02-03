@@ -14,6 +14,7 @@ namespace LiiteriStatisticsCore.Factories
             var obj = new Models.AreaType();
             obj.Id = element.Attribute("id").Value.ToString();
             obj.Description = element.Element("Description").Value.ToString();
+            obj.Category = element.Attribute("category").Value.ToString();
             return obj;
         }
 
@@ -26,6 +27,7 @@ namespace LiiteriStatisticsCore.Factories
             var obj = new Models.AreaType();
             obj.Id = areaType.Id;
             obj.Description = areaType.Description;
+            obj.Category = areaType.Category;
             obj.DataSource = (string) rdr["DataSource"].ToString();
             return obj;
         }
