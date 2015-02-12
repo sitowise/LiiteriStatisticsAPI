@@ -1,12 +1,8 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriDataAPI", "LiiteriDataAPI\LiiteriDataAPI.csproj", "{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportTool", "ImportTool\ImportTool.csproj", "{DE73C493-3456-425B-8960-6DC6A9D7279F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriDataTests", "LiiteriDataTests\LiiteriDataTests.csproj", "{71B5052E-80B4-460D-B019-426B40AD6485}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D0DE3D5D-425D-4DAA-942C-8E79D7EB0F30}"
@@ -18,7 +14,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D0DE3D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsCore", "LiiteriStatisticsCore\LiiteriStatisticsCore.csproj", "{741CD9E6-DCF6-4688-8C9D-6560A7038286}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ImportTool2", "ImportTool2\ImportTool2.pyproj", "{AD6EB449-F338-4E25-B2A4-10C061FA6D9F}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LiiteriDataTests2", "LiiteriDataTests2\LiiteriDataTests2.pyproj", "{B2F43B32-DB3A-4BA8-A2AD-DB92233F62CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsService", "LiiteriStatisticsService\LiiteriStatisticsService.csproj", "{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsProxiedAPI", "LiiteriStatisticsProxiedAPI\LiiteriStatisticsProxiedAPI.csproj", "{DA85752A-7898-4F6D-A8E0-E9A119C082EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2} = {6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsDirectAPI", "LiiteriStatisticsDirectAPI\LiiteriStatisticsDirectAPI.csproj", "{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,14 +31,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE73C493-3456-425B-8960-6DC6A9D7279F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{71B5052E-80B4-460D-B019-426B40AD6485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71B5052E-80B4-460D-B019-426B40AD6485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71B5052E-80B4-460D-B019-426B40AD6485}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -42,8 +39,20 @@ Global
 		{741CD9E6-DCF6-4688-8C9D-6560A7038286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{741CD9E6-DCF6-4688-8C9D-6560A7038286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{741CD9E6-DCF6-4688-8C9D-6560A7038286}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD6EB449-F338-4E25-B2A4-10C061FA6D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD6EB449-F338-4E25-B2A4-10C061FA6D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2F43B32-DB3A-4BA8-A2AD-DB92233F62CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2F43B32-DB3A-4BA8-A2AD-DB92233F62CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
