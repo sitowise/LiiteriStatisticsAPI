@@ -44,6 +44,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CommuteStatisticsController.cs" />
+    <Compile Include="Controllers\IndicatorController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Factories\AreaFactory.cs" />
     <Compile Include="Factories\AreaTypeFactory.cs">
       <SubType>Code</SubType>

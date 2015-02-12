@@ -12,7 +12,7 @@ namespace LiiteriStatisticsCore.Repositories
     public abstract class SqlReadRepository<T> :
         IReadRepository<T> where T : class
     {
-        public static readonly log4net.ILog logger =
+        private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -52,8 +52,7 @@ namespace LiiteriStatisticsCore.Repositories
                 cmd.CommandText = query.GetQueryString();
                 cmd.CommandTimeout = 600;
 
-                foreach (Infrastructure.Parameter param in
-                        query.Parameters) {
+                foreach (Infrastructure.Parameter param in query.Parameters) {
                     if (param.Value.GetType().Equals(typeof(int))) {
                         Debug.WriteLine(string.Format(
                             "Using special parameter type for {0}",
