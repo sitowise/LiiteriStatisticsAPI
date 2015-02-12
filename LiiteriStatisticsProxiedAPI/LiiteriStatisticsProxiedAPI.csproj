@@ -77,11 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Properties\DataSources\LiiteriStatisticsCore.Models.IndicatorBrief.datasource" />
-    <Content Include="Properties\DataSources\LiiteriStatisticsCore.Models.IndicatorDetails.datasource" />
-    <Content Include="Properties\DataSources\LiiteriStatisticsCore.Models.Area.datasource" />
-    <Content Include="Properties\DataSources\LiiteriStatisticsCore.Models.AreaType.datasource" />
-    <Content Include="Properties\DataSources\LiiteriStatisticsCore.Models.StatisticsResult.datasource" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\LiiteriStatisticsProxiedAPI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
