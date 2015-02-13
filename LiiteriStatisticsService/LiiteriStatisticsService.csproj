@@ -71,6 +71,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Code\Init.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -126,7 +127,7 @@
   </Target>
   <PropertyGroup>
     <PreBuildEvent>subwcrev.exe "$(SolutionDir)." "$(ProjectDir)Properties\AssemblyInfo.cs.tmpl" "$(ProjectDir)Properties\AssemblyInfo.cs"
-xcopy "$(SolutionDir)\Data\AreaTypeMappings.xml" "$(ProjectDir)App_data"</PreBuildEvent>
+xcopy /Y "$(SolutionDir)\Data\AreaTypeMappings.xml" "$(ProjectDir)App_Data\"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
