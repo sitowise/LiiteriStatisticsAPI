@@ -44,7 +44,6 @@ namespace LiiteriStatisticsCore.Controllers
         public string home_filter { get; set; }
     }
 
-
     public class CommuteStatisticsController : ICommuteStatisticsController
     {
         public static readonly log4net.ILog logger =

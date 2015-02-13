@@ -5,24 +5,28 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
+using System.Configuration;
 using System.ServiceModel; // WCF
 
 using Core = LiiteriStatisticsCore;
 
-namespace LiiteriStatisticsProxiedAPI.Controllers
+namespace LiiteriStatisticsAPI.Controllers
 {
     [RoutePrefix("v1")]
     public class CommuteStatisticsController :
         ApiController,
         Core.Controllers.ICommuteStatisticsController
     {
-        private Core.Controllers.ICommuteStatisticsController GetServiceClient()
+        private Core.Controllers.ICommuteStatisticsController GetController()
         {
-            ChannelFactory<Core.Controllers.ICommuteStatisticsController> factory =
-                new ChannelFactory<Core.Controllers.ICommuteStatisticsController>(
-                    "StatisticsServiceEndpoint");
-            Core.Controllers.ICommuteStatisticsController proxy = factory.CreateChannel();
-            return proxy;
+            if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
+                ChannelFactory<Core.Controllers.ICommuteStatisticsController> factory =
+                    new ChannelFactory<Core.Controllers.ICommuteStatisticsController>(
+                        "StatisticsServiceEndpoint");
+                return factory.CreateChannel();
+            } else {
+                return new Core.Controllers.CommuteStatisticsController();
+            }
         }
 
         [Route("commuteStatistics/")]
@@ -30,7 +34,7 @@ namespace LiiteriStatisticsProxiedAPI.Controllers
         public IEnumerable<Core.Models.CommuteStatisticsIndicator>
             GetCommuteStatisticsIndicators()
         {
-            return this.GetServiceClient().GetCommuteStatisticsIndicators();
+            return this.GetController().GetCommuteStatisticsIndicators();
         }
 
         [Route("commuteStatistics/{statisticsId}/")]
@@ -61,7 +65,7 @@ namespace LiiteriStatisticsProxiedAPI.Controllers
             string home_filter = null,
             bool debug = false)
         {
-            return this.GetServiceClient().GetCommuteStatistics(
+            return this.GetController().GetCommuteStatistics(
                 statisticsId,
                 years,
                 type,

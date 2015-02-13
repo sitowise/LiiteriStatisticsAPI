@@ -10,7 +10,7 @@ using System.Web.Http.Controllers;
 
 using LiiteriStatisticsCore.Util;
 
-namespace LiiteriStatisticsProxiedAPI.Binders
+namespace LiiteriStatisticsAPI.Binders
 {
     public class DateRangeModelBinder : IModelBinder
     {

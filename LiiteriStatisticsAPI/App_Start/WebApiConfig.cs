@@ -5,7 +5,7 @@ using System.Web.Http;
 
 using LiiteriStatisticsCore.Util;
 
-namespace LiiteriStatisticsProxiedAPI
+namespace LiiteriStatisticsAPI
 {
     public static class WebApiConfig
     {
@@ -13,13 +13,16 @@ namespace LiiteriStatisticsProxiedAPI
         {
             // Web API configuration and services
 
+            // disable xml
+            //GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
+
             GlobalConfiguration.Configuration.BindParameter(
                 typeof(DateRange), new Binders.DateRangeModelBinder());
 
             GlobalConfiguration.Configuration.BindParameter(
                 typeof(int[]), new Binders.IntegerArrayModelBinder());
 
-            //config.Formatters.Add(new Formatters.TextPlainFormatter());
+            config.Formatters.Add(new Formatters.TextPlainFormatter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();
@@ -30,8 +33,5 @@ namespace LiiteriStatisticsProxiedAPI
                 defaults: new { id = RouteParameter.Optional }
             );
         }
-
-        /* LiiteriStatisticsDirectAPI has some log4net helper code here,
-         * in this case the logging is done in the Service */
     }
 }

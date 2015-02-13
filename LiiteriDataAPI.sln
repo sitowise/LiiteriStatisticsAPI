@@ -18,12 +18,7 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LiiteriDataTests2", "Liiter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsService", "LiiteriStatisticsService\LiiteriStatisticsService.csproj", "{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsProxiedAPI", "LiiteriStatisticsProxiedAPI\LiiteriStatisticsProxiedAPI.csproj", "{DA85752A-7898-4F6D-A8E0-E9A119C082EB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2} = {6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsDirectAPI", "LiiteriStatisticsDirectAPI\LiiteriStatisticsDirectAPI.csproj", "{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiiteriStatisticsAPI", "LiiteriStatisticsAPI\LiiteriStatisticsAPI.csproj", "{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +40,6 @@ Global
 		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D0EF6BB-9E73-4443-843E-8CEE39FD44A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA85752A-7898-4F6D-A8E0-E9A119C082EB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BC9BFE9-385B-4B51-A30B-93FC432B8BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU

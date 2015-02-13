@@ -13,7 +13,7 @@ using System.Threading.Tasks;
  * text/plain formatter for use with DebugOutput
  */
 
-namespace LiiteriStatisticsDirectAPI.Formatters
+namespace LiiteriStatisticsAPI.Formatters
 {
     /*
      * http://stackoverflow.com/questions/11581697/is-there-a-way-to-force-asp-net-web-api-to-return-plain-text

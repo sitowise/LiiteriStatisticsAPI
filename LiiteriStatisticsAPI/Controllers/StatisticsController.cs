@@ -5,9 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
+using System.Configuration;
+using System.ServiceModel; // WCF
+
 using Core = LiiteriStatisticsCore;
 
-namespace LiiteriStatisticsDirectAPI.Controllers
+namespace LiiteriStatisticsAPI.Controllers
 {
     [RoutePrefix("v1")]
     public class StatisticController :
@@ -16,7 +19,14 @@ namespace LiiteriStatisticsDirectAPI.Controllers
     {
         private Core.Controllers.IStatisticsController GetController()
         {
-            return new Core.Controllers.StatisticsController();
+            if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
+                ChannelFactory<Core.Controllers.IStatisticsController> factory =
+                    new ChannelFactory<Core.Controllers.IStatisticsController>(
+                        "StatisticsServiceEndpoint");
+                return factory.CreateChannel();
+            } else {
+                return new Core.Controllers.StatisticsController();
+            }
         }
 
         [Route("statistics/{statisticsId}/")]

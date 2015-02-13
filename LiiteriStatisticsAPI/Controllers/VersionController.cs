@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 
-namespace LiiteriStatisticsProxiedAPI.Controllers
+namespace LiiteriStatisticsAPI.Controllers
 {
     public class VersionController : ApiController
     {
