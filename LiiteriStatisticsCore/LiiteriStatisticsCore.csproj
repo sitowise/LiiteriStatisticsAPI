@@ -55,6 +55,7 @@
     <Compile Include="Controllers\CommuteStatisticsController.cs" />
     <Compile Include="Controllers\IndicatorController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
+    <Compile Include="Controllers\VersionController.cs" />
     <Compile Include="Factories\AreaFactory.cs" />
     <Compile Include="Factories\AreaTypeFactory.cs">
       <SubType>Code</SubType>
@@ -83,6 +84,7 @@
     <Compile Include="Models\TimePeriod.cs" />
     <Compile Include="Models\StatisticsResult.cs" />
     <Compile Include="Models\Theme.cs" />
+    <Compile Include="Models\ApplicationVersion.cs" />
     <Compile Include="Parsers\AreaFilterParser.cs" />
     <Compile Include="Parsers\AreaFilterParserVisitor.cs" />
     <Compile Include="Parsers\SimpleQueryLanguage.g4.lexer.cs">
