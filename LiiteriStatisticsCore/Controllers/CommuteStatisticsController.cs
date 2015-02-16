@@ -10,19 +10,17 @@ using System.Configuration;
 
 using System.ServiceModel; // WCF
 
-using Core = LiiteriStatisticsCore;
-
 namespace LiiteriStatisticsCore.Controllers
 {
     [ServiceContract]
     public interface ICommuteStatisticsController
     {
         [OperationContract]
-        IEnumerable<Core.Models.CommuteStatisticsIndicator>
+        IEnumerable<Models.CommuteStatisticsIndicator>
             GetCommuteStatisticsIndicators();
 
         [OperationContract]
-        IEnumerable<Core.Models.StatisticsResult> GetCommuteStatistics(
+        IEnumerable<Models.StatisticsResult> GetCommuteStatistics(
             int statisticsId,
             int[] years,
             string type = "yht",
@@ -50,8 +48,8 @@ namespace LiiteriStatisticsCore.Controllers
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static Core.Util.AreaTypeMappings
-            AreaTypeMappings = new Core.Util.AreaTypeMappings();
+        private static Util.AreaTypeMappings
+            AreaTypeMappings = new Util.AreaTypeMappings();
 
         private DbConnection GetDbConnection(bool open = true)
         {
@@ -62,14 +60,14 @@ namespace LiiteriStatisticsCore.Controllers
             return db;
         }
 
-        public IEnumerable<Core.Models.CommuteStatisticsIndicator>
+        public IEnumerable<Models.CommuteStatisticsIndicator>
             GetCommuteStatisticsIndicators()
         {
-            return new Core.Repositories
+            return new Repositories
                 .CommuteStatisticsIndicatorRepository().GetAll();
         }
 
-        public IEnumerable<Core.Models.StatisticsResult> GetCommuteStatistics(
+        public IEnumerable<Models.StatisticsResult> GetCommuteStatistics(
             int statisticsId,
             int[] years,
             string type = "yht",
@@ -79,14 +77,14 @@ namespace LiiteriStatisticsCore.Controllers
             string home_filter = null,
             bool debug = false)
         {
-            var indicator = new Core.Repositories
+            var indicator = new Repositories
                 .CommuteStatisticsIndicatorRepository().Get(statisticsId);
 
             using (DbConnection db = this.GetDbConnection()) {
-                var queries = new List<Core.Queries.CommuteStatisticsQuery>();
+                var queries = new List<Queries.CommuteStatisticsQuery>();
 
                 foreach (int year in years) {
-                    var query = new Core.Queries.CommuteStatisticsQuery();
+                    var query = new Queries.CommuteStatisticsQuery();
                     query.GroupByAreaTypeIdIs = group;
                     query.YearIs = year;
                     query.TableName = indicator.TableName;
@@ -125,9 +123,9 @@ namespace LiiteriStatisticsCore.Controllers
                 */
 
                 var repository =
-                    new Core.Repositories.StatisticsResultRepository(db);
+                    new Repositories.StatisticsResultRepository(db);
 
-                IEnumerable<Core.Models.StatisticsResult> results;
+                IEnumerable<Models.StatisticsResult> results;
                 if (queries.Count > 0) {
                     results = repository.FindAll(queries);
                 } else {
