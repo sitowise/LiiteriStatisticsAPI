@@ -31,14 +31,6 @@ namespace LiiteriStatisticsCore.Controllers
         IEnumerable<Models.Area> GetAreas(string areaTypeId);
     }
 
-    // Used for WebAPI POST requests
-    public class StatisticsRequest
-    {
-        public int[] years { get; set; }
-        public string group { get; set; }
-        public string filter { get; set; }
-    }
-
     public class StatisticsController : IStatisticsController
     {
         private static readonly log4net.ILog logger =

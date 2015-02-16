@@ -17,6 +17,16 @@ namespace LiiteriStatisticsAPI.Controllers
         ApiController,
         Core.Controllers.ICommuteStatisticsController
     {
+        public class CommuteStatisticsRequest
+        {
+            public int[] years { get; set; }
+            public string type { get; set; }
+            public int gender { get; set; }
+            public string group { get; set; }
+            public string work_filter { get; set; }
+            public string home_filter { get; set; }
+        }
+
         private Core.Controllers.ICommuteStatisticsController GetController()
         {
             if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
@@ -41,7 +51,7 @@ namespace LiiteriStatisticsAPI.Controllers
         [HttpPost]
         public IEnumerable<Core.Models.StatisticsResult> GetCommuteStatistics(
             int statisticsId,
-            [FromBody] Core.Controllers.CommuteStatisticsRequest reqobj)
+            [FromBody] CommuteStatisticsRequest reqobj)
         {
             return this.GetCommuteStatistics(
                 statisticsId,

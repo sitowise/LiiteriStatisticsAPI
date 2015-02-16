@@ -31,17 +31,6 @@ namespace LiiteriStatisticsCore.Controllers
             bool debug = false);
     }
 
-    // used for WebAPI POST requests
-    public class CommuteStatisticsRequest
-    {
-        public int[] years { get; set; }
-        public string type { get; set; }
-        public int gender { get; set; }
-        public string group { get; set; }
-        public string work_filter { get; set; }
-        public string home_filter { get; set; }
-    }
-
     public class CommuteStatisticsController : ICommuteStatisticsController
     {
         public static readonly log4net.ILog logger =

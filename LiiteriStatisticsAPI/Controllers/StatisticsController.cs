@@ -17,6 +17,13 @@ namespace LiiteriStatisticsAPI.Controllers
         ApiController,
         Core.Controllers.IStatisticsController
     {
+        public class StatisticsRequest
+        {
+            public int[] years { get; set; }
+            public string group { get; set; }
+            public string filter { get; set; }
+        }
+
         private Core.Controllers.IStatisticsController GetController()
         {
             if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
@@ -33,7 +40,7 @@ namespace LiiteriStatisticsAPI.Controllers
         [HttpPost]
         public IEnumerable<Core.Models.StatisticsResult> GetStatistics(
             int statisticsId,
-            [FromBody] Core.Controllers.StatisticsRequest reqobj)
+            [FromBody] StatisticsRequest reqobj)
         {
             return this.GetStatistics(
                 reqobj.years,
