@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Configuration;
 using System.Diagnostics;
 
 namespace LiiteriStatisticsCore.Queries
@@ -107,21 +106,19 @@ namespace LiiteriStatisticsCore.Queries
                     ).ToArray())
                 );
 
-            sb.Append(string.Format(" FROM [{0}]..[DimTilasto] T ",
-                ConfigurationManager.AppSettings["DbDataMarts"]));
+            sb.Append(" FROM DimTilasto T ");
 
-            sb.Append(string.Format(@"
-INNER JOIN [{0}]..[Apu_TilastoTallennusJakso] J ON
+            sb.Append(@"
+INNER JOIN Apu_TilastoTallennusJakso J ON
     J.Tilasto_Id = T.Tilasto_Id
-",
-                ConfigurationManager.AppSettings["DbDataMarts"]));
+");
 
-            sb.Append(string.Format(@"
+            sb.Append(@"
 OUTER APPLY (
     SELECT
         TOP 1 TL.Tietolahde
     FROM
-        [{0}]..[FactTilastoTietolahde] TL
+        FactTilastoTietolahde TL
     WHERE
         J.Jakso_ID >= TL.Alkaen_Jakso_ID AND
         J.AlueTaso_ID = TL.AlueTaso_ID AND
@@ -129,26 +126,22 @@ OUTER APPLY (
     ORDER BY
         TL.Alkaen_Jakso_ID DESC
     ) TL
-",
-                ConfigurationManager.AppSettings["DbDataMarts"]));
+");
 
-            sb.Append(string.Format(@"
-LEFT OUTER JOIN [{0}]..[DimMittayksikko] MY ON
+            sb.Append(@"
+LEFT OUTER JOIN DimMittayksikko MY ON
     T.MittayksikkoEsitys_Mittayksikko_ID = MY.Mittayksikko_ID
-",
-                ConfigurationManager.AppSettings["DbDataMarts"]));
+");
 
-            sb.Append(string.Format(@"
-LEFT OUTER JOIN [{0}]..[DimAjallinenVaihe] AJV ON
+            sb.Append(@"
+LEFT OUTER JOIN DimAjallinenVaihe AJV ON
     T.AjallinenVaihe_ID = AJV.AjallinenVaihe_ID
-",
-                ConfigurationManager.AppSettings["DbDataMarts"]));
+");
 
-            sb.Append(string.Format(@"
-LEFT OUTER JOIN [{0}]..[Tietosuojaraja] TS ON
+            sb.Append(@"
+LEFT OUTER JOIN Tietosuojaraja TS ON
     TS.Tilasto_ID = T.Tilasto_ID
-",
-                ConfigurationManager.AppSettings["DbDataMarts"]));
+");
 
             //this.whereList.Add("J.AlueTaso_Id = 2");
             this.whereList.Add("T.TilastoLaskentatyyppi_ID <> 2");
