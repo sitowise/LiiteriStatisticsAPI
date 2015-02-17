@@ -13,7 +13,7 @@ namespace LiiteriStatisticsCore.Factories
         {
             var obj = new Models.StatisticsResult();
             obj.Value = (decimal) ((double) this.GetValueOrNull(rdr, "Value"));
-            obj.AreaId = (int) rdr["AreaId"];
+            obj.AreaId = (int) Convert.ToInt32(rdr["AreaId"]);
             obj.AreaName = (string) rdr["AreaName"].ToString();
             obj.AlternativeId = (string) rdr["AlternativeId"].ToString();
             obj.Year = (int) rdr["Year"];
