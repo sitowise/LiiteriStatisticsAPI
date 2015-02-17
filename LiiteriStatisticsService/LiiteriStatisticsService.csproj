@@ -65,6 +65,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\AreaTypeMappings.xml" />
     <Content Include="CommuteStatisticsService.svc" />
     <Content Include="IndicatorService.svc" />
     <Content Include="StatisticsService.svc" />
@@ -79,11 +80,10 @@
       <DependentUpon>VersionService.svc</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="log4net.config" />
     <None Include="Properties\PublishProfiles\LiiteriStatisticsService.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
