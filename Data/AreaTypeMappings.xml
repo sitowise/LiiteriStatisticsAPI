@@ -29,6 +29,21 @@
             <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
+    <SelectionAreaType id="planned_area_type" category="functional">
+        <Description>Asemakaavoitettu alue -tyyppi</Description>
+        <DatabaseSchema>
+            <MainIdColumn>{1}.AsemakaavoitettuAlueTyyppi_ID</MainIdColumn>
+            <SubIdColumn>{0}.AsemakaavoitettuAlueTyyppi_ID</SubIdColumn>
+            <SubNameColumn>{0}.AsemakaavoitettuAlueTyyppi</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString>DimAsemakaavoitettuAlueTyyppi {0}</SubFromString>
+            <JoinQuery>INNER JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID)</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
     <SelectionAreaType id="municipality" category="administrative">
         <Description>Kunta</Description>
         <DatabaseSchema>
@@ -278,6 +293,21 @@
             <SubYearColumn/>
             <SubFromString>DimTaajamaHarvaTiheaTyyppi {0}</SubFromString>
             <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_rural_type" category="functional">
+        <Description>Taajama haja-asutustyyppi</Description>
+        <DatabaseSchema>
+            <MainIdColumn>{1}.TaajamaHajaAsutusTyyppi_ID</MainIdColumn>
+            <SubIdColumn>{0}.TaajamaHajaAsutusTyyppi_ID</SubIdColumn>
+            <SubNameColumn>{0}.TaajamaHajaAsutusTyyppi</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString>DimTaajamaHajaAsutusTyyppi {0}</SubFromString>
+            <JoinQuery>INNER JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />

@@ -12,7 +12,7 @@ namespace LiiteriStatisticsCore.Factories
         public override Models.ILiiteriMarker Create(DbDataReader rdr)
         {
             var obj = new Models.Area();
-            obj.Id = (int) rdr["AreaId"];
+            obj.Id = (int) Convert.ToInt32(rdr["AreaId"]);
             obj.Name = rdr["AreaName"].ToString();
             obj.AlternativeId = rdr["AlternativeId"].ToString();
             obj.AreaType = rdr["AreaType"].ToString();
