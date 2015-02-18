@@ -16,5 +16,18 @@ namespace LiiteriStatisticsCore.Factories
             if (Convert.IsDBNull(rdr[key])) return null;
             return rdr.GetValue(rdr.GetOrdinal(key));
         }
+
+        /* tinyint in db will return object {byte}, which cannot cast
+         * to int. instead of using Convert.Int32, let's be more
+         * specific and attempt casting both int and byte, and fail
+         * with everything else */
+        public int GetNumber(DbDataReader rdr, string key)
+        {
+            try {
+                return (int) rdr.GetInt32(rdr.GetOrdinal("AreaId"));
+            } catch (InvalidCastException) {
+                return (int) rdr.GetByte(rdr.GetOrdinal("AreaId"));
+            }
+        }
     }
 }

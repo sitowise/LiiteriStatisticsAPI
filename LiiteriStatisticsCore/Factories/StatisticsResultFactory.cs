@@ -13,14 +13,11 @@ namespace LiiteriStatisticsCore.Factories
         {
             var obj = new Models.StatisticsResult();
             obj.Value = (decimal) ((double) this.GetValueOrNull(rdr, "Value"));
-            obj.AreaId = (int) Convert.ToInt32(rdr["AreaId"]);
+            obj.AreaId = (int) this.GetNumber(rdr, "AreaId");
             obj.AreaName = (string) rdr["AreaName"].ToString();
             obj.AlternativeId = (string) rdr["AlternativeId"].ToString();
             obj.Year = (int) rdr["Year"];
             obj.PrivacyLimitTriggered = false;
-
-            //obj.AreaPointLat = (int?) this.GetValueOrNull(rdr, "AreaPointLat");
-            //obj.AreaPointLon = (int?) this.GetValueOrNull(rdr, "AreaPointLon");
             return obj;
         }
     }
