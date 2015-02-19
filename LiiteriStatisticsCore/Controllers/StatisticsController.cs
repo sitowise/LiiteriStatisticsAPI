@@ -21,8 +21,14 @@ namespace LiiteriStatisticsCore.Controllers
             int[] years,
             int statisticsId,
             string group = null,
-            string filter = null,
-            bool debug = false);
+            string filter = null);
+
+        [OperationContract]
+        string GetStatisticsDebugString(
+            int[] years,
+            int statisticsId,
+            string group = null,
+            string filter = null);
 
         [OperationContract]
         IEnumerable<Models.AreaType> GetAreaTypes();
@@ -40,6 +46,12 @@ namespace LiiteriStatisticsCore.Controllers
         private static Util.AreaTypeMappings
             AreaTypeMappings = new Util.AreaTypeMappings();
 
+        private class StatisticsResultContainer
+        {
+            public string DebugString;
+            public IEnumerable<Models.StatisticsResult> Results;
+        }
+
         private DbConnection GetDbConnection(bool open = true)
         {
             string connStr = ConfigurationManager.ConnectionStrings[
@@ -49,7 +61,9 @@ namespace LiiteriStatisticsCore.Controllers
             return db;
         }
 
-        public virtual IEnumerable<Models.StatisticsResult> GetStatistics(
+        /* be prepared to return either a debug string, or the actual
+         * results */
+        private StatisticsResultContainer GetStatisticsResultContainer(
             int[] years,
             int statisticsId,
             string group = null,
@@ -141,25 +155,23 @@ namespace LiiteriStatisticsCore.Controllers
                     }
                 }
 
-                /* this debug output is the reason we've declared the
-                 * entire controller as HttpResponseMessage */
-                /*
-                TODO: HOWTODO
                 if (debug) {
-                    DebugOutput debugOutput;
+                    Util.DebugOutput debugOutput;
                     if (queries.Count > 0) {
-                        debugOutput = new DebugOutput(queries);
+                        debugOutput = new Util.DebugOutput(queries);
                     } else if (querypairs.Count > 0) {
-                        debugOutput = new DebugOutput(querypairs);
+                        debugOutput = new Util.DebugOutput(querypairs);
                     } else {
                         throw new Exception("No statistics queries specified!");
                     }
-                    return Request.CreateResponse(
-                        HttpStatusCode.OK,
-                        debugOutput.ToString(),
-                        new Formatters.TextPlainFormatter());
+                    return new StatisticsResultContainer() {
+                        DebugString = debugOutput.ToString(),
+                        Results = null
+                    };
+                    /* We could continue here and fill the actual results,
+                     * but if there's an error we might rather just want
+                     * to see the query */
                 }
-                */
 
                 /* Step 3: Fetch StatisticsResult */
 
@@ -179,13 +191,39 @@ namespace LiiteriStatisticsCore.Controllers
 
                 /* Note: we are iterating the generator here, could be
                  * memory-inefficient */
-                return results.ToList();
-                /*
-                return Request.CreateResponse(
-                    HttpStatusCode.OK,
-                    results.ToList());
-                */
+                return new StatisticsResultContainer() {
+                    DebugString = null,
+                    Results = results.ToList()
+                };
             }
+        }
+
+        public virtual IEnumerable<Models.StatisticsResult> GetStatistics(
+            int[] years,
+            int statisticsId,
+            string group = null,
+            string filter = null)
+        {
+            return this.GetStatisticsResultContainer(
+                years,
+                statisticsId,
+                group,
+                filter,
+                false).Results;
+        }
+
+        public string GetStatisticsDebugString(
+            int[] years,
+            int statisticsId,
+            string group = null,
+            string filter = null)
+        {
+            return this.GetStatisticsResultContainer(
+                years,
+                statisticsId,
+                group,
+                filter,
+                true).DebugString;
         }
 
         public virtual IEnumerable<Models.AreaType> GetAreaTypes()

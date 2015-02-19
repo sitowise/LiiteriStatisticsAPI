@@ -65,7 +65,7 @@ namespace LiiteriStatisticsAPI.Controllers
 
         [Route("commuteStatistics/{statisticsId}/")]
         [HttpGet]
-        public IEnumerable<Core.Models.StatisticsResult> GetCommuteStatistics(
+        public HttpResponseMessage GetCommuteStatisticsResultsOrDebug(
             int statisticsId,
             int[] years,
             string type = "yht",
@@ -75,6 +75,31 @@ namespace LiiteriStatisticsAPI.Controllers
             string home_filter = null,
             bool debug = false)
         {
+            if (debug) {
+                string debugOutput = this.GetCommuteStatisticsDebugString(
+                    statisticsId, years, type, gender, group,
+                    work_filter, home_filter);
+                return Request.CreateResponse(
+                    HttpStatusCode.OK,
+                    debugOutput,
+                    new Formatters.TextPlainFormatter());
+            } else {
+                return Request.CreateResponse(
+                    HttpStatusCode.OK,
+                    this.GetCommuteStatistics(
+                        statisticsId, years, type, gender, group).ToList());
+            }
+        }
+
+        public IEnumerable<Core.Models.StatisticsResult> GetCommuteStatistics(
+            int statisticsId,
+            int[] years,
+            string type = "yht",
+            int gender = 0,
+            string group = null,
+            string work_filter = null,
+            string home_filter = null)
+        {
             return this.GetController().GetCommuteStatistics(
                 statisticsId,
                 years,
@@ -82,8 +107,26 @@ namespace LiiteriStatisticsAPI.Controllers
                 gender,
                 group,
                 work_filter,
-                home_filter,
-                debug);
+                home_filter);
+        }
+
+        public string GetCommuteStatisticsDebugString(
+            int statisticsId,
+            int[] years,
+            string type = "yht",
+            int gender = 0,
+            string group = null,
+            string work_filter = null,
+            string home_filter = null)
+        {
+            return this.GetController().GetCommuteStatisticsDebugString(
+                statisticsId,
+                years,
+                type,
+                gender,
+                group,
+                work_filter,
+                home_filter);
         }
     }
 }

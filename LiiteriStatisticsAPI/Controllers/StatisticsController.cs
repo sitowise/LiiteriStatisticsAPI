@@ -51,15 +51,45 @@ namespace LiiteriStatisticsAPI.Controllers
 
         [Route("statistics/{statisticsId}/")]
         [HttpGet]
-        public IEnumerable<Core.Models.StatisticsResult> GetStatistics(
+        public HttpResponseMessage GetStatisticsResultsOrDebug(
             int[] years,
             int statisticsId,
             string group = null,
             string filter = null,
             bool debug = false)
         {
+            if (debug) {
+                string debugOutput = this.GetStatisticsDebugString(
+                    years, statisticsId, group, filter);
+                return Request.CreateResponse(
+                    HttpStatusCode.OK,
+                    debugOutput,
+                    new Formatters.TextPlainFormatter());
+            } else {
+                return Request.CreateResponse(
+                    HttpStatusCode.OK,
+                    this.GetStatistics(years, statisticsId, group, filter).ToList());
+            }
+        }
+
+        public IEnumerable<Core.Models.StatisticsResult> GetStatistics(
+            int[] years,
+            int statisticsId,
+            string group = null,
+            string filter = null)
+        {
             return this.GetController().GetStatistics(
-                years, statisticsId, group, filter, debug);
+                years, statisticsId, group, filter);
+        }
+
+        public string GetStatisticsDebugString(
+            int[] years,
+            int statisticsId,
+            string group = null,
+            string filter = null)
+        {
+            return this.GetController().GetStatisticsDebugString(
+                years, statisticsId, group, filter);
         }
 
         [Route("areaTypes/")]

@@ -27,8 +27,17 @@ namespace LiiteriStatisticsCore.Controllers
             int gender = 0,
             string group = null,
             string work_filter = null,
-            string home_filter = null,
-            bool debug = false);
+            string home_filter = null);
+
+        [OperationContract]
+        string GetCommuteStatisticsDebugString(
+            int statisticsId,
+            int[] years,
+            string type = "yht",
+            int gender = 0,
+            string group = null,
+            string work_filter = null,
+            string home_filter = null);
     }
 
     public class CommuteStatisticsController : ICommuteStatisticsController
@@ -39,6 +48,12 @@ namespace LiiteriStatisticsCore.Controllers
 
         private static Util.AreaTypeMappings
             AreaTypeMappings = new Util.AreaTypeMappings();
+
+        private class StatisticsResultContainer
+        {
+            public string DebugString;
+            public IEnumerable<Models.StatisticsResult> Results;
+        }
 
         private DbConnection GetDbConnection(bool open = true)
         {
@@ -56,7 +71,7 @@ namespace LiiteriStatisticsCore.Controllers
                 .CommuteStatisticsIndicatorRepository().GetAll();
         }
 
-        public IEnumerable<Models.StatisticsResult> GetCommuteStatistics(
+        private StatisticsResultContainer GetCommuteStatisticsResultContainer(
             int statisticsId,
             int[] years,
             string type = "yht",
@@ -94,22 +109,21 @@ namespace LiiteriStatisticsCore.Controllers
                     queries.Add(query);
                 }
 
-                /* this debug output is the reason we've declared the
-                 * entire controller as HttpResponseMessage */
-                /*
                 if (debug) {
-                    DebugOutput debugOutput;
+                    Util.DebugOutput debugOutput;
                     if (queries.Count > 0) {
-                        debugOutput = new DebugOutput(queries);
+                        debugOutput = new Util.DebugOutput(queries);
                     } else {
                         throw new Exception("No statistics queries specified!");
                     }
-                    return Request.CreateResponse(
-                        HttpStatusCode.OK,
-                        debugOutput.ToString(),
-                        new Formatters.TextPlainFormatter());
+                    return new StatisticsResultContainer() {
+                        DebugString = debugOutput.ToString(),
+                        Results = null
+                    };
+                    /* We could continue here and fill the actual results,
+                     * but if there's an error we might rather just want
+                     * to see the query */
                 }
-                */
 
                 var repository =
                     new Repositories.StatisticsResultRepository(db);
@@ -123,13 +137,51 @@ namespace LiiteriStatisticsCore.Controllers
 
                 /* Note: we are iterating the generator here, could be
                  * memory-inefficient */
-                return results.ToList();
-                /*
-                return Request.CreateResponse(
-                    HttpStatusCode.OK,
-                    results.ToList());
-                */
+                return new StatisticsResultContainer() {
+                    DebugString = null,
+                    Results = results.ToList()
+                };
             }
+        }
+
+        public IEnumerable<Models.StatisticsResult> GetCommuteStatistics(
+            int statisticsId,
+            int[] years,
+            string type = "yht",
+            int gender = 0,
+            string group = null,
+            string work_filter = null,
+            string home_filter = null)
+        {
+            return this.GetCommuteStatisticsResultContainer(
+                statisticsId,
+                years,
+                type,
+                gender,
+                group,
+                work_filter,
+                home_filter,
+                false).Results;
+        }
+
+        public string GetCommuteStatisticsDebugString(
+            int statisticsId,
+            int[] years,
+            string type = "yht",
+            int gender = 0,
+            string group = null,
+            string work_filter = null,
+            string home_filter = null)
+        {
+            return this.GetCommuteStatisticsResultContainer(
+                statisticsId,
+                years,
+                type,
+                gender,
+                group,
+                work_filter,
+                home_filter,
+                true).DebugString;
         }
     }
 }
