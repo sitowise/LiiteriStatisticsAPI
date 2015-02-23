@@ -418,7 +418,15 @@ namespace LiiteriStatisticsCore.Queries
 
         private string GetGroupString()
         {
-            return string.Join<string>(",\n    ", this.groups);
+            var grouplist = new List<string>();
+            foreach (string group in this.groups) {
+                // don't try to group using strings, e.g. 'Finland'
+                if (group.StartsWith("'") && group.EndsWith("'")) {
+                    continue;
+                }
+                grouplist.Add(group);
+            }
+            return string.Join(",\n    ", grouplist);
         }
 
         private string GetOrderString()
