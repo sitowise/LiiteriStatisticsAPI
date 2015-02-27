@@ -77,17 +77,26 @@ namespace LiiteriStatisticsAPI.Controllers
         {
             if (debug) {
                 string debugOutput = this.GetCommuteStatisticsDebugString(
-                    statisticsId, years, type, gender, group,
-                    work_filter, home_filter);
+                    statisticsId,
+                    years, type,
+                    gender,
+                    group,
+                    work_filter,
+                    home_filter);
                 return Request.CreateResponse(
                     HttpStatusCode.OK,
                     debugOutput,
                     new Formatters.TextPlainFormatter());
             } else {
-                return Request.CreateResponse(
-                    HttpStatusCode.OK,
+                return Request.CreateResponse(HttpStatusCode.OK,
                     this.GetCommuteStatistics(
-                        statisticsId, years, type, gender, group).ToList());
+                        statisticsId,
+                        years,
+                        type,
+                        gender,
+                        group,
+                        work_filter,
+                        home_filter).ToList());
             }
         }
 
