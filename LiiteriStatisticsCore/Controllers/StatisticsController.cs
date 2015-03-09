@@ -142,8 +142,17 @@ namespace LiiteriStatisticsCore.Controllers
                          */
                         refQuery.CalculationTypeIdIs =
                             refDetails.CalculationType;
-                        refQuery.AvailableAreaTypes =
-                            statisticsQuery.AvailableAreaTypes;
+
+                        Models.TimePeriod refTimePeriod = (
+                            from p in refDetails.TimePeriods
+                            where p.Id == year
+                            select p).Single();
+                        int[] refAvailableAreaTypes = (
+                            from a in refTimePeriod.DataAreaTypes
+                            select a.Id).ToArray();
+
+                        refQuery.AvailableAreaTypes = refAvailableAreaTypes;
+
                         refQuery.GroupByAreaTypeIdIs =
                             statisticsQuery.GroupByAreaTypeIdIs;
                         refQuery.YearIs = statisticsQuery.YearIs;
