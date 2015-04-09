@@ -25,14 +25,30 @@ namespace LiiteriStatisticsCore.Controllers
         {
             var versions = new List<Models.ApplicationVersion>();
 
-            Assembly asm = Assembly.GetCallingAssembly();
+            string assemblyNames = null; // could be a parameter
 
-            FileVersionInfo fv = FileVersionInfo.GetVersionInfo(asm.Location);
+            Assembly[] assemblies;
 
-            versions.Add(new Models.ApplicationVersion() {
-                Application = asm.GetName().Name,
-                Version = fv.FileVersion.ToString()
-            });
+            if (assemblyNames != null && assemblyNames.Length > 0) {
+                assemblies =
+                    AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(b => assemblyNames.Contains(b.GetName().Name))
+                    .ToArray();
+            } else {
+                assemblies =
+                    AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(b => b.GetName().Name.StartsWith("Liiteri"))
+                    .ToArray();
+            }
+
+            foreach (Assembly asm in assemblies) {
+                FileVersionInfo fv = FileVersionInfo.GetVersionInfo(
+                    asm.Location);
+                versions.Add(new Models.ApplicationVersion() {
+                    Application = asm.GetName().Name,
+                    Version = fv.FileVersion.ToString()
+                });
+            }
 
             return versions;
         }
