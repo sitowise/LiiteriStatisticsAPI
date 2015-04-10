@@ -205,6 +205,7 @@
             <JoinQuery>INNER JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = {1}.HallintoOikeus_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
+            <DatabaseAreaType id="16" name="Maakunta" />
             <DatabaseAreaType id="2" name="Kunta" />
             <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
