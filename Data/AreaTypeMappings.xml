@@ -149,7 +149,7 @@
         <DatabaseSchema>
             <MainIdColumn/>
             <SubIdColumn/>
-            <SubNameColumn>'Finland'</SubNameColumn>
+            <SubNameColumn>'Suomi'</SubNameColumn>
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <JoinQuery/>
