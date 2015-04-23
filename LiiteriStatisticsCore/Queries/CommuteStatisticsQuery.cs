@@ -80,7 +80,6 @@ namespace LiiteriStatisticsCore.Queries
             {
                 if (!new string[] {
                         "yht",
-                        "distance_avg",
 
                         /* FactTyomatkaTOL2008 */
                         "a_alkut",
@@ -472,6 +471,8 @@ namespace LiiteriStatisticsCore.Queries
 
             //this.fields.Add(string.Format("SUM({0}) AS Value", this.Type));
             switch (this.Type) {
+                /* distance_avg is actually not used, but the functionality
+                   exists here for future reference */
                 case "distance_avg":
                     this.fields.Add("ROUND(AVG(matka) / 1000, 0) AS Value");
                     break;

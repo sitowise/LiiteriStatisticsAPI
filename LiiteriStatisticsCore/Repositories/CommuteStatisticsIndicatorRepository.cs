@@ -19,10 +19,6 @@ namespace LiiteriStatisticsCore.Repositories
                     Years = Enumerable.Range(1990, 2005 - 1990 + 1).ToArray(),
                     CommuteStatisticsTypes = (new List<Models.CommuteStatisticsType>() {
                         new Models.CommuteStatisticsType() {
-                            Id = "distance_avg",
-                            Description = "Työmatkojen välimatka, Keskiarvo"
-                        },
-                        new Models.CommuteStatisticsType() {
                             Id = "yht",
                             Description = "Työmatkojen lukumäärä, Yhteensä"
                         },
@@ -107,10 +103,6 @@ namespace LiiteriStatisticsCore.Repositories
                     TableName = "FactTyomatkaTOL2008",
                     Years = Enumerable.Range(2007, DateTime.Now.Year - 2007 + 1).ToArray(),
                     CommuteStatisticsTypes = (new List<Models.CommuteStatisticsType>() {
-                        new Models.CommuteStatisticsType() {
-                            Id = "distance_avg",
-                            Description = "Työmatkojen välimatka, Keskiarvo"
-                        },
                         new Models.CommuteStatisticsType() {
                             Id = "yht",
                             Description = "Työmatkojen lukumäärä, Yhteensä"
