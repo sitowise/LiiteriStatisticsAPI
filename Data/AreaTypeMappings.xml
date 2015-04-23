@@ -315,6 +315,21 @@
             <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
     </SelectionAreaType>
+    <SelectionAreaType id="urban_zone_type" category="functional">
+        <Description>Yhdyskuntarakenteen vyöhyke -tyyppi</Description>
+        <DatabaseSchema>
+            <MainIdColumn>{1}.UZVyohykeTyyppi_ID</MainIdColumn>
+            <SubIdColumn>{0}.UZVyohykeTyyppi_ID</SubIdColumn>
+            <SubNameColumn>{0}.Selite</SubNameColumn>
+            <SubAlternativeIdColumn/>
+            <SubYearColumn/>
+            <SubFromString>DimUZVyohykeTyyppi {0}</SubFromString>
+            <JoinQuery>INNER JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</JoinQuery>
+        </DatabaseSchema>
+        <DatabaseAreaTypes>
+            <DatabaseAreaType id="1" name="Ruutu 250m" />
+        </DatabaseAreaTypes>
+    </SelectionAreaType>
     <SelectionAreaType id="grid250m" category="functional">
         <Description>Ruutu 250m</Description>
         <DatabaseSchema>
