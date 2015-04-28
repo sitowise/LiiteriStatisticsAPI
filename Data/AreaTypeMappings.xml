@@ -90,7 +90,6 @@
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" primary="true" />
-            <DatabaseAreaType id="17" name="Seutukunta" />
             <DatabaseAreaType id="2" name="Kunta" />
             <DatabaseAreaType id="1" name="Ruutu 250m" />
         </DatabaseAreaTypes>
