@@ -14,6 +14,7 @@ namespace LiiteriStatisticsCore.Factories
             var obj = new Models.IndicatorBrief();
             obj.Id = (int) rdr["Id"];
             obj.Name = rdr["Name"].ToString();
+            obj.OrderNumber = (int) rdr["OrderNumber"];
             return obj;
         }
     }

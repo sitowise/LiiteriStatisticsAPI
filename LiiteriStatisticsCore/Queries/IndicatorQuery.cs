@@ -69,6 +69,7 @@ namespace LiiteriStatisticsCore.Queries
             /* These are used by IndicatorBrief */
             fields["T.Tilasto_Id"] = "Id";
             fields["T.Nimi"] = "Name";
+            fields["T.JarjNro"] = "OrderNumber";
 
             /* These are used by IndicatorDetails */
             fields["T.EsitysDesimaalitarkkuus"] = "DecimalCount";
