@@ -35,6 +35,7 @@ namespace LiiteriStatisticsCore.Repositories
             var periodFactory = new Factories.TimePeriodFactory();
             var dataAreaTypeFactory = new Factories.DataAreaTypeFactory();
             var areaTypeFactory = new Factories.AreaTypeFactory();
+            var annotationFactory = new Factories.AnnotationFactory();
 
             Models.IndicatorDetails details = null;
             Models.TimePeriod timePeriod = null;
@@ -46,6 +47,8 @@ namespace LiiteriStatisticsCore.Repositories
             Models.DataAreaType dataAreaType = null;
             List<Models.DataAreaType> dataAreaTypes = null;
             List<Models.AreaType> areaTypes = null;
+
+            List<Models.Annotation> annotations = null;
 
             using (DbDataReader rdr = this.GetDbDataReader(query)) {
                 while (rdr.Read()) {
@@ -62,7 +65,7 @@ namespace LiiteriStatisticsCore.Repositories
                     }
 
                     /* each TimePeriod instance may have a number
-                     * of AreaTypes */
+                     * of AreaTypes, as well as a a number of Annotations */
                     if (prevPeriodId != (prevPeriodId = (int) rdr["PeriodId"])) {
                         timePeriod = (Models.TimePeriod)
                             periodFactory.Create(rdr);
@@ -71,6 +74,9 @@ namespace LiiteriStatisticsCore.Repositories
                         areaTypes = new List<Models.AreaType>();
                         timePeriod.DataAreaTypes = dataAreaTypes;
                         timePeriod.AreaTypes = areaTypes;
+
+                        annotations = new List<Models.Annotation>();
+                        timePeriod.Annotations = annotations;
 
                         timePeriods.Add(timePeriod);
                     }
@@ -102,6 +108,13 @@ namespace LiiteriStatisticsCore.Repositories
                     dataAreaType = (Models.DataAreaType)
                         dataAreaTypeFactory.Create(rdr);
                     dataAreaTypes.Add(dataAreaType);
+
+                    /* Each TimePeriod can also have a number
+                     * of Annotations */
+                    if (!Convert.IsDBNull(rdr["Annotation"])) {
+                        annotations.Add((Models.Annotation)
+                            annotationFactory.Create(rdr));
+                    }
                 }
             }
             return entityList;

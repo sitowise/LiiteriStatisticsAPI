@@ -99,6 +99,12 @@ namespace LiiteriStatisticsCore.Queries
             fields["TS.Ref_Tilasto_ID"] = "PrivacyLimitStatisticsId";
             fields["TS.GreaterThan"] = "PrivacyLimitGreaterThan";
 
+            /* Annotations */
+            fields["LT.Lisatieto"] = "Annotation";
+            fields["LT.O_Lyhenne"] = "AnnotationOrganizationShort";
+            fields["LT.O_Nimi"] = "AnnotationOrganizationName";
+            fields["LT.O_Nro"] = "AnnotationOrganizationNumber";
+
             sb.Append(
                 string.Join<string>(", ", (
                     from pair in fields
@@ -107,7 +113,7 @@ namespace LiiteriStatisticsCore.Queries
                     ).ToArray())
                 );
 
-            sb.Append(" FROM DimTilasto T ");
+            sb.Append("\nFROM DimTilasto T ");
 
             sb.Append(@"
 INNER JOIN Apu_TilastoTallennusJakso J ON
@@ -127,6 +133,24 @@ OUTER APPLY (
     ORDER BY
         TL.Alkaen_Jakso_ID DESC
     ) TL
+");
+
+            sb.Append(@"
+    OUTER APPLY (
+        SELECT
+            LTX.Lisatieto AS Lisatieto,
+            YHO.Lyhenne AS O_Lyhenne,
+            YHO.Nimi AS O_Nimi,
+            YHO.Nro AS O_Nro
+        FROM
+            FactTilastolaskentaLisatieto LTX
+
+            INNER JOIN DimYmpHalOrganisaatio YHO ON
+                YHO.YmpHalOrganisaatio_ID = LTX.YmpHalOrganisaatio_ID
+        WHERE
+            LTX.Tilasto_ID = T.Tilasto_ID AND
+            LTX.Jakso_ID = J.Jakso_ID
+        ) LT
 ");
 
             sb.Append(@"

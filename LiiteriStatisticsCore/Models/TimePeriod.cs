@@ -20,5 +20,9 @@ namespace LiiteriStatisticsCore.Models
         /* With these, the client will know what areaTypes can be used
          * to make the queries specific to this TimePeriod */
         public IEnumerable<AreaType> AreaTypes;
+
+        /* each time period in an indicator can have multiple annotations
+         * from different sources */
+        public IEnumerable<Annotation> Annotations;
     }
 }
