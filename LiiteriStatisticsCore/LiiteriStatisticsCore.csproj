@@ -117,6 +117,7 @@
     <Compile Include="Util\DebugOutput.cs" />
     <Compile Include="Util\Range.cs" />
     <Compile Include="Util\AreaTypeMappings.cs" />
+    <Compile Include="Util\TemplateCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

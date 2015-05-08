@@ -133,7 +133,7 @@
   </Target>
   <PropertyGroup>
     <PreBuildEvent>subwcrev.exe "$(SolutionDir)." "$(ProjectDir)Properties\AssemblyInfo.cs.tmpl" "$(ProjectDir)Properties\AssemblyInfo.cs"
-xcopy /Y "$(SolutionDir)\Data\AreaTypeMappings.xml" "$(ProjectDir)App_Data\"</PreBuildEvent>
+(robocopy /NJH /NJS /FP /NDL /NP /E /V "$(SolutionDir)Data" "$(ProjectDir)App_Data") ^&amp; exit 0</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

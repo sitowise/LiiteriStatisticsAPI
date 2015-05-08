@@ -1,0 +1,23 @@
+SELECT
+    {0}
+
+FROM
+    FactTilastoArvo T
+
+    INNER JOIN DimAlue A ON
+        (A.Alue_ID = T.Alue_ID AND
+        A.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
+
+    {1}
+
+WHERE
+    T.Tilasto_ID = @IdIs AND
+    T.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
+    T.Arvo IS NOT NULL AND
+    T.Jakso_ID = @YearIs
+    {2}
+
+GROUP BY
+    {3}
+    {4}
