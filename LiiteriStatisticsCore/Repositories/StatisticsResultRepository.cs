@@ -72,7 +72,7 @@ namespace LiiteriStatisticsCore.Repositories
                 case 10: // m2
                     switch (this.Indicator.DisplayUnitId) {
                         case 14: // ha
-                            obj.Value = (decimal) ((double) obj.Value / 100000);
+                            obj.Value = (decimal) ((double) obj.Value / 10000);
                             break;
                     }
                     break;
