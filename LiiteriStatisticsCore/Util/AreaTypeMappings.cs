@@ -101,6 +101,7 @@ namespace LiiteriStatisticsCore.Util
                     "SubWhereString",
                     "InnerJoinQuery",
                     "RightJoinQuery",
+                    "FilterJoinQuery",
                     }) {
                 if (queryElem.Element(key) != null) {
                     schema[key] = queryElem.Element(key).Value.ToString();

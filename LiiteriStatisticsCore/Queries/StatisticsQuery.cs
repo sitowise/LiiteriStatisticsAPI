@@ -45,6 +45,10 @@ namespace LiiteriStatisticsCore.Queries
         private StringBuilder sbPreQuery;
         private StringBuilder sbPostQuery;
 
+        // some tables need to be dynamically added to the Area join so
+        // we can run filter queries on them
+        private List<string> filterJoins = new List<string>();
+
         public StatisticsQuery(int id) : base()
         {
             this.IdIs = id;
@@ -242,6 +246,14 @@ namespace LiiteriStatisticsCore.Queries
                     var schema = AreaTypeMappings.GetDatabaseSchema(name);
                     string idColumn = schema["MainIdColumn"];
                     idColumn = SchemaDataFormat(idColumn);
+
+                    /* "Luokka" tables need to be added with these */
+                    if (!this.filterJoins.Contains(schema["FilterJoinQuery"]) &&
+                            schema["FilterJoinQuery"] != null &&
+                            schema["FilterJoinQuery"].Length > 0) {
+                        this.filterJoins.Add(SchemaDataFormat(
+                            schema["FilterJoinQuery"]));
+                    }
                     return idColumn;
                 };
 
@@ -349,10 +361,14 @@ namespace LiiteriStatisticsCore.Queries
                 string.Join(",\n    ", this.fields));
        }
 
-        private string GetGroupString()
+        private string GetGroupString(IList<string> groups = null)
         {
+            IList<string> groupvar = this.groups;
+            if (groups != null) {
+                groupvar = groups;
+            }
             var grouplist = new List<string>();
-            foreach (string group in this.groups) {
+            foreach (string group in groupvar) {
                 // don't try to group using strings, e.g. 'Finland'
                 if (group.StartsWith("'") && group.EndsWith("'")) {
                     continue;
@@ -373,6 +389,12 @@ namespace LiiteriStatisticsCore.Queries
             sb.Append("\n    ");
             sb.Append(string.Join<string>(",\n    ", this.orders));
             return this.labelSQLString("orderString", sb.ToString());
+        }
+
+        private string GetFilterJoinsString()
+        {
+            return this.labelSQLString("FilterJoins",
+                "\n" + string.Join("\n", this.filterJoins));
         }
 
         /* This should be called after Filters & Groups have been processed */
@@ -400,10 +422,15 @@ namespace LiiteriStatisticsCore.Queries
         {
             // we won't use SetGroups here, since the query is too different
 
+            var mainGroups = new List<string>();
+            var subGroups = new List<string>();
+
             string idColumn = "NULL";
             string subIdColumn = "NULL";
             string alternativeIdColumn = "NULL";
             string nameColumn = "Suomi";
+
+            string innerJoinQuery = "/* Empty InnerJoinQuery here */";
 
             if (this.GroupByAreaTypeIdIs != null) {
                 var schema = AreaTypeMappings.GetDatabaseSchema(
@@ -414,7 +441,6 @@ namespace LiiteriStatisticsCore.Queries
                     idColumn = SchemaDataFormat(idColumn);
                     //this.fields.Add(string.Format("{0} AS AreaId", idColumn));
                     // this will be grouped in the subqueries
-                    this.groups.Add(idColumn);
                 } else {
                     idColumn = "-1";
                 }
@@ -425,6 +451,8 @@ namespace LiiteriStatisticsCore.Queries
                     /* ordering is important to assure side-by-side queries
                      * are handled properly */
                     this.orders.Add(subIdColumn);
+                    subGroups.Add(subIdColumn);
+                    mainGroups.Add(subIdColumn);
                 } else {
                     subIdColumn = "-1";
                 }
@@ -433,6 +461,7 @@ namespace LiiteriStatisticsCore.Queries
                 nameColumn = schema["SubNameColumn"];
                 if (nameColumn != null && nameColumn.Length > 0) {
                     nameColumn = SchemaDataFormat(nameColumn);
+                    mainGroups.Add(nameColumn);
                 } else {
                     nameColumn = "NULL";
                 }
@@ -441,6 +470,7 @@ namespace LiiteriStatisticsCore.Queries
                 alternativeIdColumn = schema["SubAlternativeIdColumn"];
                 if (alternativeIdColumn != null && alternativeIdColumn.Length > 0) {
                     alternativeIdColumn = SchemaDataFormat(alternativeIdColumn);
+                    mainGroups.Add(alternativeIdColumn);
                 } else {
                     alternativeIdColumn = "-1";
                 }
@@ -460,30 +490,50 @@ namespace LiiteriStatisticsCore.Queries
                 this.sbFrom.Append(joinQuery);
 
                 this.ReduceUsableAreaTypes(this.GroupByAreaTypeIdIs);
+
+                innerJoinQuery = schema["InnerJoinQuery"];
+                if (innerJoinQuery != null) {
+                    innerJoinQuery = SchemaDataFormat(innerJoinQuery);
+                }
             }
 
-            this.fields.Add("Denominator.Jakso_ID AS Year");
-            this.groups.Add("T.Jakso_ID"); // groups will be in subqueries
+            //this.fields.Add("Denominator.Jakso_ID AS Year");
+            this.fields.Add("@YearIs AS Year");
+            //subGroups.Add("T.Jakso_ID"); // groups will be in subqueries
+            //mainGroups.Add("Denominator.Jakso_ID");
 
             this.fields.Add("(ISNULL(Numerator.Arvo, 0) / Denominator.Arvo) AS Value");
+            mainGroups.Add("Numerator.Arvo");
+            mainGroups.Add("Denominator.Arvo");
 
-            this.groups.Add("A.Alkaen_Jakso_ID");
-            this.groups.Add("A.Asti_Jakso_ID");
+            /*
+            subGroups.Add("A.Alkaen_Jakso_ID");
+            subGroups.Add("A.Asti_Jakso_ID");
+            */
 
             this.SetFilters();
             //this.SetGroups("RightJoinQuery");
             this.SetDatabaseAreaTypeId();
 
             string queryString = QueryTemplates.Get("DerivedDivided");
+
+            string subGroupString = "";
+            if (subGroups.Count > 0) {
+                subGroupString = "GROUP BY\n" + this.GetGroupString(subGroups);
+            }
+
             queryString = string.Format(queryString,
                 this.GetFieldsString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
-                this.GetGroupString(),
+                this.GetGroupString(mainGroups),
                 this.GetOrderString(),
                 idColumn,
-                subIdColumn);
-
+                subIdColumn,
+                innerJoinQuery,
+                subGroupString,
+                this.GetFilterJoinsString());
+                
             return queryString;
         }
 
@@ -508,7 +558,8 @@ namespace LiiteriStatisticsCore.Queries
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
                 this.GetGroupString(),
-                this.GetOrderString());
+                this.GetOrderString(),
+                this.GetFilterJoinsString());
 
             return queryString;
         }
@@ -540,7 +591,8 @@ namespace LiiteriStatisticsCore.Queries
                 this.GetFieldsString(),
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
-                this.GetOrderString());
+                this.GetOrderString(),
+                this.GetFilterJoinsString());
 
             return queryString;
         }
@@ -566,7 +618,8 @@ namespace LiiteriStatisticsCore.Queries
                 this.sbFrom.ToString(),
                 this.GetWhereString(),
                 this.GetGroupString(),
-                this.GetOrderString());
+                this.GetOrderString(),
+                this.GetFilterJoinsString());
 
             return queryString;
         }

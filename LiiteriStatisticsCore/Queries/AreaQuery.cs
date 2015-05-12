@@ -104,6 +104,7 @@ namespace LiiteriStatisticsCore.Queries
                     string areaTypeName = areaType.Id;
                     string columnName1 = AreaTypeMappings.GetDatabaseSchema(
                         areaTypeName)["MainIdColumn"];
+                    if (columnName1.StartsWith("F_")) continue;
                     columnName1 = SchemaDataFormat(columnName1);
                     string columnName2 = "parent_" + areaTypeName;
                     if (columnName1 == null ||
