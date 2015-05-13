@@ -119,6 +119,17 @@ namespace LiiteriStatisticsCore.Queries
                 }
             }
 
+            /* extra fields, this is a special additional way of adding
+             * parent areas. previously we only did the addAreaTable
+             * stuff above */
+            IDictionary<string, string> extraFields =
+                AreaTypeMappings.GetExtraAreaFields(this.AreaTypeIdIs);
+            foreach (var extraField in extraFields) {
+                Debug.WriteLine("I am dealing with {0}", extraField.Key);
+                fields.Add(string.Format("{0} AS {1}",
+                    SchemaDataFormat(extraField.Value), extraField.Key));
+            }
+
             if (fields.Count > 0) {
                 fieldString = string.Join(", ", fields);
             }

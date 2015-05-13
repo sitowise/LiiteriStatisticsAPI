@@ -39,7 +39,7 @@ namespace LiiteriStatisticsCore.Repositories
                 }
 
                 if (Convert.IsDBNull(rdr[columnName])) continue;
-                int areaId = (int) rdr[columnName];
+                int areaId = (int) Convert.ToInt32(rdr[columnName]);
                 if (!this.areaLists.Keys.Contains(areaTypeName)) {
                     Queries.AreaQuery query = new Queries.AreaQuery();
                     query.AreaTypeIdIs = areaTypeName;

@@ -288,5 +288,34 @@ namespace LiiteriStatisticsCore.Util
                         "Unknown areatype category: " + category);
             }
         }
+
+        public Dictionary<string, string> GetExtraAreaFields(string areaTypeId)
+        {
+            if (areaTypeId == null) {
+                throw new ArgumentNullException("areaTypeId must not be null!");
+            }
+            var retval = new Dictionary<string, string>();
+
+            var selectionAreaType = (
+                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                where d.Attribute("id").Value == areaTypeId
+                select d.Element("DatabaseSchema")).Single();
+
+            var extraFields = (
+                from d in selectionAreaType
+                    .Descendants("ExtraAreaFields")
+                    .Descendants("ExtraAreaField")
+                select d);
+
+            foreach (var extraField in extraFields) {
+                // parent_foo_bar_blah
+                string key = extraField.Attribute("name").Value.ToString();
+                // A2.Field_ID
+                string value = extraField.Value.ToString();
+                retval[key] = value;
+            }
+
+            return retval;
+        }
     }
 }
