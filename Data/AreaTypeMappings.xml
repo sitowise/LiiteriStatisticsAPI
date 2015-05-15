@@ -381,7 +381,7 @@
             <InnerJoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID</InnerJoinQuery>
             <RightJoinQuery>RIGHT JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
             <ExtraAreaFields>
-                <ExtraAreaField name="parent_city_central_type">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
+                <ExtraAreaField name="parent_city_central_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
             </ExtraAreaFields>
         </DatabaseSchema>
         <DatabaseAreaTypes>
