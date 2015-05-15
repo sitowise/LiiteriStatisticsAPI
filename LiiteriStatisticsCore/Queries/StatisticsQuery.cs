@@ -25,6 +25,9 @@ namespace LiiteriStatisticsCore.Queries
             new Util.TemplateCollection("StatisticsQuery");
 #endif
 
+        // this will be filled by GenerateQueryString, and returned by GetQueryString
+        private string QueryString = null;
+
         private List<string> whereList;
 
         // these will be added as fields for SELECT
@@ -397,6 +400,8 @@ namespace LiiteriStatisticsCore.Queries
                 "\n" + string.Join("\n", this.filterJoins));
         }
 
+        private int? databaseAreaTypeId = null;
+
         /* This should be called after Filters & Groups have been processed */
         private void SetDatabaseAreaTypeId()
         {
@@ -404,15 +409,27 @@ namespace LiiteriStatisticsCore.Queries
                 throw new Exception(
                     "No suitable DatabaseAreaType could be determined with the supplied parameters");
             }
+            if (this.databaseAreaTypeId != null) {
+                throw new Exception("DatabaseAreaTypeId already set!");
+            }
             /* Here we pick our preferred DatabaseAreaType by simply picking
              * the largest number. However, it may be necessary to start
              * using some priority value instead */
             Array.Sort(this.UsableAreaTypes);
-            int dbAreaType = this.UsableAreaTypes.Last();
+            this.databaseAreaTypeId = this.UsableAreaTypes.Last();
             Debug.WriteLine(string.Format(
                 "From this list: [{0}], we decided to pick [{1}]",
-                string.Join(", ", this.UsableAreaTypes), dbAreaType));
-            this.Parameters.Add("DatabaseAreaTypeIdIs", dbAreaType);
+                string.Join(", ", this.UsableAreaTypes),
+                this.databaseAreaTypeId));
+            this.Parameters.Add("DatabaseAreaTypeIdIs", this.databaseAreaTypeId);
+        }
+
+        public int GetDatabaseAreaTypeId()
+        {
+            if (this.databaseAreaTypeId == null) {
+                throw new Exception("DatabaseAreaTypeId is not set!");
+            }
+            return (int) this.databaseAreaTypeId;
         }
 
         /*
@@ -624,7 +641,7 @@ namespace LiiteriStatisticsCore.Queries
             return queryString;
         }
 
-        public override string GetQueryString()
+        public void GenerateQueryString()
         {
             string queryString;
 
@@ -678,7 +695,15 @@ namespace LiiteriStatisticsCore.Queries
             /* postQuery stuff (drop temporary tables) */
             queryString = queryString + "\n" + this.sbPostQuery.ToString();
 
-            return queryString;
+            this.QueryString = queryString;
+        }
+
+        public override string GetQueryString()
+        {
+            if (this.QueryString == null) {
+                this.GenerateQueryString();
+            }
+            return this.QueryString;
         }
     }
 }

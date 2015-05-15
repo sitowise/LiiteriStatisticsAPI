@@ -129,7 +129,16 @@ namespace LiiteriStatisticsCore.Controllers
                     }
                     statisticsQuery.AreaFilterQueryString = filter;
 
-                    if (details.PrivacyLimit == null) {
+                    /* at this point the statisticsQuery should be ready,
+                     * let's process it here so we can decide if privacy limits
+                     * can be applied here */
+                    statisticsQuery.GenerateQueryString();
+
+                    /* privacy limits should only be applied
+                     * when using grid data (1) */
+                    int dbAreaType = statisticsQuery.GetDatabaseAreaTypeId();
+
+                    if (details.PrivacyLimit == null || dbAreaType != 1) {
                         queries.Add(statisticsQuery);
                     } else {
                         /* For privacy limits, we need to do a parallel
@@ -185,6 +194,7 @@ namespace LiiteriStatisticsCore.Controllers
                 /* Step 3: Fetch StatisticsResult */
 
                 var repository = new Repositories.StatisticsResultRepository(db);
+
                 /* when IndictorDetails is passed to the repository, it will
                  * know how to do unit conversions */
                 repository.Indicator = details;

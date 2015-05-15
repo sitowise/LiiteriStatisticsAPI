@@ -99,11 +99,6 @@ namespace LiiteriStatisticsCore.Repositories
 
         public abstract IEnumerable<T> FindAll(Queries.ISqlQuery query);
 
-        public virtual IEnumerable<T> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
         public abstract T Single(Queries.ISqlQuery query);
 
         public abstract T First(Queries.ISqlQuery query);
