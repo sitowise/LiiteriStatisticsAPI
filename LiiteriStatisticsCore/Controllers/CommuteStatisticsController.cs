@@ -67,8 +67,11 @@ namespace LiiteriStatisticsCore.Controllers
         public IEnumerable<Models.CommuteStatisticsIndicator>
             GetCommuteStatisticsIndicators()
         {
-            return new Repositories
-                .CommuteStatisticsIndicatorRepository().GetAll();
+            using (DbConnection db = this.GetDbConnection()) {
+                return new Repositories
+                    .CommuteStatisticsIndicatorRepository(db)
+                    .GetAll();
+            }
         }
 
         private StatisticsResultContainer GetCommuteStatisticsResultContainer(
@@ -81,10 +84,12 @@ namespace LiiteriStatisticsCore.Controllers
             string home_filter = null,
             bool debug = false)
         {
-            var indicator = new Repositories
-                .CommuteStatisticsIndicatorRepository().Get(statisticsId);
-
             using (DbConnection db = this.GetDbConnection()) {
+
+                var indicator = new Repositories
+                    .CommuteStatisticsIndicatorRepository(db)
+                    .Get(statisticsId);
+
                 var queries = new List<Queries.CommuteStatisticsQuery>();
 
                 foreach (int year in years) {

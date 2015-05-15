@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiiteriStatisticsCore.Repositories
 {
-    public interface IReadRepository<T> where T : class
+    public interface IReadRepository<T>
     {
         IEnumerable<T> GetAll();
 

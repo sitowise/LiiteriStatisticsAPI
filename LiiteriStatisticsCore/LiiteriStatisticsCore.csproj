@@ -100,12 +100,14 @@
     <Compile Include="Queries\AnySqlQuery.cs" />
     <Compile Include="Queries\AreaQuery.cs" />
     <Compile Include="Queries\CommuteStatisticsQuery.cs" />
+    <Compile Include="Queries\CommuteStatisticsYearQuery.cs" />
     <Compile Include="Queries\IndicatorQuery.cs" />
     <Compile Include="Queries\SqlQuery.cs" />
     <Compile Include="Queries\StatisticsQuery.cs" />
     <Compile Include="Queries\ThemeQuery.cs" />
     <Compile Include="Repositories\AreaRepository.cs" />
     <Compile Include="Repositories\CommuteStatisticsIndicatorRepository.cs" />
+    <Compile Include="Repositories\CommuteStatisticsYearRepository.cs" />
     <Compile Include="Repositories\IndicatorBriefRepository.cs" />
     <Compile Include="Repositories\IndicatorDetailsRepository.cs" />
     <Compile Include="Repositories\IReadRepository.cs" />

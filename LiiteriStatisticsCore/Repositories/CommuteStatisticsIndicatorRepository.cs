@@ -4,19 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Data.Common;
+
 namespace LiiteriStatisticsCore.Repositories
 {
     public class CommuteStatisticsIndicatorRepository
     {
+        private DbConnection dbConnection;
+
+        public CommuteStatisticsIndicatorRepository(DbConnection dbConnection)
+        {
+            this.dbConnection = dbConnection;
+        }
+
+        private int[] GetYears(string tableName)
+        {
+            Queries.ISqlQuery query = new Queries.CommuteStatisticsYearQuery(tableName);
+            return (new CommuteStatisticsYearRepository(this.dbConnection))
+                .FindAll(query)
+                .ToArray();
+        }
+
         public IEnumerable<Models.CommuteStatisticsIndicator> GetAll()
         {
             return new List<Models.CommuteStatisticsIndicator>() {
                 new Models.CommuteStatisticsIndicator() {
                     Id = -1,
                     Name = "FactTyomatkaTOL2002",
-                    Description = "Toimialaluokiteltu sukupuolittain ositettu työmatka-aineisto vuosilta 1990-2005",
+                    Description = "Toimialaluokitus 2002: vuodet 1990-2005",
                     TableName = "FactTyomatkaTOL2002",
-                    Years = Enumerable.Range(1990, 2005 - 1990 + 1).ToArray(),
+                    Years = this.GetYears("FactTyomatkaTOL2002"),
                     CommuteStatisticsTypes = (new List<Models.CommuteStatisticsType>() {
                         new Models.CommuteStatisticsType() {
                             Id = "yht",
@@ -99,9 +116,9 @@ namespace LiiteriStatisticsCore.Repositories
                 new Models.CommuteStatisticsIndicator() {
                     Id = -2,
                     Name = "FactTyomatkaTOL2008",
-                    Description = "Toimialaluokiteltu sukupuolittain ositettu työmatka-aineisto vuodesta 2007 alkaen",
+                    Description = "Toimialaluokitus 2008: vuodet 2007-",
                     TableName = "FactTyomatkaTOL2008",
-                    Years = Enumerable.Range(2007, DateTime.Now.Year - 2007 + 1).ToArray(),
+                    Years = this.GetYears("FactTyomatkaTOL2008"),
                     CommuteStatisticsTypes = (new List<Models.CommuteStatisticsType>() {
                         new Models.CommuteStatisticsType() {
                             Id = "yht",

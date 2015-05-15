@@ -10,7 +10,7 @@ using System.Diagnostics;
 namespace LiiteriStatisticsCore.Repositories
 {
     public abstract class SqlReadRepository<T> :
-        IReadRepository<T> where T : class
+        IReadRepository<T>
     {
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
