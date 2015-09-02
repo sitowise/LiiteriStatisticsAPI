@@ -29,5 +29,15 @@ namespace LiiteriStatisticsCore.Factories
                 return (int) rdr.GetByte(rdr.GetOrdinal("AreaId"));
             }
         }
+
+        public bool HasColumn(DbDataReader rdr, string key)
+        {
+            foreach (System.Data.DataRow row in rdr.GetSchemaTable().Rows) {
+                if (row["ColumnName"].ToString() == key) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

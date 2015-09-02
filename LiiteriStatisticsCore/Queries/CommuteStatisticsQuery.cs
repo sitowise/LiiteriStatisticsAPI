@@ -476,9 +476,22 @@ namespace LiiteriStatisticsCore.Queries
                 case "distance_avg":
                     this.fields.Add("ROUND(AVG(matka) / 1000, 0) AS Value");
                     break;
-                default:
+                case "yht":
                     this.fields.Add(string.Format(
                         "CAST(SUM({0}) AS FLOAT) AS Value", this.Type));
+                    break;
+                default:
+                    this.fields.Add(string.Format(
+                        "CAST(SUM({0}) AS FLOAT) AS Value",
+                        this.Type));
+                    this.fields.Add(string.Format(
+                    @"
+    CASE
+        WHEN SUM(yht) < 10
+        THEN 1
+        ELSE 0
+        END AS TriggerPrivacyLimit",
+                        this.Type));
                     break;
             }
 
