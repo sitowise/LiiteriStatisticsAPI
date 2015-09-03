@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>LiiteriStatisticsCore.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>LiiteriStatisticsCore.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime.net45">
@@ -122,6 +124,7 @@
     <Compile Include="Util\TemplateCollection.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LiiteriStatisticsCore.ruleset" />
     <None Include="packages.config" />
     <Antlr4 Include="Parsers\SimpleQueryLanguage.g4">
       <Generator>MSBuild:Compile</Generator>
