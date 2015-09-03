@@ -13,5 +13,7 @@ namespace LiiteriStatisticsCore.Models
 
         /* value condition */
         public int? GreaterThan { get; set; }
+
+        public string Description { get; set; }
     }
 }
