@@ -85,21 +85,6 @@ namespace LiiteriStatisticsCore.Controllers
                 /* Step 2: Create one or more StatisticsQuery objects */
                 var queries = new List<Queries.StatisticsQuery>();
 
-                /* For privacy limits, we do some extra stuff */
-                Queries.IndicatorQuery refIndicatorQuery;
-                Models.IndicatorDetails refDetails = null;
-
-                IList<Tuple<Queries.ISqlQuery, Queries.ISqlQuery>>
-                    querypairs = null;
-
-                if (details.PrivacyLimit != null) {
-                    refIndicatorQuery = new Queries.IndicatorQuery();
-                    refIndicatorQuery.IdIs = details.PrivacyLimit.RefId;
-                    refDetails = (Models.IndicatorDetails)
-                        indicatorDetailsRepository.Single(refIndicatorQuery);
-                    querypairs =
-                        new List<Tuple<Queries.ISqlQuery, Queries.ISqlQuery>>();
-                }
 
                 /* although StatisticsQuery could implement .YearIn, which 
                  * would accept a list of years, what about if different years
@@ -134,51 +119,13 @@ namespace LiiteriStatisticsCore.Controllers
                      * can be applied here */
                     statisticsQuery.GenerateQueryString();
 
-                    /* privacy limits should only be applied
-                     * when using grid data (1) */
-                    int dbAreaType = statisticsQuery.GetDatabaseAreaTypeId();
-
-                    if (details.PrivacyLimit == null || dbAreaType != 1) {
-                        queries.Add(statisticsQuery);
-                    } else {
-                        /* For privacy limits, we need to do a parallel
-                         * query and compare the results side-by-side
-                         * in the repository */
-                        var refQuery = new Queries.StatisticsQuery(
-                            details.PrivacyLimit.RefId);
-                        /* TODO: implement cloning?
-                         * (StatisticsQuery state may be too uncertain, though)
-                         */
-                        refQuery.CalculationTypeIdIs =
-                            refDetails.CalculationType;
-
-                        Models.TimePeriod refTimePeriod = (
-                            from p in refDetails.TimePeriods
-                            where p.Id == year
-                            select p).Single();
-                        int[] refAvailableAreaTypes = (
-                            from a in refTimePeriod.DataAreaTypes
-                            select a.Id).ToArray();
-
-                        refQuery.AvailableAreaTypes = refAvailableAreaTypes;
-
-                        refQuery.GroupByAreaTypeIdIs =
-                            statisticsQuery.GroupByAreaTypeIdIs;
-                        refQuery.YearIs = statisticsQuery.YearIs;
-                        refQuery.AreaFilterQueryString =
-                            statisticsQuery.AreaFilterQueryString;
-                        querypairs.Add(
-                            new Tuple<Queries.ISqlQuery, Queries.ISqlQuery>(
-                                statisticsQuery, refQuery));
-                    }
+                    queries.Add(statisticsQuery);
                 }
 
                 if (debug) {
                     Util.DebugOutput debugOutput;
                     if (queries.Count > 0) {
                         debugOutput = new Util.DebugOutput(queries);
-                    } else if (querypairs.Count > 0) {
-                        debugOutput = new Util.DebugOutput(querypairs);
                     } else {
                         throw new Exception("No statistics queries specified!");
                     }
@@ -195,15 +142,9 @@ namespace LiiteriStatisticsCore.Controllers
 
                 var repository = new Repositories.StatisticsResultRepository(db);
 
-                /* when IndictorDetails is passed to the repository, it will
-                 * know how to do unit conversions */
-                repository.Indicator = details;
-
                 IEnumerable<Models.StatisticsResult> results;
                 if (queries.Count > 0) {
                     results = repository.FindAll(queries);
-                } else if (querypairs.Count > 0) {
-                    results = repository.FindAll(querypairs);
                 } else {
                     throw new Exception("No statistics queries specified!");
                 }

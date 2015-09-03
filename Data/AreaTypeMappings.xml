@@ -8,8 +8,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimTaajama {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimTaajama {0} ON ({0}.Alue_ID = {1}.Taajama_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimTaajama {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimTaajama {0} ON ({0}.Alue_ID = {1}.Taajama_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -24,8 +23,7 @@
             <SubAlternativeIdColumn>CONVERT(INT, {0}.KseutuNro)</SubAlternativeIdColumn>
             <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimKaupunkiseutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKaupunkiseutu {0} ON ({0}.Alue_ID = {1}.Kaupunkiseutu_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKaupunkiseutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKaupunkiseutu {0} ON ({0}.Alue_ID = {1}.Kaupunkiseutu_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -40,8 +38,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimAsemakaavoitettuAlueTyyppi {0} LEFT OUTER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {0}.AsemakaavoitettuAlueTyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID)</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = Denominator.S_Alue_ID)</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID)</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_planned_area_class">BR_{0}.AsemakaavoitettuAlueLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -59,8 +56,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimAsemakaavoitettuAlueLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID INNER JOIN DimAsemakaavoitettuAlueLuokka {0} ON {0}.AsemakaavoitettuAlueLuokka_ID = BR_{0}.AsemakaavoitettuAlueLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimAsemakaavoitettuAlueLuokka {0} ON {0}.AsemakaavoitettuAlueLuokka_ID = BR_{0}.AsemakaavoitettuAlueLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID INNER JOIN DimAsemakaavoitettuAlueLuokka {0} ON {0}.AsemakaavoitettuAlueLuokka_ID = BR_{0}.AsemakaavoitettuAlueLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka F_AsemakaavoitettuAlueLuokka ON F_AsemakaavoitettuAlueLuokka.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -76,8 +72,7 @@
             <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimKunta {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKunta {0} ON {0}.Alue_ID = {1}.Kunta_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKunta {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKunta {0} ON {0}.Alue_ID = {1}.Kunta_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType primary="true" id="2" name="Kunta" />
@@ -93,8 +88,7 @@
             <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimSeutukunta {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimSeutukunta {0} ON {0}.Alue_ID = {1}.Seutukunta_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimSeutukunta {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimSeutukunta {0} ON {0}.Alue_ID = {1}.Seutukunta_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="17" name="Seutukunta" primary="true" />
@@ -111,8 +105,7 @@
             <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimMaakunta {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimMaakunta {0} ON {0}.Alue_ID = {1}.Maakunta_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimMaakunta {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimMaakunta {0} ON {0}.Alue_ID = {1}.Maakunta_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" primary="true" />
@@ -129,8 +122,7 @@
             <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_E_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimEly {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_E_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" />
@@ -148,8 +140,7 @@
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
             <SubWhereString>{0}.LiikenneElyNimi IS NOT NULL</SubWhereString>
-            <InnerJoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_L_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimEly {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_L_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" />
@@ -167,8 +158,7 @@
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
             <SubWhereString>{0}.YmparistoElyNimi IS NOT NULL</SubWhereString>
-            <InnerJoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_Y_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimEly {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_Y_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" />
@@ -204,8 +194,7 @@
             <SubAlternativeIdColumn>CONVERT(INT, {0}.KaavaNro)</SubAlternativeIdColumn>
             <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimAsemakaavoitettuAlue {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimAsemakaavoitettuAlue {0} ON ({0}.Alue_ID = {1}.AsemakaavoitettuAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimAsemakaavoitettuAlue {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimAsemakaavoitettuAlue {0} ON ({0}.Alue_ID = {1}.AsemakaavoitettuAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -220,8 +209,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimAsutusalueTyyppi {0} LEFT OUTER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {0}.Asutusaluetyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_neighborhood_class">BR_{0}.AsutusalueLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -239,8 +227,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimAsutusalueLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID INNER JOIN DimAsutusalueLuokka {0} ON {0}.AsutusalueLuokka_ID = BR_{0}.AsutusalueLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.AsutusalueLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimAsutusalueLuokka {0} ON {0}.AsutusalueLuokka_ID = BR_{0}.AsutusalueLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID INNER JOIN DimAsutusalueLuokka {0} ON {0}.AsutusalueLuokka_ID = BR_{0}.AsutusalueLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka F_AsutusalueLuokka ON F_AsutusalueLuokka.Asutusaluetyyppi_ID = {1}.Asutusaluetyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -256,8 +243,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString addAreaTable="true">DimHallintoOikeus {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = {1}.HallintoOikeus_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = {1}.HallintoOikeus_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="16" name="Maakunta" />
@@ -274,8 +260,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimKaupanAlue {0} INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKaupanAlue {0} ON ({0}.Alue_ID = {1}.KaupanAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID)) INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.KeskustaTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKaupanAlue {0} ON {0}.Alue_ID = Denominator.S_Alue_ID INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.KeskustaTyyppi_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKaupanAlue {0} ON ({0}.Alue_ID = {1}.KaupanAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID)) INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.KeskustaTyyppi_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -290,8 +275,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKaupunkiMaaseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {0}.KaupunkimaaseutuTyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkiMaaseutuTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_city_rural_area_class">BR_{0}.KaupunkimaaseutuLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -309,8 +293,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKaupunkiMaaseutuLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID INNER JOIN DimKaupunkiMaaseutuLuokka {0} ON {0}.KaupunkiMaaseutuLuokka_ID = BR_{0}.KaupunkiMaaseutuLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>INNER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkiMaaseutuLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimKaupunkiMaaseutuLuokka {0} ON {0}.KaupunkiMaaseutuLuokka_ID = BR_{0}.KaupunkiMaaseutuLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID INNER JOIN DimKaupunkiMaaseutuLuokka {0} ON {0}.KaupunkiMaaseutuLuokka_ID = BR_{0}.KaupunkiMaaseutuLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka F_KaupunkiMaaseutuLuokka ON F_KaupunkiMaaseutuLuokka.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -326,8 +309,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKaupunkiseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {0}.KaupunkiseutuTyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_urban_area_class">BR_{0}.KaupunkiseutuLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -345,8 +327,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKaupunkiseutuLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID INNER JOIN DimKaupunkiseutuLuokka {0} ON {0}.KaupunkiseutuLuokka_ID = BR_{0}.KaupunkiseutuLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimKaupunkiseutuLuokka {0} ON {0}.KaupunkiseutuLuokka_ID = BR_{0}.KaupunkiseutuLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID INNER JOIN DimKaupunkiseutuLuokka {0} ON {0}.KaupunkiseutuLuokka_ID = BR_{0}.KaupunkiseutuLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka F_KaupunkiseutuLuokka ON F_KaupunkiseutuLuokka.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -362,8 +343,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
             <SubFromString addAreaTable="true">DimKeskusta {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKeskusta {0} ON ({0}.Alue_ID = {1}.Keskusta_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKeskusta {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKeskusta {0} ON ({0}.Alue_ID = {1}.Keskusta_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" />
@@ -378,8 +358,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKeskustatyyppi {0} LEFT OUTER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_city_central_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -397,8 +376,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimKeskustaLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON {0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustaluokka_ID = Denominator.S_Alue_ID INNER JOIN DimKeskustaLuokka {0} ON {0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON {0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeKeskustatyyppi_Keskustaluokka F_KeskustaLuokka ON F_KeskustaLuokka.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -414,8 +392,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimTaajamaHarvaTiheaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {0}.TaajamaHarvaTiheaTyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_locality_density_class">BR_{0}.TaajamaHarvaTiheaLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -433,8 +410,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimTaajamaHarvaTiheaLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID INNER JOIN DimTaajamaHarvaTiheaLuokka {0} ON {0}.TaajamaHarvaTiheaLuokka_ID = BR_{0}.TaajamaHarvaTiheaLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimTaajamaHarvaTiheaLuokka {0} ON {0}.TaajamaHarvaTiheaLuokka_ID = BR_{0}.TaajamaHarvaTiheaLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID INNER JOIN DimTaajamaHarvaTiheaLuokka {0} ON {0}.TaajamaHarvaTiheaLuokka_ID = BR_{0}.TaajamaHarvaTiheaLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka F_TaajamaHarvaTiheaLuokka ON F_TaajamaHarvaTiheaLuokka.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -450,8 +426,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimTaajamaHajaAsutusTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {0}.TaajamaHajaAsutusTyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_locality_rural_class">BR_{0}.TaajamaHajaAsutusLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -469,8 +444,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimTaajamaHajaAsutusLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID INNER JOIN DimTaajamaHajaAsutusLuokka {0} ON {0}.TaajamaHajaAsutusLuokka_ID = BR_{0}.TaajamaHajaAsutusLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimTaajamaHajaAsutusLuokka {0} ON {0}.TaajamaHajaAsutusLuokka_ID = BR_{0}.TaajamaHajaAsutusLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID INNER JOIN DimTaajamaHajaAsutusLuokka {0} ON {0}.TaajamaHajaAsutusLuokka_ID = BR_{0}.TaajamaHajaAsutusLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka F_TaajamaHajaAsutusLuokka ON F_TaajamaHajaAsutusLuokka.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -486,8 +460,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimUZVyohykeTyyppi {0} LEFT OUTER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {0}.UZVyohykeTyyppi_ID</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</JoinQuery>
             <ExtraAreaFields>
                 <ExtraAreaField name="parent_urban_zone_class">BR_{0}.UZVyohykeLuokka_ID</ExtraAreaField>
             </ExtraAreaFields>
@@ -505,8 +478,7 @@
             <SubAlternativeIdColumn/>
             <SubYearColumn/>
             <SubFromString>DimUZVyohykeLuokka {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID INNER JOIN DimUZVyohykeLuokka {0} ON {0}.UZVyohykeLuokka_ID = BR_{0}.UZVyohykeLuokka_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeLuokka_ID = Denominator.S_Alue_ID INNER JOIN DimUZVyohykeLuokka {0} ON {0}.UZVyohykeLuokka_ID = BR_{0}.UZVyohykeLuokka_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID INNER JOIN DimUZVyohykeLuokka {0} ON {0}.UZVyohykeLuokka_ID = BR_{0}.UZVyohykeLuokka_ID</JoinQuery>
             <FilterJoinQuery>LEFT JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka F_UZVyohykeLuokka ON F_UZVyohykeLuokka.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</FilterJoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
@@ -523,8 +495,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="1" name="Ruutu 250m" primary="true" />
@@ -540,8 +511,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_500m_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_500m_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="7" name="Ruutu 500m" primary="true" />
@@ -558,8 +528,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_1km_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_1km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="22" name="Ruutu 1km" primary="true" />
@@ -576,8 +545,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_2km_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_2km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="23" name="Ruutu 2km" primary="true" />
@@ -594,8 +562,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_5km_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_5km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="24" name="Ruutu 5km" primary="true" />
@@ -612,8 +579,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_10km_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_10km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="25" name="Ruutu 10km" primary="true" />
@@ -630,8 +596,7 @@
             <SubYearColumn/>
             <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
             <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-            <InnerJoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_20km_Alue_ID</InnerJoinQuery>
-            <RightJoinQuery>RIGHT JOIN DimRuutu {0} ON {0}.Alue_ID = Denominator.S_Alue_ID</RightJoinQuery>
+            <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_20km_Alue_ID</JoinQuery>
         </DatabaseSchema>
         <DatabaseAreaTypes>
             <DatabaseAreaType id="26" name="Ruutu 20km" primary="true" />

@@ -99,9 +99,8 @@ namespace LiiteriStatisticsCore.Util
                     "GeometryColumn",
                     "SubFromString",
                     "SubWhereString",
-                    "InnerJoinQuery",
-                    "RightJoinQuery",
                     "FilterJoinQuery",
+                    "JoinQuery",
                     }) {
                 if (queryElem.Element(key) != null) {
                     schema[key] = queryElem.Element(key).Value.ToString();

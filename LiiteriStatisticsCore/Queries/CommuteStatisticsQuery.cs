@@ -216,10 +216,10 @@ namespace LiiteriStatisticsCore.Queries
                     this.fields.Add("NULL AS AlternativeId");
                 }
 
-                if (schema["InnerJoinQuery"] != null) {
+                if (schema["JoinQuery"] != null) {
                     /* alias substitutions are needed because the names
                      * will be different in CommuteStatistics */
-                    string joinQuery = schema["InnerJoinQuery"];
+                    string joinQuery = schema["JoinQuery"];
                     joinQuery = dataFormat(joinQuery);
 
                     this.sbFrom.Append("\n    ");
