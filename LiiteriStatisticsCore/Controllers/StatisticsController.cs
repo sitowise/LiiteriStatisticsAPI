@@ -63,6 +63,8 @@ namespace LiiteriStatisticsCore.Controllers
 
         /* be prepared to return either a debug string, or the actual
          * results */
+        /* TODO: Remove the container encapsulation,
+         * or reimplement it along with debug */
         private StatisticsResultContainer GetStatisticsResultContainer(
             int[] years,
             int statisticsId,
@@ -72,85 +74,21 @@ namespace LiiteriStatisticsCore.Controllers
         {
             using (DbConnection db = this.GetDbConnection()) {
 
-                /* Step 1: Fetch IndicatorDetails */
+                var request = new Requests.StatisticsRequest() {
+                    StatisticsId = statisticsId,
+                    Years = years,
+                    Group = group,
+                    Filter = filter,
+                };
 
-                var indicatorQuery = new Queries.IndicatorQuery();
-                indicatorQuery.IdIs = statisticsId;
+                var repofactory = new Factories.StatisticsRepositoryFactory(
+                    db, request);
+                var repository = repofactory.GetRepository();
 
-                var indicatorDetailsRepository =
-                    new Repositories.IndicatorDetailsRepository(
-                        db,
-                        new Queries.ISqlQuery[] { indicatorQuery });
-
-                var details = (Models.IndicatorDetails)
-                    indicatorDetailsRepository.Single();
-
-                /* Step 2: Create one or more StatisticsQuery objects */
-                var queries = new List<Queries.StatisticsQuery>();
-
-                /* although StatisticsQuery could implement .YearIn, which 
-                 * would accept a list of years, what about if different years
-                 * end up having different DatabaseAreaTypes?
-                 * For this reason, let's just loop the years and create
-                 * multiple queries */
-                foreach (int year in years) {
-                    Models.TimePeriod timePeriod = (
-                        from p in details.TimePeriods
-                        where p.Id == year
-                        select p).Single();
-                    int[] availableAreaTypes = (
-                        from a in timePeriod.DataAreaTypes
-                        select a.Id).ToArray();
-
-                    var statisticsQuery = new Queries.StatisticsQuery(statisticsId);
-
-                    statisticsQuery.CalculationTypeIdIs = details.CalculationType;
-                    statisticsQuery.AvailableAreaTypes = availableAreaTypes;
-
-                    if (group == null) group = "finland";
-                    statisticsQuery.GroupByAreaTypeIdIs = group;
-                    statisticsQuery.YearIs = year;
-
-                    if (filter != null && filter.Length == 0) {
-                        filter = null;
-                    }
-                    statisticsQuery.AreaFilterQueryString = filter;
-
-                    /* at this point the statisticsQuery should be ready,
-                     * let's process it here so we can decide if privacy limits
-                     * can be applied here */
-                    statisticsQuery.GenerateQueryString();
-
-                    queries.Add(statisticsQuery);
-                }
-
-                if (debug) {
-                    Util.DebugOutput debugOutput;
-                    if (queries.Count > 0) {
-                        debugOutput = new Util.DebugOutput(queries);
-                    } else {
-                        throw new Exception("No statistics queries specified!");
-                    }
-                    return new StatisticsResultContainer() {
-                        DebugString = debugOutput.ToString(),
-                        Results = null
-                    };
-                    /* We could continue here and fill the actual results,
-                     * but if there's an error we might rather just want
-                     * to see the query */
-                }
-
-                /* Step 3: Fetch StatisticsResult */
+                /* debug snipped away from here */
 
                 IEnumerable<Models.StatisticsResult> results;
-                if (queries.Count > 0) {
-                    var repository =
-                        new Repositories.StatisticsResultRepository(
-                            db, queries.ToArray());
-                    results = repository.FindAll();
-                } else {
-                    throw new Exception("No statistics queries specified!");
-                }
+                results = repository.FindAll();
 
                 /* Note: we are iterating the generator here, could be
                  * memory-inefficient */

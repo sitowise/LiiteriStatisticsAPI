@@ -17,33 +17,21 @@ namespace LiiteriStatisticsCore.Repositories
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         protected DbConnection dbConnection;
+        protected Factories.IFactory factory;
+        protected IEnumerable<Queries.ISqlQuery> queries;
 
-        public SqlReadRepository(DbConnection dbConnection)
+        public SqlReadRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries,
+            Factories.IFactory factory = null)
         {
             this.dbConnection = dbConnection;
+            this.factory = factory;
+            this.queries = queries;
         }
 
         public delegate T ModifierDelegate(T obj);
         public List<ModifierDelegate> Modifiers = new List<ModifierDelegate>();
-
-        public IEnumerable<T> FindAll(
-            Queries.ISqlQuery query,
-            Factories.IFactory factory)
-        {
-            using (DbDataReader rdr = this.GetDbDataReader(query)) {
-                while (rdr.Read()) {
-                    T p = (T) factory.Create(rdr);
-
-                    if (this.Modifiers != null) {
-                        foreach (var d in this.Modifiers) {
-                            p = d(p);
-                        }
-                    }
-
-                    yield return p;
-                }
-            }
-        }
 
         public DbDataReader GetDbDataReader(
             Queries.ISqlQuery query)
@@ -96,11 +84,40 @@ namespace LiiteriStatisticsCore.Repositories
                 return retval;
             }
         }
+        private IEnumerable<T> FindAll(Queries.ISqlQuery query)
+        {
+            if (this.factory == null) {
+                throw new ArgumentNullException(
+                    "Using standard FindAll(), but factory is null!");
+            }
+            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+                while (rdr.Read()) {
+                    T p = (T) this.factory.Create(rdr);
 
-        public abstract IEnumerable<T> FindAll(Queries.ISqlQuery query);
+                    if (this.Modifiers != null) {
+                        foreach (var d in this.Modifiers) {
+                            p = d(p);
+                        }
+                    }
 
-        public abstract T Single(Queries.ISqlQuery query);
+                    yield return p;
+                }
+            }
+        }
 
-        public abstract T First(Queries.ISqlQuery query);
+        public virtual IEnumerable<T> FindAll()
+        {
+            foreach (Queries.ISqlQuery query in this.queries) {
+                foreach (T r in this.FindAll(query)) {
+                    yield return r;
+                }
+            }
+        }
+
+        /* TODO: should probably have a default implementation for these? */
+
+        public abstract T Single();
+
+        public abstract T First();
     }
 }

@@ -133,7 +133,7 @@ namespace LiiteriStatisticsCore.Controllers
                 IEnumerable<Models.StatisticsResult> results;
                 if (queries.Count > 0) {
                     var repository =
-                        new Repositories.StatisticsResultRepository(
+                        new Repositories.NormalStatisticsRepository(
                             db, queries);
                     results = repository.FindAll();
                 } else {

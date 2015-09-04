@@ -8,14 +8,14 @@ using System.Diagnostics;
 
 namespace LiiteriStatisticsCore.Repositories
 {
-    public class StatisticsResultRepository :
+    public class NormalStatisticsRepository :
         SqlReadRepository<Models.StatisticsResult>
     {
         public static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public StatisticsResultRepository(
+        public NormalStatisticsRepository(
             DbConnection dbConnection,
             IEnumerable<Queries.ISqlQuery> queries) :
             base(dbConnection, queries, new Factories.StatisticsResultFactory())

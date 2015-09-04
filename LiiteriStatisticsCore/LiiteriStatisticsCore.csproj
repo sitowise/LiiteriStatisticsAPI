@@ -68,6 +68,7 @@
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Factories\IndicatorBriefFactory.cs" />
     <Compile Include="Factories\IndicatorDetailsFactory.cs" />
+    <Compile Include="Factories\StatisticsRepositoryFactory.cs" />
     <Compile Include="Factories\StatisticsResultFactory.cs" />
     <Compile Include="Factories\ThemeFactory.cs" />
     <Compile Include="Factories\TimePeriodFactory.cs" />
@@ -116,8 +117,9 @@
     <Compile Include="Repositories\IReadWriteRepository.cs" />
     <Compile Include="Repositories\SqlReadRepository.cs" />
     <Compile Include="Repositories\SqlReadWriteRepository.cs" />
-    <Compile Include="Repositories\StatisticsResultRepository.cs" />
+    <Compile Include="Repositories\Statistics\NormalStatisticsRepository.cs" />
     <Compile Include="Repositories\ThemeRepository.cs" />
+    <Compile Include="Requests\StatisticsRequest.cs" />
     <Compile Include="Util\DebugOutput.cs" />
     <Compile Include="Util\Range.cs" />
     <Compile Include="Util\AreaTypeMappings.cs" />
