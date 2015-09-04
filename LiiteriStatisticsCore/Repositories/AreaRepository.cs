@@ -15,8 +15,10 @@ namespace LiiteriStatisticsCore.Repositories
 
         private Dictionary<string, IEnumerable<Models.Area>> areaLists;
 
-        public AreaRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public AreaRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries) :
+            base(dbConnection, queries, new Factories.AreaFactory())
         {
             /* this is a bit ugly, but the full lists are also good caches */
             this.areaLists = new Dictionary<string, IEnumerable<Models.Area>>();
@@ -78,19 +80,19 @@ namespace LiiteriStatisticsCore.Repositories
             }
         }
 
-        public override IEnumerable<Models.Area> FindAll(Queries.ISqlQuery query)
+        public override IEnumerable<Models.Area> FindAll()
         {
-            return this.FindAll(query, false);
+            return this.FindAll(this.queries.Single(), false);
         }
 
-        public override Models.Area Single(Queries.ISqlQuery query)
+        public override Models.Area Single()
         {
-            return this.FindAll(query).Single();
+            return this.FindAll(this.queries.Single()).Single();
         }
 
-        public override Models.Area First(Queries.ISqlQuery query)
+        public override Models.Area First()
         {
-            return this.FindAll(query).First();
+            return this.FindAll(this.queries.Single()).First();
         }
     }
 }

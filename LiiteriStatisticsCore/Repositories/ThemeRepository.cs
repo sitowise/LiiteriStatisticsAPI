@@ -12,28 +12,21 @@ namespace LiiteriStatisticsCore.Repositories
     {
         private string tableName = "[LiiteriDataIndex]..[Themes]";
 
-        public ThemeRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public ThemeRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries) :
+            base(dbConnection, queries, new Factories.ThemeFactory())
         {
         }
 
-        public override IEnumerable<Models.Theme>
-            FindAll(Queries.ISqlQuery query)
+        public override Models.Theme Single()
         {
-            return this.FindAll(query,
-                new Factories.ThemeFactory());
+            return this.FindAll().Single();
         }
 
-        public override Models.Theme Single(Queries.ISqlQuery query)
+        public override Models.Theme First()
         {
-            return this.FindAll(query,
-                new Factories.ThemeFactory()).Single();
-        }
-
-        public override Models.Theme First(Queries.ISqlQuery query)
-        {
-            return this.FindAll(query,
-                new Factories.ThemeFactory()).First();
+            return this.FindAll().First();
         }
 
         public override void Insert(Models.Theme entity)

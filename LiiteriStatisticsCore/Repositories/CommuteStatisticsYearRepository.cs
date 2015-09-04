@@ -10,26 +10,29 @@ namespace LiiteriStatisticsCore.Repositories
 {
     class CommuteStatisticsYearRepository : SqlReadRepository<int>
     {
-        public CommuteStatisticsYearRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public CommuteStatisticsYearRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries) :
+            base(dbConnection, queries)
         {
         }
 
-        public override IEnumerable<int> FindAll(Queries.ISqlQuery query)
+        public override IEnumerable<int> FindAll()
         {
-            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+            using (DbDataReader rdr =
+                    this.GetDbDataReader(this.queries.Single())) {
                 while (rdr.Read()) {
                     yield return (int) rdr["Year"];
                 }
             }
         }
 
-        public override int Single(Queries.ISqlQuery query)
+        public override int Single()
         {
             throw new NotImplementedException();
         }
 
-        public override int First(Queries.ISqlQuery query)
+        public override int First()
         {
             throw new NotImplementedException();
         }

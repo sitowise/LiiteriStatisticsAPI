@@ -16,13 +16,14 @@ namespace LiiteriStatisticsCore.Repositories
         private static LiiteriStatisticsCore.Util.AreaTypeMappings
             AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
 
-        public IndicatorDetailsRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public IndicatorDetailsRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries) :
+            base(dbConnection, queries, new Factories.IndicatorDetailsFactory())
         {
         }
 
-        public override IEnumerable<Models.IndicatorDetails>
-            FindAll(Queries.ISqlQuery query)
+        public override IEnumerable<Models.IndicatorDetails> FindAll()
         {
             /* This is a bit different from standard way of handling results;
              * here we aggregate different sets of data from a single query
@@ -50,7 +51,8 @@ namespace LiiteriStatisticsCore.Repositories
 
             List<Models.Annotation> annotations = null;
 
-            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+            using (DbDataReader rdr =
+                    this.GetDbDataReader(this.queries.Single())) {
                 while (rdr.Read()) {
                     /* each IndicatorDetails instance may have a number
                      * of TimePeriods */
@@ -120,14 +122,14 @@ namespace LiiteriStatisticsCore.Repositories
             return entityList;
         }
 
-        public override Models.IndicatorDetails Single(Queries.ISqlQuery query)
+        public override Models.IndicatorDetails Single()
         {
-            return this.FindAll(query).Single();
+            return this.FindAll().Single();
         }
 
-        public override Models.IndicatorDetails First(Queries.ISqlQuery query)
+        public override Models.IndicatorDetails First()
         {
-            return this.FindAll(query).First();
+            return this.FindAll().First();
         }
     }
 }

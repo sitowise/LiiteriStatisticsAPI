@@ -15,36 +15,26 @@ namespace LiiteriStatisticsCore.Repositories
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public StatisticsResultRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public StatisticsResultRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries) :
+            base(dbConnection, queries, new Factories.StatisticsResultFactory())
         {
         }
 
-        public IEnumerable<Models.StatisticsResult> FindAll(
-            IEnumerable<Queries.ISqlQuery> queries)
+        public override IEnumerable<Models.StatisticsResult> FindAll()
         {
-            foreach (Queries.ISqlQuery query in queries) {
-                foreach (Models.StatisticsResult r in this.FindAll(query)) {
-                    yield return r;
-                }
-            }
+            return base.FindAll();
         }
 
-        public override IEnumerable<Models.StatisticsResult>
-            FindAll(Queries.ISqlQuery query)
+        public override Models.StatisticsResult Single()
         {
-            return this.FindAll(query,
-                new Factories.StatisticsResultFactory());
+            return this.FindAll().Single();
         }
 
-        public override Models.StatisticsResult Single(Queries.ISqlQuery query)
+        public override Models.StatisticsResult First()
         {
-            return this.FindAll(query).Single();
-        }
-
-        public override Models.StatisticsResult First(Queries.ISqlQuery query)
-        {
-            return this.FindAll(query).First();
+            return this.FindAll().First();
         }
     }
 }

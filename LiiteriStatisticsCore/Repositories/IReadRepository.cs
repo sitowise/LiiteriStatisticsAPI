@@ -8,10 +8,10 @@ namespace LiiteriStatisticsCore.Repositories
 {
     public interface IReadRepository<T>
     {
-        IEnumerable<T> FindAll(Queries.ISqlQuery query);
+        IEnumerable<T> FindAll();
 
-        T Single(Queries.ISqlQuery query);
+        T Single();
 
-        T First(Queries.ISqlQuery query);
+        T First();
     } 
 }

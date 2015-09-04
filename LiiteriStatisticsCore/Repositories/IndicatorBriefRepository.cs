@@ -10,13 +10,14 @@ namespace LiiteriStatisticsCore.Repositories
     public class IndicatorBriefRepository :
         SqlReadRepository<Models.IndicatorBrief>
     {
-        public IndicatorBriefRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public IndicatorBriefRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries) :
+            base(dbConnection, queries, new Factories.IndicatorBriefFactory())
         {
         }
 
-        public override IEnumerable<Models.IndicatorBrief>
-            FindAll(Queries.ISqlQuery query)
+        public override IEnumerable<Models.IndicatorBrief> FindAll()
         {
             /* Here we have to do a bit of manual work with the indicators,
              * since we are receiving multiples of the same indicator due
@@ -27,7 +28,8 @@ namespace LiiteriStatisticsCore.Repositories
             var briefFactory = new Factories.IndicatorBriefFactory();
             Models.IndicatorBrief brief = null;
 
-            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+            using (DbDataReader rdr =
+                    this.GetDbDataReader(this.queries.Single())) {
                 while (rdr.Read()) {
                     if (prevDetailsId == (prevDetailsId = (int) rdr["Id"])) {
                         continue;
@@ -38,14 +40,14 @@ namespace LiiteriStatisticsCore.Repositories
             }
         }
 
-        public override Models.IndicatorBrief Single(Queries.ISqlQuery query)
+        public override Models.IndicatorBrief Single()
         {
-            return this.FindAll(query).Single();
+            return this.FindAll().Single();
         }
 
-        public override Models.IndicatorBrief First(Queries.ISqlQuery query)
+        public override Models.IndicatorBrief First()
         {
-            return this.FindAll(query).First();
+            return this.FindAll().First();
         }
     }
 }

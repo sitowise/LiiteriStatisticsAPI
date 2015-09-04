@@ -130,12 +130,12 @@ namespace LiiteriStatisticsCore.Controllers
                      * to see the query */
                 }
 
-                var repository =
-                    new Repositories.StatisticsResultRepository(db);
-
                 IEnumerable<Models.StatisticsResult> results;
                 if (queries.Count > 0) {
-                    results = repository.FindAll(queries);
+                    var repository =
+                        new Repositories.StatisticsResultRepository(
+                            db, queries);
+                    results = repository.FindAll();
                 } else {
                     throw new Exception("No statistics queries specified!");
                 }

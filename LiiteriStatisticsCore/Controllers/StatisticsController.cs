@@ -78,13 +78,15 @@ namespace LiiteriStatisticsCore.Controllers
                 indicatorQuery.IdIs = statisticsId;
 
                 var indicatorDetailsRepository =
-                    new Repositories.IndicatorDetailsRepository(db);
+                    new Repositories.IndicatorDetailsRepository(
+                        db,
+                        new Queries.ISqlQuery[] { indicatorQuery });
+
                 var details = (Models.IndicatorDetails)
-                    indicatorDetailsRepository.Single(indicatorQuery);
+                    indicatorDetailsRepository.Single();
 
                 /* Step 2: Create one or more StatisticsQuery objects */
                 var queries = new List<Queries.StatisticsQuery>();
-
 
                 /* although StatisticsQuery could implement .YearIn, which 
                  * would accept a list of years, what about if different years
@@ -140,11 +142,12 @@ namespace LiiteriStatisticsCore.Controllers
 
                 /* Step 3: Fetch StatisticsResult */
 
-                var repository = new Repositories.StatisticsResultRepository(db);
-
                 IEnumerable<Models.StatisticsResult> results;
                 if (queries.Count > 0) {
-                    results = repository.FindAll(queries);
+                    var repository =
+                        new Repositories.StatisticsResultRepository(
+                            db, queries.ToArray());
+                    results = repository.FindAll();
                 } else {
                     throw new Exception("No statistics queries specified!");
                 }
@@ -196,8 +199,9 @@ namespace LiiteriStatisticsCore.Controllers
             var query = new Queries.AreaQuery();
             query.AreaTypeIdIs = areaTypeId;
             using (DbConnection db = this.GetDbConnection()) {
-                var repository = new Repositories.AreaRepository(db);
-                foreach (Models.Area r in repository.FindAll(query)) {
+                var repository = new Repositories.AreaRepository(
+                    db, new Queries.ISqlQuery[] { query });
+                foreach (Models.Area r in repository.FindAll()) {
                     yield return r;
                 }
             }
