@@ -45,7 +45,8 @@ FROM
 
         WHERE
             T.Jakso_ID = @YearIs AND
-            T.Tilasto_ID = @DenominatorId
+            T.Tilasto_ID = @DenominatorId AND
+            T.AlueTaso_ID = @DatabaseAreaTypeIdIs
             {2}
 
         {8}
@@ -72,7 +73,8 @@ FROM
 
         WHERE
             T.Jakso_ID = @YearIs AND
-            T.Tilasto_ID = @NumeratorId
+            T.Tilasto_ID = @NumeratorId AND
+            T.AlueTaso_ID = @DatabaseAreaTypeIdIs
             {2}
 
         {8}
