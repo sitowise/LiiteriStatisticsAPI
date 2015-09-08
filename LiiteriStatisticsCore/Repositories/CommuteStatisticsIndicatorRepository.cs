@@ -19,7 +19,7 @@ namespace LiiteriStatisticsCore.Repositories
 
         private int[] GetYears(string tableName)
         {
-            Queries.ISqlQuery query = new Queries.CommuteStatisticsYearQuery(tableName);
+            var query = new Queries.CommuteStatisticsYearQuery(tableName);
 
             var repo = new CommuteStatisticsYearRepository(
                 this.dbConnection,

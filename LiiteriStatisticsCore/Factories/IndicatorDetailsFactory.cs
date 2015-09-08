@@ -22,7 +22,7 @@ namespace LiiteriStatisticsCore.Factories
             obj.InternalUnitId = (int) rdr["InternalUnitId"];
             obj.Unit = (string) this.GetValueOrNull(rdr, "Unit");
             obj.Description = rdr["Description"].ToString(); ;
-            obj.AdditionalInformation = rdr["AdditionalInformation"].ToString(); ;
+            obj.AdditionalInformation = rdr["AdditionalInformation"].ToString();
             obj.CalculationType = (int) rdr["CalculationType"];
 
             obj.ProcessingStage = null;
