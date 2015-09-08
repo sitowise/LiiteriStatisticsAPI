@@ -121,6 +121,7 @@
     <Compile Include="Repositories\SqlReadWriteRepository.cs" />
     <Compile Include="Repositories\Statistics\DividingStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\NormalStatisticsRepository.cs" />
+    <Compile Include="Repositories\Statistics\SummingStatisticsRepository.cs" />
     <Compile Include="Repositories\ThemeRepository.cs" />
     <Compile Include="Requests\StatisticsRequest.cs" />
     <Compile Include="Util\DebugOutput.cs" />

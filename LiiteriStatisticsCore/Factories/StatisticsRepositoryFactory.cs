@@ -53,8 +53,8 @@ namespace LiiteriStatisticsCore.Factories
                     throw new NotImplementedException();
                     //break;
                 case 5: // derived & summed
-                    throw new NotImplementedException();
-                    //break;
+                    repo = this.GetSummingRepository(details);
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -143,6 +143,28 @@ namespace LiiteriStatisticsCore.Factories
             var repo = new DividingStatisticsRepository(denomrepo, numerrepo);
 
             return repo;
+        }
+
+        private SummingStatisticsRepository GetSummingRepository(
+            IndicatorDetails details)
+        {
+            var repos = new List<IReadRepository<StatisticsResult>>();
+
+            if (details.DerivedStatistics.Length < 2) {
+                throw new ArgumentException(
+                    "Was excepting at least 2 derived statistics, instead got " +
+                    details.DerivedStatistics.Length);
+            }
+
+            foreach (int statisticsId in details.DerivedStatistics) {
+                var request = (Requests.StatisticsRequest) this.Request.Clone();
+                request.StatisticsId = statisticsId;
+                var subrepo = new StatisticsRepositoryFactory(this.db, request)
+                    .GetRepository();
+                repos.Add(subrepo);
+            }
+
+            return new SummingStatisticsRepository(repos);
         }
 
         private IReadRepository<StatisticsResult> GetDerivedDividedRepository()
