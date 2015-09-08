@@ -166,10 +166,5 @@ namespace LiiteriStatisticsCore.Factories
 
             return new SummingStatisticsRepository(repos);
         }
-
-        private IReadRepository<StatisticsResult> GetDerivedDividedRepository()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
