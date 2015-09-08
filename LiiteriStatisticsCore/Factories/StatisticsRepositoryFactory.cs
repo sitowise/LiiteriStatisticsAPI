@@ -29,6 +29,7 @@ namespace LiiteriStatisticsCore.Factories
         {
             var indicatorQuery = new IndicatorQuery();
             indicatorQuery.IdIs = this.Request.StatisticsId;
+            indicatorQuery.IncludeHelperStatistics = true;
 
             var indicatorDetailsRepository =
                 new IndicatorDetailsRepository(
@@ -38,10 +39,24 @@ namespace LiiteriStatisticsCore.Factories
 
             IReadRepository<StatisticsResult> repo;
 
-            if (details.CalculationType == 1) {
-                repo = this.GetNormalRepository(details);
-            } else {
-                throw new NotImplementedException();
+            switch (details.CalculationType) {
+                case 1: // normal
+                    repo = this.GetNormalRepository(details);
+                    break;
+                case 2: // helper
+                    repo = this.GetNormalRepository(details);
+                    break;
+                case 3: // derived & divided
+                    repo = this.GetDividingRepository(details);
+                    break;
+                case 4: // special
+                    throw new NotImplementedException();
+                    //break;
+                case 5: // derived & summed
+                    throw new NotImplementedException();
+                    //break;
+                default:
+                    throw new NotImplementedException();
             }
 
             Debug.WriteLine(string.Format(
@@ -51,7 +66,7 @@ namespace LiiteriStatisticsCore.Factories
             return repo;
         }
 
-        public NormalStatisticsRepository GetNormalRepository(
+        private NormalStatisticsRepository GetNormalRepository(
             IndicatorDetails details)
         {
             string group = this.Request.Group;
@@ -102,7 +117,35 @@ namespace LiiteriStatisticsCore.Factories
             return repo;
         }
 
-        public IReadRepository<StatisticsResult> GetDerivedDividedRepository()
+        private DividingStatisticsRepository GetDividingRepository(
+            IndicatorDetails details)
+        {
+            if (details.DerivedStatistics.Length != 2) {
+                throw new ArgumentException(
+                    "Was excepting 2 derived statistics, instead got " +
+                    details.DerivedStatistics.Length);
+            }
+            var denomstatid = details.DerivedStatistics[0];
+            var numerstatid = details.DerivedStatistics[1];
+
+            var denomreq = (Requests.StatisticsRequest) this.Request.Clone();
+            denomreq.StatisticsId = denomstatid;
+            var denomrepo =
+                new StatisticsRepositoryFactory(this.db, denomreq)
+                .GetRepository();
+
+            var numerreq = (Requests.StatisticsRequest) this.Request.Clone();
+            numerreq.StatisticsId = numerstatid;
+            var numerrepo =
+                new StatisticsRepositoryFactory(this.db, numerreq)
+                .GetRepository();
+
+            var repo = new DividingStatisticsRepository(denomrepo, numerrepo);
+
+            return repo;
+        }
+
+        private IReadRepository<StatisticsResult> GetDerivedDividedRepository()
         {
             throw new NotImplementedException();
         }

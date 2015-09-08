@@ -23,6 +23,29 @@ namespace LiiteriStatisticsCore.Repositories
         {
         }
 
+        private int[] GetDerivedStatistics(
+            int statisticsId, int calculationType)
+        {
+            var subQuery = new Queries.IndicatorSubQuery();
+            subQuery.IdIs = statisticsId;
+            switch (calculationType) {
+                case 3:
+                    subQuery.SubQueryType =
+                        Queries.IndicatorSubQuery.SubQueryTypes.DerivedDividedStatistics;
+                    break;
+                case 5:
+                    subQuery.SubQueryType =
+                        Queries.IndicatorSubQuery.SubQueryTypes.DerivedSummedStatistics;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            var subRepo = new IndicatorSubRepository(
+                this.dbConnection,
+                new Queries.ISqlQuery[] { subQuery });
+            return subRepo.FindAll().ToArray();
+        }
+
         public override IEnumerable<Models.IndicatorDetails> FindAll()
         {
             /* This is a bit different from standard way of handling results;
@@ -59,6 +82,14 @@ namespace LiiteriStatisticsCore.Repositories
                     if (prevDetailsId != (prevDetailsId = (int) rdr["Id"])) {
                         details = (Models.IndicatorDetails)
                             detailsFactory.Create(rdr);
+
+                        if (new[] { 3, 5 }.Contains(
+                                (int) rdr["CalculationType"])) {
+                            details.DerivedStatistics =
+                                this.GetDerivedStatistics(
+                                    (int) rdr["Id"],
+                                    (int) rdr["CalculationType"]);
+                        }
 
                         timePeriods = new List<Models.TimePeriod>();
                         details.TimePeriods = timePeriods;

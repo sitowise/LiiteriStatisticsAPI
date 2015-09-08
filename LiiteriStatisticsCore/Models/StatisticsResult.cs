@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiiteriStatisticsCore.Models
 {
-    public class StatisticsResult : ILiiteriMarker
+    public class StatisticsResult : ILiiteriMarker, ICloneable
     {
         public decimal? Value { get; set; }
         public int AreaId { get; set; }
@@ -15,9 +15,16 @@ namespace LiiteriStatisticsCore.Models
         public int Year { get; set; }
         public bool PrivacyLimitTriggered { get; set; }
 
-        /* If we end up adding something like this, consider
-         * using a nullable class instead */
-        //public int? AreaPointLat { get; set; }
-        //public int? AreaPointLon { get; set; }
+        public object Clone()
+        {
+            return new StatisticsResult() {
+                Value = this.Value,
+                AreaId = this.AreaId,
+                AreaName = this.AreaName,
+                AlternativeId = this.AlternativeId,
+                Year = this.Year,
+                PrivacyLimitTriggered = this.PrivacyLimitTriggered,
+            };
+        }
     }
 }

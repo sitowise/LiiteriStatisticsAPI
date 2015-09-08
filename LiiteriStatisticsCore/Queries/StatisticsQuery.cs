@@ -482,6 +482,10 @@ namespace LiiteriStatisticsCore.Queries
                     logger.Debug("Statistics query: normal");
                     queryString = this.GetQueryString_Normal();
                     break;
+                case 2: // helper
+                    logger.Debug("Statistics query: helper");
+                    queryString = this.GetQueryString_Normal();
+                    break;
                 default:
                     string errMsg = string.Format(
                         "Unsupported CalculationType: {0}",
