@@ -484,14 +484,13 @@ namespace LiiteriStatisticsCore.Queries
                     this.fields.Add(string.Format(
                         "CAST(SUM({0}) AS FLOAT) AS Value",
                         this.Type));
-                    this.fields.Add(string.Format(
+                    this.fields.Add(
                     @"
     CASE
         WHEN SUM(yht) < 10
         THEN 1
         ELSE 0
-        END AS TriggerPrivacyLimit",
-                        this.Type));
+        END AS TriggerPrivacyLimit");
                     break;
             }
 
