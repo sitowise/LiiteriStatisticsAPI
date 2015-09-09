@@ -94,6 +94,10 @@ namespace LiiteriStatisticsCore.Repositories
                 ret_r.Value = values.Sum();
                 yield return ret_r;
             }
+
+            foreach (RState rstate in rstates) {
+                rstate.Enumerator.Dispose();
+            }
         }
 
         public StatisticsResult First()
