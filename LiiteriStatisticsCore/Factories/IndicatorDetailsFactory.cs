@@ -26,8 +26,9 @@ namespace LiiteriStatisticsCore.Factories
             obj.CalculationType = (int) rdr["CalculationType"];
 
             obj.ProcessingStage = null;
-            obj.TimeSpan = (string) rdr["TimeSpan"];
-            obj.TimeSpanDetails = (string) rdr["TimeSpanDetails"];
+
+            obj.TimeSpan = (string) this.GetValueOrNull(rdr, "TimeSpan");
+            obj.TimeSpanDetails = (string) this.GetValueOrNull(rdr, "TimeSpanDetails");
 
             int? privacyLimitStatisticsId =
                 (int?) this.GetValueOrNull(rdr, "PrivacyLimitStatisticsId");
