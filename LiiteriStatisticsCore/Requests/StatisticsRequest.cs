@@ -21,6 +21,10 @@ namespace LiiteriStatisticsCore.Requests
         [System.ComponentModel.DefaultValue(false)]
         public bool SkipUnitConversions { get; set; }
 
+        // helper property to avoid infinite loop
+        [System.ComponentModel.DefaultValue(0)]
+        public int RecursionDepth { get; set; }
+
         public object Clone()
         {
             var obj = new StatisticsRequest();
@@ -31,6 +35,7 @@ namespace LiiteriStatisticsCore.Requests
 
             obj.SkipPrivacyLimits = this.SkipPrivacyLimits;
             obj.SkipUnitConversions = this.SkipUnitConversions;
+            obj.RecursionDepth = this.RecursionDepth;
 
             return obj;
         }

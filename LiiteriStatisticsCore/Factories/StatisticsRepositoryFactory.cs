@@ -26,6 +26,11 @@ namespace LiiteriStatisticsCore.Factories
             this.db = dbConnection;
             this.Request = request;
 
+            if (++this.Request.RecursionDepth > 15) {
+                throw new Exception(
+                    "Chained repositories reached recursion limit");
+            }
+
             // a foolproof way of making sure we will only do this once
             this.SkipPrivacyLimits = request.SkipPrivacyLimits;
             this.Request.SkipPrivacyLimits = true;
