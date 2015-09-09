@@ -32,14 +32,14 @@ namespace LiiteriStatisticsCore.Repositories
                 case 12: // osuus
                     switch (this.Details.DisplayUnitId) {
                         case 1: // %
-                            obj.Value = (decimal) ((double) obj.Value * 100);
+                            obj.Value = (decimal) (obj.Value * 100);
                             break;
                     }
                     break;
                 case 10: // m2
                     switch (this.Details.DisplayUnitId) {
                         case 14: // ha
-                            obj.Value = (decimal) ((double) obj.Value / 10000);
+                            obj.Value = (decimal) (obj.Value / 10000);
                             break;
                     }
                     break;
