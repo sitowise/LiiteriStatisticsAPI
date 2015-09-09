@@ -73,7 +73,11 @@ namespace LiiteriStatisticsCore.Repositories
                             "numerator > denominator, assume numerator == 0");
                         ret_r.Value = 0;
                     } else if (numerResult.AreaId == denomResult.AreaId) {
-                        ret_r.Value = numerResult.Value / denomResult.Value;
+                        if (denomResult.Value == 0) {
+                            ret_r.Value = 0;
+                        } else {
+                            ret_r.Value = numerResult.Value / denomResult.Value;
+                        }
                     } else {
                         throw new Exception("Unexpected state");
                     }
