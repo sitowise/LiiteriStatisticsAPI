@@ -17,12 +17,18 @@ namespace LiiteriStatisticsCore.Factories
         private DbConnection db;
         private Requests.StatisticsRequest Request;
 
+        private bool SkipPrivacyLimits = true;
+
         public StatisticsRepositoryFactory(
             DbConnection dbConnection,
             Requests.StatisticsRequest request)
         {
             this.db = dbConnection;
             this.Request = request;
+
+            // a foolproof way of making sure we will only do this once
+            this.SkipPrivacyLimits = request.SkipPrivacyLimits;
+            this.Request.SkipPrivacyLimits = true;
         }
 
         public IReadRepository<StatisticsResult> GetRepository()
@@ -39,30 +45,77 @@ namespace LiiteriStatisticsCore.Factories
 
             IReadRepository<StatisticsResult> repo;
 
-            switch (details.CalculationType) {
-                case 1: // normal
-                    repo = this.GetNormalRepository(details);
-                    break;
-                case 2: // helper
-                    repo = this.GetNormalRepository(details);
-                    break;
-                case 3: // derived & divided
-                    repo = this.GetDividingRepository(details);
-                    break;
-                case 4: // special
-                    throw new NotImplementedException();
-                    //break;
-                case 5: // derived & summed
-                    repo = this.GetSummingRepository(details);
-                    break;
-                default:
-                    throw new NotImplementedException();
+            if (!this.SkipPrivacyLimits && details.PrivacyLimit != null) {
+                repo = this.GetPrivacyLimitRepository(details);
+            } else if (!this.Request.SkipUnitConversions) {
+                /* privacy limits should be done on values that have gone
+                 * through unit conversions, so we do the conversion here
+                 * before the normal repositories */
+                repo = this.GetUnitConversionRepository(details);
+            } else {
+                switch (details.CalculationType) {
+                    case 1: // normal
+                        repo = this.GetNormalRepository(details);
+                        break;
+                    case 2: // helper
+                        repo = this.GetNormalRepository(details);
+                        break;
+                    case 3: // derived & divided
+                        repo = this.GetDividingRepository(details);
+                        break;
+                    case 4: // special
+                        throw new NotImplementedException();
+                        //break;
+                    case 5: // derived & summed
+                        repo = this.GetSummingRepository(details);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
 
             Debug.WriteLine(string.Format(
                 "Repository for {0} determined to be {1}",
                 Request.StatisticsId, repo.GetType().ToString()));
 
+            return repo;
+        }
+
+        private UnitConversionStatisticsRepository GetUnitConversionRepository(
+            IndicatorDetails details)
+        {
+            var request = (Requests.StatisticsRequest) this.Request.Clone();
+
+            // this is important, do not go into infinite loop
+            request.SkipUnitConversions = true;
+
+            var mainrepo = new StatisticsRepositoryFactory(
+                this.db, request).GetRepository();
+            var convrepo = new UnitConversionStatisticsRepository(
+                details, mainrepo);
+
+            return convrepo;
+        }
+
+        private PrivacyLimitStatisticsRepository GetPrivacyLimitRepository(
+            IndicatorDetails details)
+        {
+            var mainrequest =
+                (Requests.StatisticsRequest) this.Request.Clone();
+
+            var mainrepo =
+                new StatisticsRepositoryFactory(this.db, mainrequest)
+                .GetRepository();
+
+            var refrequest =
+                (Requests.StatisticsRequest) this.Request.Clone();
+            refrequest.StatisticsId = details.PrivacyLimit.RefId;
+            var refrepo =
+                new StatisticsRepositoryFactory(this.db, refrequest)
+                .GetRepository();
+
+            var repo = new PrivacyLimitStatisticsRepository(
+                details.PrivacyLimit, mainrepo, refrepo);
             return repo;
         }
 

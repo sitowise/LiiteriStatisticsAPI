@@ -13,6 +13,14 @@ namespace LiiteriStatisticsCore.Requests
         public string Group { get; set; }
         public string Filter { get; set; }
 
+        // helper property to avoid infinite loop
+        [System.ComponentModel.DefaultValue(false)]
+        public bool SkipPrivacyLimits { get; set; }
+
+        // helper property to avoid infinite loop
+        [System.ComponentModel.DefaultValue(false)]
+        public bool SkipUnitConversions { get; set; }
+
         public object Clone()
         {
             var obj = new StatisticsRequest();
@@ -20,6 +28,10 @@ namespace LiiteriStatisticsCore.Requests
             obj.StatisticsId = this.StatisticsId;
             obj.Group = this.Group;
             obj.Filter = this.Filter;
+
+            obj.SkipPrivacyLimits = this.SkipPrivacyLimits;
+            obj.SkipUnitConversions = this.SkipUnitConversions;
+
             return obj;
         }
     }
