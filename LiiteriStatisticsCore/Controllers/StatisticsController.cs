@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -20,15 +21,16 @@ namespace LiiteriStatisticsCore.Controllers
         IEnumerable<Models.StatisticsResult> GetStatistics(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null);
+            string group,
+            string filter);
 
         [OperationContract]
-        string GetStatisticsDebugString(
+        Models.StatisticsRepositoryTracer GetStatisticsDebugString(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null);
+            string group,
+            string filter,
+            string debug);
 
         [OperationContract]
         IEnumerable<Models.AreaType> GetAreaTypes();
@@ -48,7 +50,7 @@ namespace LiiteriStatisticsCore.Controllers
 
         private class StatisticsResultContainer
         {
-            public string DebugString;
+            public Models.StatisticsRepositoryTracer Tracer;
             public IEnumerable<Models.StatisticsResult> Results;
         }
 
@@ -61,16 +63,14 @@ namespace LiiteriStatisticsCore.Controllers
             return db;
         }
 
-        /* be prepared to return either a debug string, or the actual
+        /* be prepared to return either a debug tracer, or the actual
          * results */
-        /* TODO: Remove the container encapsulation,
-         * or reimplement it along with debug */
         private StatisticsResultContainer GetStatisticsResultContainer(
             int[] years,
             int statisticsId,
             string group = null,
             string filter = null,
-            bool debug = false)
+            string debug = null)
         {
             using (DbConnection db = this.GetDbConnection()) {
 
@@ -85,7 +85,15 @@ namespace LiiteriStatisticsCore.Controllers
                     db, request);
                 var repository = repofactory.GetRepository();
 
-                /* debug snipped away from here */
+                var tracer = repofactory.Tracer;
+
+                // "true" is for backwards compatibility
+                if (debug != null && debug == "noexec" || debug == "true") {
+                    return new StatisticsResultContainer() {
+                        Tracer = tracer,
+                        Results = null
+                    };
+                }
 
                 IEnumerable<Models.StatisticsResult> results;
                 results = repository.FindAll();
@@ -93,7 +101,7 @@ namespace LiiteriStatisticsCore.Controllers
                 /* Note: we are iterating the generator here, could be
                  * memory-inefficient */
                 return new StatisticsResultContainer() {
-                    DebugString = null,
+                    Tracer = tracer,
                     Results = results.ToList()
                 };
             }
@@ -102,29 +110,30 @@ namespace LiiteriStatisticsCore.Controllers
         public virtual IEnumerable<Models.StatisticsResult> GetStatistics(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null)
+            string group,
+            string filter)
         {
             return this.GetStatisticsResultContainer(
                 years,
                 statisticsId,
                 group,
                 filter,
-                false).Results;
+                null).Results;
         }
 
-        public string GetStatisticsDebugString(
+        public Models.StatisticsRepositoryTracer GetStatisticsDebugString(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null)
+            string group,
+            string filter,
+            string debug)
         {
             return this.GetStatisticsResultContainer(
                 years,
                 statisticsId,
                 group,
                 filter,
-                true).DebugString;
+                debug).Tracer;
         }
 
         public virtual IEnumerable<Models.AreaType> GetAreaTypes()

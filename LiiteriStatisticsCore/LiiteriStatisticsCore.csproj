@@ -86,6 +86,7 @@
     <Compile Include="Models\IndicatorBrief.cs" />
     <Compile Include="Models\IndicatorDetails.cs" />
     <Compile Include="Models\PrivacyLimit.cs" />
+    <Compile Include="Models\StatisticsRepositoryTracer.cs" />
     <Compile Include="Models\TimePeriod.cs" />
     <Compile Include="Models\StatisticsResult.cs" />
     <Compile Include="Models\Theme.cs" />

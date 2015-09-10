@@ -16,9 +16,11 @@ namespace LiiteriStatisticsCore.Repositories
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        protected Models.SQLQueryTime sqlQueryTime = new Models.SQLQueryTime();
+
         protected DbConnection dbConnection;
         protected Factories.IFactory factory;
-        protected IEnumerable<Queries.ISqlQuery> queries;
+        public IEnumerable<Queries.ISqlQuery> queries;
 
         public SqlReadRepository(
             DbConnection dbConnection,
@@ -74,10 +76,11 @@ namespace LiiteriStatisticsCore.Repositories
                 DateTime startTime = DateTime.Now;
                 DbDataReader retval = cmd.ExecuteReader();
                 DateTime endTime = DateTime.Now;
-                TimeSpan elapsedTime = (endTime - startTime);
+                TimeSpan elapsed = (endTime - startTime);
                 debugString = string.Format(
                     "Time elapsed on query: {0}.{1}s",
-                    elapsedTime.Seconds, elapsedTime.Milliseconds);
+                    elapsed.Seconds, elapsed.Milliseconds);
+                this.sqlQueryTime.TotalMilliseconds = elapsed.TotalMilliseconds;
                 Debug.WriteLine(debugString);
                 logger.Debug(debugString);
 

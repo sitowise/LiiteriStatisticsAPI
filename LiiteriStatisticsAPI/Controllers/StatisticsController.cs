@@ -56,15 +56,15 @@ namespace LiiteriStatisticsAPI.Controllers
             int statisticsId,
             string group = null,
             string filter = null,
-            bool debug = false)
+            string debug = null)
         {
-            if (debug) {
-                string debugOutput = this.GetStatisticsDebugString(
-                    years, statisticsId, group, filter);
+            if (debug != null && new string[] {
+                    "exec", "noexec", "true" }.Contains(debug)) {
+                Core.Models.StatisticsRepositoryTracer debugOutput =
+                    this.GetStatisticsDebugString(
+                        years, statisticsId, group, filter, debug);
                 return Request.CreateResponse(
-                    HttpStatusCode.OK,
-                    debugOutput,
-                    new Formatters.TextPlainFormatter());
+                    HttpStatusCode.OK, debugOutput);
             } else {
                 return Request.CreateResponse(
                     HttpStatusCode.OK,
@@ -75,21 +75,22 @@ namespace LiiteriStatisticsAPI.Controllers
         public IEnumerable<Core.Models.StatisticsResult> GetStatistics(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null)
+            string group,
+            string filter)
         {
             return this.GetController().GetStatistics(
                 years, statisticsId, group, filter);
         }
 
-        public string GetStatisticsDebugString(
+        public Core.Models.StatisticsRepositoryTracer GetStatisticsDebugString(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null)
+            string group,
+            string filter,
+            string debug)
         {
             return this.GetController().GetStatisticsDebugString(
-                years, statisticsId, group, filter);
+                years, statisticsId, group, filter, debug);
         }
 
         [Route("areaTypes/")]

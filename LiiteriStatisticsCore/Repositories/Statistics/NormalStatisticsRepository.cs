@@ -15,6 +15,8 @@ namespace LiiteriStatisticsCore.Repositories
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public Models.StatisticsRepositoryTracer Tracer;
+
         public NormalStatisticsRepository(
             DbConnection dbConnection,
             IEnumerable<Queries.ISqlQuery> queries) :
@@ -24,6 +26,7 @@ namespace LiiteriStatisticsCore.Repositories
 
         public override IEnumerable<Models.StatisticsResult> FindAll()
         {
+            this.Tracer.QueryTime = this.sqlQueryTime;
             return base.FindAll();
         }
 

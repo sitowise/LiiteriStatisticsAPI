@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace LiiteriStatisticsCore.Requests
 {
+    [DataContract]
     public class StatisticsRequest : ICloneable
     {
+        [DataMember]
         public int[] Years { get; set; }
+
+        [DataMember]
         public int StatisticsId { get; set; }
+
+        [DataMember]
         public string Group { get; set; }
+
+        [DataMember]
         public string Filter { get; set; }
 
         // helper property to avoid infinite loop

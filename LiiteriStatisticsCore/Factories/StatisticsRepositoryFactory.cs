@@ -16,15 +16,27 @@ namespace LiiteriStatisticsCore.Factories
     {
         private DbConnection db;
         private Requests.StatisticsRequest Request;
+        public StatisticsRepositoryTracer Tracer;
 
         private bool SkipPrivacyLimits = true;
 
         public StatisticsRepositoryFactory(
             DbConnection dbConnection,
-            Requests.StatisticsRequest request)
+            Requests.StatisticsRequest request) :
+            this(dbConnection, request, new StatisticsRepositoryTracer())
+        {
+        }
+
+        private StatisticsRepositoryFactory(
+            DbConnection dbConnection,
+            Requests.StatisticsRequest request,
+            StatisticsRepositoryTracer tracer)
         {
             this.db = dbConnection;
             this.Request = request;
+
+            this.Tracer = tracer.CreateChild();
+            this.Tracer.Request = this.Request;
 
             if (++this.Request.RecursionDepth > 15) {
                 throw new Exception(
@@ -34,6 +46,14 @@ namespace LiiteriStatisticsCore.Factories
             // a foolproof way of making sure we will only do this once
             this.SkipPrivacyLimits = request.SkipPrivacyLimits;
             this.Request.SkipPrivacyLimits = true;
+        }
+
+        private StatisticsRepositoryFactory GetFactory(
+            Requests.StatisticsRequest request)
+        {
+            var factory = new StatisticsRepositoryFactory(
+                this.db, request, this.Tracer);
+            return factory;
         }
 
         public IReadRepository<StatisticsResult> GetRepository()
@@ -83,6 +103,8 @@ namespace LiiteriStatisticsCore.Factories
                 "Repository for {0} determined to be {1}",
                 Request.StatisticsId, repo.GetType().ToString()));
 
+            this.Tracer.Repository = repo;
+
             return repo;
         }
 
@@ -94,8 +116,7 @@ namespace LiiteriStatisticsCore.Factories
             // this is important, do not go into infinite loop
             request.SkipUnitConversions = true;
 
-            var mainrepo = new StatisticsRepositoryFactory(
-                this.db, request).GetRepository();
+            var mainrepo = this.GetFactory(request).GetRepository();
             var convrepo = new UnitConversionStatisticsRepository(
                 details, mainrepo);
 
@@ -108,16 +129,12 @@ namespace LiiteriStatisticsCore.Factories
             var mainrequest =
                 (Requests.StatisticsRequest) this.Request.Clone();
 
-            var mainrepo =
-                new StatisticsRepositoryFactory(this.db, mainrequest)
-                .GetRepository();
+            var mainrepo = this.GetFactory(mainrequest).GetRepository();
 
             var refrequest =
                 (Requests.StatisticsRequest) this.Request.Clone();
             refrequest.StatisticsId = details.PrivacyLimit.RefId;
-            var refrepo =
-                new StatisticsRepositoryFactory(this.db, refrequest)
-                .GetRepository();
+            var refrepo = this.GetFactory(refrequest).GetRepository();
 
             var repo = new PrivacyLimitStatisticsRepository(
                 details.PrivacyLimit, mainrepo, refrepo);
@@ -172,6 +189,9 @@ namespace LiiteriStatisticsCore.Factories
 
             var repo = new NormalStatisticsRepository(
                 this.db, queries.ToArray());
+
+            // the tracer is placed in the repo so we can record DB query time
+            repo.Tracer = this.Tracer;
             return repo;
         }
 
@@ -188,15 +208,11 @@ namespace LiiteriStatisticsCore.Factories
 
             var denomreq = (Requests.StatisticsRequest) this.Request.Clone();
             denomreq.StatisticsId = denomstatid;
-            var denomrepo =
-                new StatisticsRepositoryFactory(this.db, denomreq)
-                .GetRepository();
+            var denomrepo = this.GetFactory(denomreq).GetRepository();
 
             var numerreq = (Requests.StatisticsRequest) this.Request.Clone();
             numerreq.StatisticsId = numerstatid;
-            var numerrepo =
-                new StatisticsRepositoryFactory(this.db, numerreq)
-                .GetRepository();
+            var numerrepo = this.GetFactory(numerreq).GetRepository();
 
             var repo = new DividingStatisticsRepository(denomrepo, numerrepo);
 
@@ -217,8 +233,7 @@ namespace LiiteriStatisticsCore.Factories
             foreach (int statisticsId in details.DerivedStatistics) {
                 var request = (Requests.StatisticsRequest) this.Request.Clone();
                 request.StatisticsId = statisticsId;
-                var subrepo = new StatisticsRepositoryFactory(this.db, request)
-                    .GetRepository();
+                var subrepo = this.GetFactory(request).GetRepository();
                 repos.Add(subrepo);
             }
 
