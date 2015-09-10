@@ -9,13 +9,6 @@ using System.ComponentModel;
 
 namespace LiiteriStatisticsCore.Models
 {
-
-    /* we keep this as an object, so we can assign a reference to it early
-     * and modify it later when the actual SQL query is executed */
-    public class SQLQueryTime {
-        public double? TotalMilliseconds;
-    }
-
     [DataContract]
     public class StatisticsRepositoryTracer
     {
@@ -54,24 +47,8 @@ namespace LiiteriStatisticsCore.Models
             }
         }
 
-        public SQLQueryTime QueryTime { get; set; }
-
-        [DataMember(Name = "QueryTime")]
-        [ReadOnly(true)]
-        public double? QueryTimeSerialized
-        {
-            get
-            {
-                if (this.QueryTime == null) {
-                    return null;
-                }
-                return this.QueryTime.TotalMilliseconds;
-            }
-
-            protected set
-            {
-            }
-        }
+        [DataMember]
+        public SQLQueryDetails QueryDetails { get; set; }
 
         [DataMember]
         public Requests.StatisticsRequest Request { get; set; }

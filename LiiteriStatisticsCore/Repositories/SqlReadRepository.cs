@@ -16,7 +16,8 @@ namespace LiiteriStatisticsCore.Repositories
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected Models.SQLQueryTime sqlQueryTime = new Models.SQLQueryTime();
+        protected Models.SQLQueryDetails queryDetails =
+            new Models.SQLQueryDetails();
 
         protected DbConnection dbConnection;
         protected Factories.IFactory factory;
@@ -80,7 +81,7 @@ namespace LiiteriStatisticsCore.Repositories
                 debugString = string.Format(
                     "Time elapsed on query: {0}.{1}s",
                     elapsed.Seconds, elapsed.Milliseconds);
-                this.sqlQueryTime.TotalMilliseconds = elapsed.TotalMilliseconds;
+                this.queryDetails.QueryTimeMilliseconds = elapsed.TotalMilliseconds;
                 Debug.WriteLine(debugString);
                 logger.Debug(debugString);
 
@@ -93,6 +94,7 @@ namespace LiiteriStatisticsCore.Repositories
                 throw new ArgumentNullException(
                     "Using standard FindAll(), but factory is null!");
             }
+            this.queryDetails.RowCount = 0;
             using (DbDataReader rdr = this.GetDbDataReader(query)) {
                 while (rdr.Read()) {
                     T p = (T) this.factory.Create(rdr);
@@ -102,6 +104,8 @@ namespace LiiteriStatisticsCore.Repositories
                             p = d(p);
                         }
                     }
+
+                    this.queryDetails.RowCount++;
 
                     yield return p;
                 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Collections;
 
 namespace LiiteriStatisticsCore.Repositories
 {
@@ -26,7 +27,7 @@ namespace LiiteriStatisticsCore.Repositories
 
         public override IEnumerable<Models.StatisticsResult> FindAll()
         {
-            this.Tracer.QueryTime = this.sqlQueryTime;
+            this.Tracer.QueryDetails = this.queryDetails;
             return base.FindAll();
         }
 
