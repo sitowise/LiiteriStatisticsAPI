@@ -204,6 +204,7 @@ namespace LiiteriStatisticsCore.Util
                         .Descendants("DatabaseAreaTypes")
                         .Descendants("DatabaseAreaType")
                     where
+                        Convert.ToInt32(d.Attribute("id").Value) == databaseAreaTypeId &&
                         d.Attribute("primary") != null &&
                         d.Attribute("primary").Value.ToLower() == "true"
                     select d);
