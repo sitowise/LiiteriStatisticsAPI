@@ -36,6 +36,8 @@ namespace LiiteriStatisticsCore.Factories
                 obj.PrivacyLimit = new Models.PrivacyLimit();
                 obj.PrivacyLimit.RefId = (int) privacyLimitStatisticsId;
                 obj.PrivacyLimit.GreaterThan = (int) rdr["PrivacyLimitGreaterThan"];
+                obj.PrivacyLimit.Description =
+                    rdr["PrivacyLimitDescription"].ToString();
             } else {
                 obj.PrivacyLimit = null;
             }

@@ -101,6 +101,7 @@ namespace LiiteriStatisticsCore.Queries
             /* Privacy limits */
             fields["TS.Ref_Tilasto_ID"] = "PrivacyLimitStatisticsId";
             fields["TS.GreaterThan"] = "PrivacyLimitGreaterThan";
+            fields["TS.Selite"] = "PrivacyLimitDescription";
 
             /* Annotations */
             fields["LT.Lisatieto"] = "Annotation";
