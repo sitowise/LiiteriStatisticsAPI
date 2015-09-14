@@ -27,7 +27,9 @@ namespace LiiteriStatisticsCore.Repositories
 
         public override IEnumerable<Models.StatisticsResult> FindAll()
         {
-            this.Tracer.QueryDetails = this.queryDetails;
+            if (this.Tracer != null) {
+                this.Tracer.QueryDetails = this.queryDetails;
+            }
             return base.FindAll();
         }
 
