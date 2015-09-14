@@ -8,7 +8,7 @@ using System.IO;
 
 namespace LiiteriStatisticsCore.Util
 {
-    class TemplateCollection
+    public class TemplateCollection
     {
         private IDictionary<string, string> Templates;
 

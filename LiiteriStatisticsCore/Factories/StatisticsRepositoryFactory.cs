@@ -89,8 +89,8 @@ namespace LiiteriStatisticsCore.Factories
                         repo = this.GetDividingRepository(details);
                         break;
                     case 4: // special
-                        throw new NotImplementedException();
-                        //break;
+                        repo = this.GetSpecialRepository(details);
+                        break;
                     case 5: // derived & summed
                         repo = this.GetSummingRepository(details);
                         break;
@@ -164,30 +164,72 @@ namespace LiiteriStatisticsCore.Factories
                     from a in timePeriod.DataAreaTypes
                     select a.Id).ToArray();
 
-                var statisticsQuery = new StatisticsQuery(
-                    this.Request.StatisticsId);
+                var query = new StatisticsQuery(this.Request.StatisticsId);
 
-                statisticsQuery.CalculationTypeIdIs = details.CalculationType;
-                statisticsQuery.AvailableAreaTypes = availableAreaTypes;
+                query.CalculationTypeIdIs = details.CalculationType;
+                query.AvailableAreaTypes = availableAreaTypes;
 
                 if (group == null) group = "finland";
-                statisticsQuery.GroupByAreaTypeIdIs = group;
-                statisticsQuery.YearIs = year;
+                query.GroupByAreaTypeIdIs = group;
+                query.YearIs = year;
 
                 if (filter != null && filter.Length == 0) {
                     filter = null;
                 }
-                statisticsQuery.AreaFilterQueryString = filter;
+                query.AreaFilterQueryString = filter;
 
-                /* at this point the statisticsQuery should be ready,
-                 * let's process it here so we can decide if privacy limits
-                 * can be applied here */
-                statisticsQuery.GenerateQueryString();
-
-                queries.Add(statisticsQuery);
+                queries.Add(query);
             }
 
             var repo = new NormalStatisticsRepository(
+                this.db, queries.ToArray());
+
+            // the tracer is placed in the repo so we can record DB query time
+            repo.Tracer = this.Tracer;
+            return repo;
+        }
+
+        private SpecialStatisticsRepository GetSpecialRepository(
+            IndicatorDetails details)
+        {
+            string group = this.Request.Group;
+            string filter = this.Request.Filter;
+
+            /* Step 2: Create one or more StatisticsQuery objects */
+            var queries = new List<StatisticsQuery>();
+
+            /* although StatisticsQuery could implement .YearIn, which 
+             * would accept a list of years, what about if different years
+             * end up having different DatabaseAreaTypes?
+             * For this reason, let's just loop the years and create
+             * multiple queries */
+            foreach (int year in this.Request.Years) {
+                TimePeriod timePeriod = (
+                    from p in details.TimePeriods
+                    where p.Id == year
+                    select p).Single();
+                int[] availableAreaTypes = (
+                    from a in timePeriod.DataAreaTypes
+                    select a.Id).ToArray();
+
+                var query = new SpecialStatisticsQuery(this.Request.StatisticsId);
+
+                query.CalculationTypeIdIs = details.CalculationType;
+                query.AvailableAreaTypes = availableAreaTypes;
+
+                if (group == null) group = "finland";
+                query.GroupByAreaTypeIdIs = group;
+                query.YearIs = year;
+
+                if (filter != null && filter.Length == 0) {
+                    filter = null;
+                }
+                query.AreaFilterQueryString = filter;
+
+                queries.Add(query);
+            }
+
+            var repo = new SpecialStatisticsRepository(
                 this.db, queries.ToArray());
 
             // the tracer is placed in the repo so we can record DB query time

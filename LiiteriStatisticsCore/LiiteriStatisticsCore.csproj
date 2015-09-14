@@ -108,6 +108,7 @@
     <Compile Include="Queries\CommuteStatisticsYearQuery.cs" />
     <Compile Include="Queries\IndicatorQuery.cs" />
     <Compile Include="Queries\IndicatorSubQuery.cs" />
+    <Compile Include="Queries\SpecialStatisticsQuery.cs" />
     <Compile Include="Queries\SqlQuery.cs" />
     <Compile Include="Queries\StatisticsQuery.cs" />
     <Compile Include="Queries\ThemeQuery.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Repositories\Statistics\DividingStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\NormalStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\PrivacyLimitStatisticsRepository.cs" />
+    <Compile Include="Repositories\Statistics\SpecialStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\SummingStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\UnitConversionStatisticsRepository.cs" />
     <Compile Include="Repositories\ThemeRepository.cs" />
