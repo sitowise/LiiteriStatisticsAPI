@@ -23,11 +23,9 @@ namespace LiiteriStatisticsCore.Models
                 if (this.Repository != null &&
                         this.Repository.GetType().IsSubclassOf(typeof(
                             SqlReadRepository<StatisticsResult>))) {
-
                     var queries = ((SqlReadRepository<StatisticsResult>)
                         this.Repository).queries;
-                    return string.Join("\n\n---\n\n",
-                        queries.Select(x => x.GetQueryString()));
+                    return new Util.DebugOutput(queries).ToString();
                 } else {
                     return null;
                 }
