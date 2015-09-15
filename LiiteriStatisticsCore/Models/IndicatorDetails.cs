@@ -28,7 +28,9 @@ namespace LiiteriStatisticsCore.Models
         public string Description;
         public string AdditionalInformation;
 
+#if !DEBUG
         [IgnoreDataMember]
+#endif
         public int CalculationType { get; set; }
 
         public IEnumerable<TimePeriod> TimePeriods;
