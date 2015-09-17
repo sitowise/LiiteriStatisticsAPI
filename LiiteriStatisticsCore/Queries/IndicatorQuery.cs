@@ -58,6 +58,9 @@ namespace LiiteriStatisticsCore.Queries
             }
         }
 
+        [System.ComponentModel.DefaultValue(false)]
+        public bool IncludeHelperStatistics { get; set; }
+
         public override string GetQueryString()
         {
             StringBuilder sb = new StringBuilder();
@@ -169,15 +172,16 @@ LEFT OUTER JOIN Tietosuojaraja TS ON
     TS.Tilasto_ID = T.Tilasto_ID
 ");
 
-            //this.whereList.Add("J.AlueTaso_Id = 2");
-            this.whereList.Add("T.TilastoLaskentatyyppi_ID <> 2");
+            if (!this.IncludeHelperStatistics) {
+                this.whereList.Add("T.TilastoLaskentatyyppi_ID <> 2");
+            }
 
             if (this.whereList.Count > 0) {
                 sb.Append(" WHERE ");
                 sb.Append(string.Join(" AND ", whereList));
             }
 
-            sb.Append("ORDER BY T.Tilasto_ID, J.Jakso_ID, J.AlueTaso_ID ");
+            sb.Append("\nORDER BY T.Tilasto_ID, J.Jakso_ID, J.AlueTaso_ID ");
 
             return sb.ToString();
         }

@@ -216,10 +216,10 @@ namespace LiiteriStatisticsCore.Queries
                     this.fields.Add("NULL AS AlternativeId");
                 }
 
-                if (schema["InnerJoinQuery"] != null) {
+                if (schema["JoinQuery"] != null) {
                     /* alias substitutions are needed because the names
                      * will be different in CommuteStatistics */
-                    string joinQuery = schema["InnerJoinQuery"];
+                    string joinQuery = schema["JoinQuery"];
                     joinQuery = dataFormat(joinQuery);
 
                     this.sbFrom.Append("\n    ");
@@ -484,14 +484,13 @@ namespace LiiteriStatisticsCore.Queries
                     this.fields.Add(string.Format(
                         "CAST(SUM({0}) AS FLOAT) AS Value",
                         this.Type));
-                    this.fields.Add(string.Format(
+                    this.fields.Add(
                     @"
     CASE
         WHEN SUM(yht) < 10
         THEN 1
         ELSE 0
-        END AS TriggerPrivacyLimit",
-                        this.Type));
+        END AS TriggerPrivacyLimit");
                     break;
             }
 

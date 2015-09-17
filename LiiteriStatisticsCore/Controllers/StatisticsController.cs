@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -20,15 +21,16 @@ namespace LiiteriStatisticsCore.Controllers
         IEnumerable<Models.StatisticsResult> GetStatistics(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null);
+            string group,
+            string filter);
 
         [OperationContract]
-        string GetStatisticsDebugString(
+        Models.StatisticsRepositoryTracer GetStatisticsDebugString(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null);
+            string group,
+            string filter,
+            string debug);
 
         [OperationContract]
         IEnumerable<Models.AreaType> GetAreaTypes();
@@ -48,7 +50,7 @@ namespace LiiteriStatisticsCore.Controllers
 
         private class StatisticsResultContainer
         {
-            public string DebugString;
+            public Models.StatisticsRepositoryTracer Tracer;
             public IEnumerable<Models.StatisticsResult> Results;
         }
 
@@ -61,157 +63,45 @@ namespace LiiteriStatisticsCore.Controllers
             return db;
         }
 
-        /* be prepared to return either a debug string, or the actual
+        /* be prepared to return either a debug tracer, or the actual
          * results */
         private StatisticsResultContainer GetStatisticsResultContainer(
             int[] years,
             int statisticsId,
             string group = null,
             string filter = null,
-            bool debug = false)
+            string debug = null)
         {
             using (DbConnection db = this.GetDbConnection()) {
 
-                /* Step 1: Fetch IndicatorDetails */
+                var request = new Requests.StatisticsRequest() {
+                    StatisticsId = statisticsId,
+                    Years = years,
+                    Group = group,
+                    Filter = filter,
+                };
 
-                var indicatorQuery = new Queries.IndicatorQuery();
-                indicatorQuery.IdIs = statisticsId;
+                var repofactory = new Factories.StatisticsRepositoryFactory(
+                    db, request);
+                var repository = repofactory.GetRepository();
 
-                var indicatorDetailsRepository =
-                    new Repositories.IndicatorDetailsRepository(db);
-                var details = (Models.IndicatorDetails)
-                    indicatorDetailsRepository.Single(indicatorQuery);
+                var tracer = repofactory.Tracer;
 
-                /* Step 2: Create one or more StatisticsQuery objects */
-                var queries = new List<Queries.StatisticsQuery>();
-
-                /* For privacy limits, we do some extra stuff */
-                Queries.IndicatorQuery refIndicatorQuery;
-                Models.IndicatorDetails refDetails = null;
-
-                IList<Tuple<Queries.ISqlQuery, Queries.ISqlQuery>>
-                    querypairs = null;
-
-                if (details.PrivacyLimit != null) {
-                    refIndicatorQuery = new Queries.IndicatorQuery();
-                    refIndicatorQuery.IdIs = details.PrivacyLimit.RefId;
-                    refDetails = (Models.IndicatorDetails)
-                        indicatorDetailsRepository.Single(refIndicatorQuery);
-                    querypairs =
-                        new List<Tuple<Queries.ISqlQuery, Queries.ISqlQuery>>();
-                }
-
-                /* although StatisticsQuery could implement .YearIn, which 
-                 * would accept a list of years, what about if different years
-                 * end up having different DatabaseAreaTypes?
-                 * For this reason, let's just loop the years and create
-                 * multiple queries */
-                foreach (int year in years) {
-                    Models.TimePeriod timePeriod = (
-                        from p in details.TimePeriods
-                        where p.Id == year
-                        select p).Single();
-                    int[] availableAreaTypes = (
-                        from a in timePeriod.DataAreaTypes
-                        select a.Id).ToArray();
-
-                    var statisticsQuery = new Queries.StatisticsQuery(statisticsId);
-
-                    statisticsQuery.CalculationTypeIdIs = details.CalculationType;
-                    statisticsQuery.AvailableAreaTypes = availableAreaTypes;
-
-                    if (group == null) group = "finland";
-                    statisticsQuery.GroupByAreaTypeIdIs = group;
-                    statisticsQuery.YearIs = year;
-
-                    if (filter != null && filter.Length == 0) {
-                        filter = null;
-                    }
-                    statisticsQuery.AreaFilterQueryString = filter;
-
-                    /* at this point the statisticsQuery should be ready,
-                     * let's process it here so we can decide if privacy limits
-                     * can be applied here */
-                    statisticsQuery.GenerateQueryString();
-
-                    /* privacy limits should only be applied
-                     * when using grid data (1) */
-                    int dbAreaType = statisticsQuery.GetDatabaseAreaTypeId();
-
-                    if (details.PrivacyLimit == null || dbAreaType != 1) {
-                        queries.Add(statisticsQuery);
-                    } else {
-                        /* For privacy limits, we need to do a parallel
-                         * query and compare the results side-by-side
-                         * in the repository */
-                        var refQuery = new Queries.StatisticsQuery(
-                            details.PrivacyLimit.RefId);
-                        /* TODO: implement cloning?
-                         * (StatisticsQuery state may be too uncertain, though)
-                         */
-                        refQuery.CalculationTypeIdIs =
-                            refDetails.CalculationType;
-
-                        Models.TimePeriod refTimePeriod = (
-                            from p in refDetails.TimePeriods
-                            where p.Id == year
-                            select p).Single();
-                        int[] refAvailableAreaTypes = (
-                            from a in refTimePeriod.DataAreaTypes
-                            select a.Id).ToArray();
-
-                        refQuery.AvailableAreaTypes = refAvailableAreaTypes;
-
-                        refQuery.GroupByAreaTypeIdIs =
-                            statisticsQuery.GroupByAreaTypeIdIs;
-                        refQuery.YearIs = statisticsQuery.YearIs;
-                        refQuery.AreaFilterQueryString =
-                            statisticsQuery.AreaFilterQueryString;
-                        querypairs.Add(
-                            new Tuple<Queries.ISqlQuery, Queries.ISqlQuery>(
-                                statisticsQuery, refQuery));
-                    }
-                }
-
-                if (debug) {
-                    Util.DebugOutput debugOutput;
-                    if (queries.Count > 0) {
-                        debugOutput = new Util.DebugOutput(queries);
-                    } else if (querypairs.Count > 0) {
-                        debugOutput = new Util.DebugOutput(querypairs);
-                    } else {
-                        throw new Exception("No statistics queries specified!");
-                    }
+                // "true" is for backwards compatibility
+                if (debug != null && debug == "noexec" || debug == "true") {
                     return new StatisticsResultContainer() {
-                        DebugString = debugOutput.ToString(),
+                        Tracer = tracer,
                         Results = null
                     };
-                    /* We could continue here and fill the actual results,
-                     * but if there's an error we might rather just want
-                     * to see the query */
                 }
-
-                /* Step 3: Fetch StatisticsResult */
-
-                var repository = new Repositories.StatisticsResultRepository(db);
-
-                /* when IndictorDetails is passed to the repository, it will
-                 * know how to do unit conversions */
-                repository.Indicator = details;
 
                 IEnumerable<Models.StatisticsResult> results;
-                if (queries.Count > 0) {
-                    results = repository.FindAll(queries);
-                } else if (querypairs.Count > 0) {
-                    results = repository.FindAll(querypairs);
-                } else {
-                    throw new Exception("No statistics queries specified!");
-                }
+                results = repository.FindAll();
 
                 /* Note: we are iterating the generator here, could be
                  * memory-inefficient */
                 return new StatisticsResultContainer() {
-                    DebugString = null,
+                    Tracer = tracer,
                     Results = results.ToList()
                 };
             }
@@ -220,29 +110,30 @@ namespace LiiteriStatisticsCore.Controllers
         public virtual IEnumerable<Models.StatisticsResult> GetStatistics(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null)
+            string group,
+            string filter)
         {
             return this.GetStatisticsResultContainer(
                 years,
                 statisticsId,
                 group,
                 filter,
-                false).Results;
+                null).Results;
         }
 
-        public string GetStatisticsDebugString(
+        public Models.StatisticsRepositoryTracer GetStatisticsDebugString(
             int[] years,
             int statisticsId,
-            string group = null,
-            string filter = null)
+            string group,
+            string filter,
+            string debug)
         {
             return this.GetStatisticsResultContainer(
                 years,
                 statisticsId,
                 group,
                 filter,
-                true).DebugString;
+                debug).Tracer;
         }
 
         public virtual IEnumerable<Models.AreaType> GetAreaTypes()
@@ -255,8 +146,9 @@ namespace LiiteriStatisticsCore.Controllers
             var query = new Queries.AreaQuery();
             query.AreaTypeIdIs = areaTypeId;
             using (DbConnection db = this.GetDbConnection()) {
-                var repository = new Repositories.AreaRepository(db);
-                foreach (Models.Area r in repository.FindAll(query)) {
+                var repository = new Repositories.AreaRepository(
+                    db, new Queries.ISqlQuery[] { query });
+                foreach (Models.Area r in repository.FindAll()) {
                     yield return r;
                 }
             }

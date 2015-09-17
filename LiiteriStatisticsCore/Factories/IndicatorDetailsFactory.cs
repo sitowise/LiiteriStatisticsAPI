@@ -22,12 +22,13 @@ namespace LiiteriStatisticsCore.Factories
             obj.InternalUnitId = (int) rdr["InternalUnitId"];
             obj.Unit = (string) this.GetValueOrNull(rdr, "Unit");
             obj.Description = rdr["Description"].ToString(); ;
-            obj.AdditionalInformation = rdr["AdditionalInformation"].ToString(); ;
+            obj.AdditionalInformation = rdr["AdditionalInformation"].ToString();
             obj.CalculationType = (int) rdr["CalculationType"];
 
             obj.ProcessingStage = null;
-            obj.TimeSpan = (string) rdr["TimeSpan"];
-            obj.TimeSpanDetails = (string) rdr["TimeSpanDetails"];
+
+            obj.TimeSpan = (string) this.GetValueOrNull(rdr, "TimeSpan");
+            obj.TimeSpanDetails = (string) this.GetValueOrNull(rdr, "TimeSpanDetails");
 
             int? privacyLimitStatisticsId =
                 (int?) this.GetValueOrNull(rdr, "PrivacyLimitStatisticsId");

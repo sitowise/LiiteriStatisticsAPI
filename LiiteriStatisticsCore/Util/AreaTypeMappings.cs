@@ -24,7 +24,7 @@ namespace LiiteriStatisticsCore.Util
             AdministrativeArea,
         };
 
-        public AreaTypeMappings()
+        public AreaTypeMappings(string xmlFile = null)
         {
             object dataDirectory =
                 AppDomain.CurrentDomain.GetData("DataDirectory");
@@ -43,20 +43,29 @@ namespace LiiteriStatisticsCore.Util
                 throw new System.IO.DirectoryNotFoundException(
                     "Unable to figure out Data Directory");
             }
-            string XmlFile = System.IO.Path.Combine(
-                (string) dataDirectory,
-                "AreaTypeMappings.xml");
+            if (xmlFile == null) {
+                xmlFile = System.IO.Path.Combine(
+                    (string) dataDirectory,
+                    "AreaTypeMappings.xml");
+            }
             Debug.WriteLine(string.Format(
-                "Reading XmlFile from {0}", XmlFile));
-            this.xdoc = XDocument.Load(XmlFile);
+                "Reading XmlFile from {0}", xmlFile));
+            this.xdoc = XDocument.Load(xmlFile);
         }
 
+        /* SubFromString/addAreaTable="true/false"
+         * Used by AreaQuery, determines whether DimAlue should be
+         * joined in the query */
         public bool GetDatabaseListAddAreaTable(string areaTypeId)
         {
             var queryElem = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
-                select d.Element("DatabaseSchema").Element("SubFromString")
+                select d
+                    .Element("DatabaseSchema")
+                    .Element("SubFromString")
                 ).Single();
             if (queryElem == null) return false;
             if (queryElem.Attribute("addAreaTable") != null &&
@@ -66,12 +75,19 @@ namespace LiiteriStatisticsCore.Util
             return false;
         }
 
+        /* SubFromString/disableList="true/false"
+         * This is used to disable area listings for grids, since
+         * they would return too many items */
         public bool GetDatabaseListDisabled(string areaTypeId)
         {
             var queryElem = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
-                select d.Element("DatabaseSchema").Element("SubFromString")
+                select d
+                    .Element("DatabaseSchema")
+                    .Element("SubFromString")
                 ).Single();
             if (queryElem == null) return false;
             if (queryElem.Attribute("disableList") != null &&
@@ -81,10 +97,15 @@ namespace LiiteriStatisticsCore.Util
             return false;
         }
 
+        /* SelectionAreaType/DatabaseSchema/*
+         * Return various fields from DatabaseSchema for
+         * building SQL queries */
         public Dictionary<string, string> GetDatabaseSchema(string areaTypeId)
         {
             var queryElem = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
                 select d.Element("DatabaseSchema")
                 ).Single();
@@ -99,9 +120,8 @@ namespace LiiteriStatisticsCore.Util
                     "GeometryColumn",
                     "SubFromString",
                     "SubWhereString",
-                    "InnerJoinQuery",
-                    "RightJoinQuery",
                     "FilterJoinQuery",
+                    "JoinQuery",
                     }) {
                 if (queryElem.Element(key) != null) {
                     schema[key] = queryElem.Element(key).Value.ToString();
@@ -112,36 +132,10 @@ namespace LiiteriStatisticsCore.Util
             return schema;
         }
 
-        private string GetValue(string areaTypeId, string key)
-        {
-            return (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
-                where d.Attribute("id").Value == areaTypeId
-                select d.Element(key).Value).Single();
-        }
-
-        public int? GetDatabaseAreaType(
-            string areaTypeId,
-            int[] availableAreaTypes)
-        {
-            if (areaTypeId == null) {
-                throw new ArgumentNullException("areaTypeId must not be null!");
-            }
-            var databaseAreaTypes = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
-                where d.Attribute("id").Value == areaTypeId
-                select d.Element("DatabaseAreaTypes")).Single();
-            foreach (var databaseAreaType in
-                    databaseAreaTypes.Descendants("DatabaseAreaType")) {
-                int id = Convert.ToInt32(
-                    databaseAreaType.Attribute("id").Value);
-                if (availableAreaTypes.Contains(id)) {
-                    return id;
-                }
-            }
-            return null;
-        }
-
+        /* SelectionAreaType/DatabaseAreaTypes/DatabaseAreaType
+         * Return all DatabaseAreaTypes for a SelectionAreaType.
+         * Used when building the SQL query to reduce the list of
+         * available areatypes */
         public int[] GetDatabaseAreaTypes(
             string areaTypeId)
         {
@@ -149,7 +143,9 @@ namespace LiiteriStatisticsCore.Util
                 throw new ArgumentNullException("areaTypeId must not be null!");
             }
             var databaseAreaTypes = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
                 select d.Element("DatabaseAreaTypes")).Single();
             int[] retval = (
@@ -159,13 +155,19 @@ namespace LiiteriStatisticsCore.Util
             return retval;
         }
 
+        /* SelectionAreaType/DatabaseAreaTypes/DatabaseAreaType/primary="true/false"
+         * Return primary databaseAreaType of a selectionAreaType.
+         * Used by special statistics, which should not be aggregated,
+         * as well as geometry filters. */
         public int GetPrimaryDatabaseAreaType(string areaTypeId)
         {
             if (areaTypeId == null) {
                 throw new ArgumentNullException("areaTypeId must not be null!");
             }
             var databaseAreaTypes = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
                 select d.Element("DatabaseAreaTypes")).Single();
             var retval = (
@@ -182,7 +184,8 @@ namespace LiiteriStatisticsCore.Util
             return (int) retval.Single();
         }
 
-        /* Get primary virtual areatype for database areaType
+        /* SelectionAreaType/DatabaseAreaTypes/DatabaseAreaType/primary="true/false"
+         * Get primary virtual areatype for database areaType
          * e.g. 2 -> municipality
          * Used by the special statistics indicators */
         public Models.AreaType GetPrimaryAreaType(int databaseAreaTypeId)
@@ -194,7 +197,9 @@ namespace LiiteriStatisticsCore.Util
             var factory = new Factories.AreaTypeFactory();
 
             var areaTypes = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 select d);
             foreach (var areaType in areaTypes) {
                 /* Debug.WriteLine(string.Format(
@@ -202,8 +207,8 @@ namespace LiiteriStatisticsCore.Util
                     areaType.Attribute("id").Value)); */
                 var found = (
                     from d in areaType
-                        .Descendants("DatabaseAreaTypes")
-                        .Descendants("DatabaseAreaType")
+                        .Elements("DatabaseAreaTypes")
+                        .Elements("DatabaseAreaType")
                     where
                         Convert.ToInt32(d.Attribute("id").Value) == databaseAreaTypeId &&
                         d.Attribute("primary") != null &&
@@ -223,11 +228,15 @@ namespace LiiteriStatisticsCore.Util
                 "No primary virtual areaType for this databaseAreaType!");
         }
 
+        /* SelectionAreaTypes/*
+         * Returns all SelectionAreaTypes */
         public IEnumerable<Models.AreaType> GetAreaTypes()
         {
             var factory = new Factories.AreaTypeFactory();
             var areaTypes = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 select (Models.AreaType) factory.Create(d));
             return areaTypes;
         }
@@ -246,14 +255,15 @@ namespace LiiteriStatisticsCore.Util
             IList<Models.AreaType> areaTypes = new List<Models.AreaType>();
 
             foreach (var sAreaType in this.xdoc.Root
-                    .Descendants("SelectionAreaType")) {
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")) {
                 /* Debug.WriteLine(string.Format(
                     "Checking virtualAreaType:{0}",
                     sAreaType.Attribute("id").Value)); */
                 bool found = false;
                 foreach (var dAreaType in sAreaType
-                        .Descendants("DatabaseAreaTypes")
-                        .Descendants("DatabaseAreaType")) {
+                        .Elements("DatabaseAreaTypes").Single()
+                        .Elements("DatabaseAreaType")) {
                     int id = Convert.ToInt32(dAreaType.Attribute("id").Value);
                     /* Debug.WriteLine(string.Format(
                         "  Checking databaseAreaType:{0}", id)); */
@@ -271,11 +281,15 @@ namespace LiiteriStatisticsCore.Util
             return areaTypes;
         }
 
+        /* SelectionAreaType/category
+         * Returns the category (functional/administrative) for an areaType. */
         public AreaTypeMappings.AreaTypeCategory GetAreaTypeCategory(
             string areaTypeId)
         {
             string category = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
                 select d.Attribute("category").Value.ToString()).Single();
 
@@ -290,6 +304,9 @@ namespace LiiteriStatisticsCore.Util
             }
         }
 
+        /* SelectionAreaType/DatabaseSchema/ExtraAreaFields/*
+         * Returns extra area fields, for adding parent areas
+         * for "*_type" functional areas */
         public Dictionary<string, string> GetExtraAreaFields(string areaTypeId)
         {
             if (areaTypeId == null) {
@@ -298,14 +315,16 @@ namespace LiiteriStatisticsCore.Util
             var retval = new Dictionary<string, string>();
 
             var selectionAreaType = (
-                from d in this.xdoc.Root.Descendants("SelectionAreaType")
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
                 select d.Element("DatabaseSchema")).Single();
 
             var extraFields = (
                 from d in selectionAreaType
-                    .Descendants("ExtraAreaFields")
-                    .Descendants("ExtraAreaField")
+                    .Elements("ExtraAreaFields")
+                    .Elements("ExtraAreaField")
                 select d);
 
             foreach (var extraField in extraFields) {

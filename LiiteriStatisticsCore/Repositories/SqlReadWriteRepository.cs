@@ -12,10 +12,12 @@ namespace LiiteriStatisticsCore.Repositories
         SqlReadRepository<T>,
         IReadWriteRepository<T> where T : class
     {
-        public SqlReadWriteRepository(DbConnection dbConnection) :
-            base(dbConnection)
+        public SqlReadWriteRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries,
+            Factories.IFactory factory = null) :
+            base(dbConnection, queries, factory)
         {
-            this.dbConnection = dbConnection;
         }
 
         public virtual void Insert(T entity)

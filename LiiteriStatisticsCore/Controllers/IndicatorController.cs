@@ -42,8 +42,9 @@ namespace LiiteriStatisticsCore.Controllers
             query.NameLike = '%' + name + '%';
 
             using (DbConnection db = this.GetDbConnection()) {
-                var repository = new Repositories.IndicatorBriefRepository(db);
-                foreach (Models.IndicatorBrief r in repository.FindAll(query)) {
+                var repository = new Repositories.IndicatorBriefRepository(
+                    db, new Queries.ISqlQuery[] { query });
+                foreach (Models.IndicatorBrief r in repository.FindAll()) {
                     yield return r;
                 }
             }
@@ -55,8 +56,10 @@ namespace LiiteriStatisticsCore.Controllers
             query.IdIs = id;
 
             using (DbConnection db = this.GetDbConnection()) {
-                var repository = new Repositories.IndicatorDetailsRepository(db);
-                return (Models.IndicatorDetails) repository.Single(query);
+                var repository = new Repositories.IndicatorDetailsRepository(
+                    db,
+                    new Queries.ISqlQuery[] { query });
+                return (Models.IndicatorDetails) repository.Single();
             }
         }
     }

@@ -14,11 +14,11 @@ namespace LiiteriStatisticsCore.Queries
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static Util.AreaTypeMappings AreaTypeMappings =
+        protected static Util.AreaTypeMappings AreaTypeMappings =
             new Util.AreaTypeMappings();
 
 #if DEBUG
-        private Util.TemplateCollection QueryTemplates =
+        protected Util.TemplateCollection QueryTemplates =
             new Util.TemplateCollection("StatisticsQuery");
 #else
         private static Util.TemplateCollection QueryTemplates =
@@ -26,19 +26,19 @@ namespace LiiteriStatisticsCore.Queries
 #endif
 
         // this will be filled by GenerateQueryString, and returned by GetQueryString
-        private string QueryString = null;
+        protected string QueryString = null;
 
         private List<string> whereList;
 
         // these will be added as fields for SELECT
         //IDictionary<string, string> fields;
-        private List<string> fields;
+        protected List<string> fields;
 
         // these will be added to GROUP BY
-        private List<string> groups;
+        protected List<string> groups;
 
         // these will be added to ORDER BY
-        private List<string> orders;
+        protected List<string> orders;
 
         // this is for JOINs and such
         private StringBuilder sbFrom;
@@ -99,8 +99,9 @@ namespace LiiteriStatisticsCore.Queries
         /* Grouping */
         public string GroupByAreaTypeIdIs { get; set; }
 
-        /* prevent CalculationType=4 from being aggregated */
+        /* this is used to enforce non aggregation for calculation type 4 */
         private bool RelaxedAreaTypes = true;
+
         private int[] GetDatabaseAreaTypes(string areaType)
         {
             if (!this.RelaxedAreaTypes) {
@@ -114,7 +115,7 @@ namespace LiiteriStatisticsCore.Queries
 
         private void ReduceUsableAreaTypes(string areaType)
         {
-            int[] dbAreaTypes = AreaTypeMappings.GetDatabaseAreaTypes(areaType);
+            int[] dbAreaTypes = this.GetDatabaseAreaTypes(areaType);
             Debug.WriteLine(string.Format(
                 "For [{0}], we could use one of these [{1}]",
                 areaType, string.Join(", ", dbAreaTypes)));
@@ -130,7 +131,7 @@ namespace LiiteriStatisticsCore.Queries
                 string.Join(", ", this.UsableAreaTypes)));
         }
 
-        private void SetGroups()
+        protected void SetGroups()
         {
             /* add the proper table that we are grouping by */
             if (this.GroupByAreaTypeIdIs != null) {
@@ -143,7 +144,7 @@ namespace LiiteriStatisticsCore.Queries
                     // Currently not using MainIdColumn for fields!
                     //this.fields.Add(string.Format("{0} AS AreaId", idColumn));
                     //this.groups.Add(idColumn);
-                    /* ordering is important to assure side-by-side queries
+                    /* ordering is important to ensure side-by-side queries
                      * are handled properly */
                     //this.orders.Add(idColumn);
                 } else {
@@ -155,7 +156,7 @@ namespace LiiteriStatisticsCore.Queries
                     subIdColumn = SchemaDataFormat(subIdColumn);
                     this.fields.Add(string.Format("{0} AS AreaId", subIdColumn));
                     this.groups.Add(subIdColumn);
-                    /* ordering is important to assure side-by-side queries
+                    /* ordering is important to ensure side-by-side queries
                      * are handled properly */
                     this.orders.Add(subIdColumn);
                 } else {
@@ -181,10 +182,10 @@ namespace LiiteriStatisticsCore.Queries
                     this.fields.Add("NULL AS AlternativeId");
                 }
 
-                if (schema["InnerJoinQuery"] != null) {
+                if (schema["JoinQuery"] != null) {
                     /* alias substitutions are needed because the names
                      * will be different in CommuteStatistics */
-                    string joinQuery = schema["InnerJoinQuery"];
+                    string joinQuery = schema["JoinQuery"];
                     joinQuery = SchemaDataFormat(joinQuery);
 
                     this.sbFrom.Append("\n    ");
@@ -235,7 +236,7 @@ namespace LiiteriStatisticsCore.Queries
                 "A"); // {1}: main table (DimAlue)
         }
 
-        private void SetFilters()
+        protected void SetFilters()
         {
             if (this.AreaFilterQueryString != null) {
                 var parser = new Parsers.AreaFilterParser();
@@ -349,7 +350,7 @@ namespace LiiteriStatisticsCore.Queries
                 key, sql);
         }
 
-        private string GetWhereString()
+        protected string GetWhereString()
         {
             string whereString = "";
             if (this.whereList.Count > 0) {
@@ -358,31 +359,36 @@ namespace LiiteriStatisticsCore.Queries
             return this.labelSQLString("whereString", whereString);
         }
 
-        private string GetFieldsString()
+        protected string GetFieldsString()
         {
             return this.labelSQLString("fieldsString",
                 string.Join(",\n    ", this.fields));
        }
 
-        private string GetGroupString(IList<string> groups = null)
+        protected string GetFromString()
         {
-            IList<string> groupvar = this.groups;
-            if (groups != null) {
-                groupvar = groups;
-            }
+            return this.labelSQLString("fromString",
+                this.sbFrom.ToString());
+        }
+
+        protected string GetGroupString()
+        {
             var grouplist = new List<string>();
-            foreach (string group in groupvar) {
+            foreach (string group in this.groups) {
                 // don't try to group using strings, e.g. 'Finland'
                 if (group.StartsWith("'") && group.EndsWith("'")) {
                     continue;
                 }
                 grouplist.Add(group);
             }
-            return this.labelSQLString("groupsString",
-                string.Join(",\n    ", grouplist));
+            StringBuilder sb = new StringBuilder();
+            sb.Append("\nGROUP BY");
+            sb.Append("\n    ");
+            sb.Append(string.Join(",\n    ", grouplist));
+            return this.labelSQLString("groupsString", sb.ToString());
         }
 
-        private string GetOrderString()
+        protected string GetOrderString()
         {
             if (this.orders.Count == 0) {
                 return "";
@@ -394,16 +400,28 @@ namespace LiiteriStatisticsCore.Queries
             return this.labelSQLString("orderString", sb.ToString());
         }
 
-        private string GetFilterJoinsString()
+        protected string GetFilterJoinsString()
         {
             return this.labelSQLString("FilterJoins",
                 "\n" + string.Join("\n", this.filterJoins));
         }
 
+        protected string GetPreQueryString()
+        {
+            return this.labelSQLString("preQueryString",
+                this.sbPreQuery.ToString());
+        }
+
+        protected string GetPostQueryString()
+        {
+            return this.labelSQLString("preQueryString",
+                this.sbPostQuery.ToString());
+        }
+
         private int? databaseAreaTypeId = null;
 
         /* This should be called after Filters & Groups have been processed */
-        private void SetDatabaseAreaTypeId()
+        protected void SetDatabaseAreaTypeId()
         {
             if (this.UsableAreaTypes.Length == 0) {
                 throw new Exception(
@@ -432,216 +450,7 @@ namespace LiiteriStatisticsCore.Queries
             return (int) this.databaseAreaTypeId;
         }
 
-        /*
-         * CalculationType == 3
-         */
-        private string GetQueryString_DerivedDivided()
-        {
-            // we won't use SetGroups here, since the query is too different
-
-            var mainGroups = new List<string>();
-            var subGroups = new List<string>();
-
-            string idColumn = "NULL";
-            string subIdColumn = "NULL";
-            string alternativeIdColumn = "NULL";
-            string nameColumn = "Suomi";
-
-            string innerJoinQuery = "/* Empty InnerJoinQuery here */";
-
-            if (this.GroupByAreaTypeIdIs != null) {
-                var schema = AreaTypeMappings.GetDatabaseSchema(
-                    this.GroupByAreaTypeIdIs);
-
-                idColumn = schema["MainIdColumn"];
-                if (idColumn != null && idColumn.Length > 0) {
-                    idColumn = SchemaDataFormat(idColumn);
-                    //this.fields.Add(string.Format("{0} AS AreaId", idColumn));
-                    // this will be grouped in the subqueries
-                } else {
-                    idColumn = "-1";
-                }
-
-                subIdColumn = schema["SubIdColumn"];
-                if (subIdColumn != null && subIdColumn.Length > 0) {
-                    subIdColumn = SchemaDataFormat(subIdColumn);
-                    /* ordering is important to assure side-by-side queries
-                     * are handled properly */
-                    this.orders.Add(subIdColumn);
-                    subGroups.Add(subIdColumn);
-                    mainGroups.Add(subIdColumn);
-                } else {
-                    subIdColumn = "-1";
-                }
-                this.fields.Add(string.Format("{0} AS AreaId", subIdColumn));
-
-                nameColumn = schema["SubNameColumn"];
-                if (nameColumn != null && nameColumn.Length > 0) {
-                    nameColumn = SchemaDataFormat(nameColumn);
-                    mainGroups.Add(nameColumn);
-                } else {
-                    nameColumn = "NULL";
-                }
-                this.fields.Add(string.Format("{0} AS AreaName", nameColumn));
-
-                alternativeIdColumn = schema["SubAlternativeIdColumn"];
-                if (alternativeIdColumn != null && alternativeIdColumn.Length > 0) {
-                    alternativeIdColumn = SchemaDataFormat(alternativeIdColumn);
-                    mainGroups.Add(alternativeIdColumn);
-                } else {
-                    alternativeIdColumn = "-1";
-                }
-                this.fields.Add(string.Format(
-                    "{0} AS AlternativeId", alternativeIdColumn));
-
-                /* alias substitutions are needed because the names
-                 * will be different in CommuteStatistics */
-                string joinQuery = schema["RightJoinQuery"];
-                if (joinQuery != null) {
-                    joinQuery = SchemaDataFormat(joinQuery);
-                } else {
-                    joinQuery = "/* Empty JoinQuery here */";
-                }
-
-                this.sbFrom.Append("\n    ");
-                this.sbFrom.Append(joinQuery);
-
-                this.ReduceUsableAreaTypes(this.GroupByAreaTypeIdIs);
-
-                innerJoinQuery = schema["InnerJoinQuery"];
-                if (innerJoinQuery != null) {
-                    innerJoinQuery = SchemaDataFormat(innerJoinQuery);
-                }
-            }
-
-            //this.fields.Add("Denominator.Jakso_ID AS Year");
-            this.fields.Add("@YearIs AS Year");
-            //subGroups.Add("T.Jakso_ID"); // groups will be in subqueries
-            //mainGroups.Add("Denominator.Jakso_ID");
-
-            this.fields.Add("(ISNULL(Numerator.Arvo, 0) / Denominator.Arvo) AS Value");
-            mainGroups.Add("Numerator.Arvo");
-            mainGroups.Add("Denominator.Arvo");
-
-            /*
-            subGroups.Add("A.Alkaen_Jakso_ID");
-            subGroups.Add("A.Asti_Jakso_ID");
-            */
-
-            this.SetFilters();
-            //this.SetGroups("RightJoinQuery");
-            this.SetDatabaseAreaTypeId();
-
-            string queryString = QueryTemplates.Get("DerivedDivided");
-
-            string subGroupString = "";
-            if (subGroups.Count > 0) {
-                subGroupString = "GROUP BY\n" + this.GetGroupString(subGroups);
-            }
-
-            queryString = string.Format(queryString,
-                this.GetFieldsString(),
-                this.sbFrom.ToString(),
-                this.GetWhereString(),
-                this.GetGroupString(mainGroups),
-                this.GetOrderString(),
-                idColumn,
-                subIdColumn,
-                innerJoinQuery,
-                subGroupString,
-                this.GetFilterJoinsString());
-                
-            return queryString;
-        }
-
-        /*
-         * CalculationType == 5
-         * this has been converted to new query
-         */
-        private string GetQueryString_DerivedSummed()
-        {
-            this.fields.Add("T.Jakso_ID AS Year");
-            this.groups.Add("T.Jakso_ID");
-
-            this.fields.Add("SUM(T.Arvo) AS Value");
-
-            this.SetFilters();
-            this.SetGroups();
-            this.SetDatabaseAreaTypeId();
-
-            string queryString = QueryTemplates.Get("DerivedSummed");
-            queryString = string.Format(queryString,
-                this.GetFieldsString(),
-                this.sbFrom.ToString(),
-                this.GetWhereString(),
-                this.GetGroupString(),
-                this.GetOrderString(),
-                this.GetFilterJoinsString());
-
-            return queryString;
-        }
-
-        /*
-         * CalculationType == 4
-         */
-        private string GetQueryString_Special()
-        {
-            int primaryDbAreaType = AreaTypeMappings.GetPrimaryDatabaseAreaType(
-                    this.GroupByAreaTypeIdIs);
-            if (!this.AvailableAreaTypes.Contains(primaryDbAreaType)) {
-                throw new Exception("Supplied grouping areaType not suitable for this statistics data!");
-            }
-
-            this.fields.Add("T.Jakso_ID AS Year");
-
-            this.fields.Add("COALESCE(T.Arvo, 0) AS Value");
-
-            /* don't allow any other areaType to be selected for this */
-            this.RelaxedAreaTypes = false;
-
-            this.SetFilters();
-            this.SetGroups(); // nothing should be grouped in this query
-            this.SetDatabaseAreaTypeId();
-
-            string queryString = QueryTemplates.Get("Special");
-            queryString = string.Format(queryString,
-                this.GetFieldsString(),
-                this.sbFrom.ToString(),
-                this.GetWhereString(),
-                this.GetOrderString(),
-                this.GetFilterJoinsString());
-
-            return queryString;
-        }
-
-        /*
-         * CalculationTypeId == 1
-         * this has been converted to new query
-         */
-        private string GetQueryString_Normal()
-        {
-            this.fields.Add("T.Jakso_ID AS Year");
-            this.groups.Add("T.Jakso_ID");
-
-            this.fields.Add("SUM(T.Arvo) AS Value");
-
-            this.SetFilters();
-            this.SetGroups();
-            this.SetDatabaseAreaTypeId();
-
-            string queryString = QueryTemplates.Get("Normal");
-            queryString = string.Format(queryString,
-                this.GetFieldsString(),
-                this.sbFrom.ToString(),
-                this.GetWhereString(),
-                this.GetGroupString(),
-                this.GetOrderString(),
-                this.GetFilterJoinsString());
-
-            return queryString;
-        }
-
-        public void GenerateQueryString()
+        private void GenerateQueryString()
         {
             string queryString;
 
@@ -649,51 +458,38 @@ namespace LiiteriStatisticsCore.Queries
                 "We have these areaTypes available: [{0}]",
                 string.Join(",", this.AvailableAreaTypes)));
 
-            /*
-            var schema = AreaTypeMappings.GetDatabaseSchema(this.GroupByAreaTypeIdIs);
-            if (schema["GeometryColumn"] != null &&
-                    schema["GeometryColumn"].Length > 0) {
-                this.fields.Add("A2.KoordErTmPohj AS AreaPointLat");
-                this.groups.Add("A2.KoordErTmPohj");
-                this.fields.Add("A2.KoordErTmIta AS AreaPointLon");
-                this.groups.Add("A2.KoordErTmIta");
-            } else {
-                this.fields.Add("NULL AS AreaPointLat");
-                this.fields.Add("NULL AS AreaPointLon");
+            if (!new int[] { 1, 2 }.Contains(this.CalculationTypeIdIs)) {
+                string errMsg = string.Format(
+                    "Unsupported CalculationType: {0}",
+                    this.CalculationTypeIdIs);
+                logger.Error(errMsg);
+                throw new Exception(errMsg);
             }
-            */
 
-            switch (this.CalculationTypeIdIs) {
-                case 1: // normal
-                    logger.Debug("Statistics query: normal");
-                    queryString = this.GetQueryString_Normal();
-                    break;
-                case 3: // derived & divided
-                    logger.Debug("Statistics query: derived/divided");
-                    queryString = this.GetQueryString_DerivedDivided();
-                    break;
-                case 4: // special
-                    logger.Debug("Statistics query: special");
-                    queryString = this.GetQueryString_Special();
-                    break;
-                case 5: // derived & summed
-                    logger.Debug("Statistics query: derived/summed");
-                    queryString = this.GetQueryString_DerivedSummed();
-                    break;
-                default:
-                    string errMsg = string.Format(
-                        "Unsupported CalculationType: {0}",
-                        this.CalculationTypeIdIs);
-                    logger.Error(errMsg);
-                    throw new Exception(errMsg);
-            }
+            this.fields.Add("T.Jakso_ID AS Year");
+
+            this.groups.Add("T.Jakso_ID");
+            this.fields.Add("SUM(T.Arvo) AS Value");
+
+            this.SetFilters();
+            this.SetGroups();
+            this.SetDatabaseAreaTypeId();
+
+            queryString = QueryTemplates.Get("Normal");
+            queryString = string.Format(queryString,
+                this.GetFieldsString(),
+                this.GetFromString(),
+                this.GetWhereString(),
+                this.GetGroupString(),
+                this.GetOrderString(),
+                this.GetFilterJoinsString());
 
             /* preQuery stuff (which are geometry declarations at the moment)
              * should be common for all query types, let's prepend it here */
-            queryString = this.sbPreQuery.ToString() + "\n" + queryString;
+            queryString = this.GetPreQueryString() + "\n" + queryString;
 
             /* postQuery stuff (drop temporary tables) */
-            queryString = queryString + "\n" + this.sbPostQuery.ToString();
+            queryString = queryString + "\n" + this.GetPostQueryString();
 
             this.QueryString = queryString;
         }

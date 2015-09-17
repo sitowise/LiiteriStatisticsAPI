@@ -16,34 +16,25 @@ namespace LiiteriStatisticsCore.Repositories
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected DbConnection dbConnection;
+        protected Models.SQLQueryDetails queryDetails =
+            new Models.SQLQueryDetails();
 
-        public SqlReadRepository(DbConnection dbConnection)
+        protected DbConnection dbConnection;
+        protected Factories.IFactory factory;
+        public IEnumerable<Queries.ISqlQuery> queries;
+
+        public SqlReadRepository(
+            DbConnection dbConnection,
+            IEnumerable<Queries.ISqlQuery> queries,
+            Factories.IFactory factory = null)
         {
             this.dbConnection = dbConnection;
+            this.factory = factory;
+            this.queries = queries;
         }
 
         public delegate T ModifierDelegate(T obj);
         public List<ModifierDelegate> Modifiers = new List<ModifierDelegate>();
-
-        public IEnumerable<T> FindAll(
-            Queries.ISqlQuery query,
-            Factories.IFactory factory)
-        {
-            using (DbDataReader rdr = this.GetDbDataReader(query)) {
-                while (rdr.Read()) {
-                    T p = (T) factory.Create(rdr);
-
-                    if (this.Modifiers != null) {
-                        foreach (var d in this.Modifiers) {
-                            p = d(p);
-                        }
-                    }
-
-                    yield return p;
-                }
-            }
-        }
 
         public DbDataReader GetDbDataReader(
             Queries.ISqlQuery query)
@@ -86,21 +77,54 @@ namespace LiiteriStatisticsCore.Repositories
                 DateTime startTime = DateTime.Now;
                 DbDataReader retval = cmd.ExecuteReader();
                 DateTime endTime = DateTime.Now;
-                TimeSpan elapsedTime = (endTime - startTime);
+                TimeSpan elapsed = (endTime - startTime);
                 debugString = string.Format(
                     "Time elapsed on query: {0}.{1}s",
-                    elapsedTime.Seconds, elapsedTime.Milliseconds);
+                    elapsed.Seconds, elapsed.Milliseconds);
+                this.queryDetails.QueryTimeMilliseconds = elapsed.TotalMilliseconds;
                 Debug.WriteLine(debugString);
                 logger.Debug(debugString);
 
                 return retval;
             }
         }
+        private IEnumerable<T> FindAll(Queries.ISqlQuery query)
+        {
+            if (this.factory == null) {
+                throw new ArgumentNullException(
+                    "Using standard FindAll(), but factory is null!");
+            }
+            this.queryDetails.RowCount = 0;
+            using (DbDataReader rdr = this.GetDbDataReader(query)) {
+                while (rdr.Read()) {
+                    T p = (T) this.factory.Create(rdr);
 
-        public abstract IEnumerable<T> FindAll(Queries.ISqlQuery query);
+                    if (this.Modifiers != null) {
+                        foreach (var d in this.Modifiers) {
+                            p = d(p);
+                        }
+                    }
 
-        public abstract T Single(Queries.ISqlQuery query);
+                    this.queryDetails.RowCount++;
 
-        public abstract T First(Queries.ISqlQuery query);
+                    yield return p;
+                }
+            }
+        }
+
+        public virtual IEnumerable<T> FindAll()
+        {
+            foreach (Queries.ISqlQuery query in this.queries) {
+                foreach (T r in this.FindAll(query)) {
+                    yield return r;
+                }
+            }
+        }
+
+        /* TODO: should probably have a default implementation for these? */
+
+        public abstract T Single();
+
+        public abstract T First();
     }
 }

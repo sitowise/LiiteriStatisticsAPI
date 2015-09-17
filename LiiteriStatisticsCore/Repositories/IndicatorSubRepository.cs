@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.Data.Common;
-
 namespace LiiteriStatisticsCore.Repositories
 {
-    class CommuteStatisticsYearRepository : SqlReadRepository<int>
+    class IndicatorSubRepository : SqlReadRepository<int>
     {
-        public CommuteStatisticsYearRepository(
+        public IndicatorSubRepository(
             DbConnection dbConnection,
             IEnumerable<Queries.ISqlQuery> queries) :
             base(dbConnection, queries)
@@ -22,17 +21,17 @@ namespace LiiteriStatisticsCore.Repositories
             using (DbDataReader rdr =
                     this.GetDbDataReader(this.queries.Single())) {
                 while (rdr.Read()) {
-                    yield return (int) rdr["Year"];
+                    yield return (int) rdr["Value"];
                 }
             }
         }
 
-        public override int Single()
+        public override int First()
         {
             throw new NotImplementedException();
         }
 
-        public override int First()
+        public override int Single()
         {
             throw new NotImplementedException();
         }
