@@ -7,7 +7,7 @@ FROM
     INNER JOIN DimAlue A ON
         (A.Alue_ID = T.Alue_ID AND
         A.AlueTaso_ID = @DatabaseAreaTypeIdIs AND
-        @YearIs BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
+        T.Jakso_ID BETWEEN A.Alkaen_Jakso_ID AND A.Asti_Jakso_ID)
     {5}
 
     {1}
