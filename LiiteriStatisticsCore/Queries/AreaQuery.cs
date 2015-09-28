@@ -79,6 +79,14 @@ namespace LiiteriStatisticsCore.Queries
                 fields.Add("NULL AS Year");
             }
 
+            if (schema["SubOrderColumn"] != null &&
+                    schema["SubOrderColumn"].Length > 0) {
+                fields.Add(string.Format("{0} AS OrderNumber",
+                    SchemaDataFormat(schema["SubOrderColumn"])));
+            } else {
+                fields.Add("0 AS OrderNumber");
+            }
+
             if (schema["SubFromString"] != null &&
                     schema["SubFromString"].Length > 0) {
                 fromList.Add(SchemaDataFormat(schema["SubFromString"]));

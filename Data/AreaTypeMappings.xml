@@ -54,6 +54,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimAsemakaavoitettuAlueTyyppi {0} LEFT OUTER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {0}.AsemakaavoitettuAlueTyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID)</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_planned_area_class">BR_{0}.AsemakaavoitettuAlueLuokka_ID</ExtraAreaField>
@@ -225,6 +226,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimAsutusalueTyyppi {0} LEFT OUTER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {0}.Asutusaluetyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_neighborhood_class">BR_{0}.AsutusalueLuokka_ID</ExtraAreaField>
@@ -291,6 +293,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimKaupunkiMaaseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {0}.KaupunkimaaseutuTyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_city_rural_area_class">BR_{0}.KaupunkimaaseutuLuokka_ID</ExtraAreaField>
@@ -325,6 +328,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimKaupunkiseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {0}.KaupunkiseutuTyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_urban_area_class">BR_{0}.KaupunkiseutuLuokka_ID</ExtraAreaField>
@@ -374,6 +378,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimKeskustatyyppi {0} LEFT OUTER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_city_central_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
@@ -408,6 +413,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimTaajamaHarvaTiheaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {0}.TaajamaHarvaTiheaTyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_locality_density_class">BR_{0}.TaajamaHarvaTiheaLuokka_ID</ExtraAreaField>
@@ -442,6 +448,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimTaajamaHajaAsutusTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {0}.TaajamaHajaAsutusTyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_locality_rural_class">BR_{0}.TaajamaHajaAsutusLuokka_ID</ExtraAreaField>
@@ -476,6 +483,7 @@
                 <SubAlternativeIdColumn/>
                 <SubYearColumn/>
                 <SubFromString>DimUZVyohykeTyyppi {0} LEFT OUTER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {0}.UZVyohykeTyyppi_ID</SubFromString>
+                <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</JoinQuery>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_urban_zone_class">BR_{0}.UZVyohykeLuokka_ID</ExtraAreaField>

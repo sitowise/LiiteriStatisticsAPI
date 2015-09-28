@@ -17,5 +17,7 @@ namespace LiiteriStatisticsCore.Models
         public int? Year { get; set; }
 
         public IEnumerable<Area> ParentAreas;
+
+        public int OrderNumber { get; set; }
     }
 }

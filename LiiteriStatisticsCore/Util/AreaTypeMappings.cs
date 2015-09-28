@@ -122,6 +122,7 @@ namespace LiiteriStatisticsCore.Util
                     "SubWhereString",
                     "FilterJoinQuery",
                     "JoinQuery",
+                    "SubOrderColumn",
                     }) {
                 if (queryElem.Element(key) != null) {
                     schema[key] = queryElem.Element(key).Value.ToString();

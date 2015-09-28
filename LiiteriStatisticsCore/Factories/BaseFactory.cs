@@ -24,9 +24,9 @@ namespace LiiteriStatisticsCore.Factories
         public int GetNumber(DbDataReader rdr, string key)
         {
             try {
-                return (int) rdr.GetInt32(rdr.GetOrdinal("AreaId"));
+                return (int) rdr.GetInt32(rdr.GetOrdinal(key));
             } catch (InvalidCastException) {
-                return (int) rdr.GetByte(rdr.GetOrdinal("AreaId"));
+                return (int) rdr.GetByte(rdr.GetOrdinal(key));
             }
         }
 
