@@ -21,7 +21,7 @@ namespace LiiteriStatisticsCore.Queries
         protected Util.TemplateCollection QueryTemplates =
             new Util.TemplateCollection("StatisticsQuery");
 #else
-        private static Util.TemplateCollection QueryTemplates =
+        public static Util.TemplateCollection QueryTemplates =
             new Util.TemplateCollection("StatisticsQuery");
 #endif
 
