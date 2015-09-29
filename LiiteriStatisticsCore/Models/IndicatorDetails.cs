@@ -26,21 +26,24 @@ namespace LiiteriStatisticsCore.Models
         [IgnoreDataMember]
         public int InternalUnitId { get; set; }
 
-        public string Description;
-        public string AdditionalInformation;
+        public string Description { get; set; }
+
+        public string AdditionalInformation { get; set; }
 
 #if !DEBUG
         [IgnoreDataMember]
 #endif
         public int CalculationType { get; set; }
 
-        public IEnumerable<TimePeriod> TimePeriods;
+        [DefaultValue(null)]
+        public IEnumerable<TimePeriod> TimePeriods { get; set; }
 
-        //[IgnoreDataMember] // may be useful in the UI?
-        public PrivacyLimit PrivacyLimit = null;
+        [DefaultValue(null)]
+        public PrivacyLimit PrivacyLimit { get; set; }
 
         [IgnoreDataMember]
-        public int[] DerivedStatistics = null;
+        [DefaultValue(null)]
+        public int[] DerivedStatistics { get; set; }
 
         [DefaultValue(null)]
         public AccessRight AccessRight { get; set; }
