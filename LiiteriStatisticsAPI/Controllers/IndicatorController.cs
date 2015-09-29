@@ -31,9 +31,10 @@ namespace LiiteriStatisticsAPI.Controllers
         [Route("v1/indicators/")]
         [HttpGet]
         public IEnumerable<Core.Models.IndicatorBrief> GetIndicators(
-            string name = null)
+            string name = null,
+            int? accessRight = null)
         {
-            return this.GetController().GetIndicators(name);
+            return this.GetController().GetIndicators(name, accessRight);
         }
 
         [Route("v1/indicators/{id}")]

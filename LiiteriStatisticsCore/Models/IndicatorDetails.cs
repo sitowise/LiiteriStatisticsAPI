@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace LiiteriStatisticsCore.Models
 {
@@ -40,5 +41,8 @@ namespace LiiteriStatisticsCore.Models
 
         [IgnoreDataMember]
         public int[] DerivedStatistics = null;
+
+        [DefaultValue(null)]
+        public AccessRight AccessRight { get; set; }
     }
 }

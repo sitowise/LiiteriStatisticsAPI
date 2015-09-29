@@ -60,6 +60,7 @@ namespace LiiteriStatisticsCore.Repositories
             var dataAreaTypeFactory = new Factories.DataAreaTypeFactory();
             var areaTypeFactory = new Factories.AreaTypeFactory();
             var annotationFactory = new Factories.AnnotationFactory();
+            var accessRightFactory = new Factories.AccessRightFactory();
 
             Models.IndicatorDetails details = null;
             Models.TimePeriod timePeriod = null;
@@ -89,6 +90,11 @@ namespace LiiteriStatisticsCore.Repositories
                                 this.GetDerivedStatistics(
                                     (int) rdr["Id"],
                                     (int) rdr["CalculationType"]);
+                        }
+
+                        if (!Convert.IsDBNull(rdr["AccessRightId"])) {
+                            details.AccessRight = (Models.AccessRight)
+                                accessRightFactory.Create(rdr);
                         }
 
                         timePeriods = new List<Models.TimePeriod>();

@@ -17,7 +17,8 @@ namespace LiiteriStatisticsCore.Controllers
     {
         [OperationContract]
         IEnumerable<Models.IndicatorBrief> GetIndicators(
-            string name = null);
+            string name = null,
+            int? accessRight = null);
 
         [OperationContract]
         Models.IndicatorDetails GetIndicatorDetails(int id);
@@ -35,11 +36,16 @@ namespace LiiteriStatisticsCore.Controllers
         }
 
         public virtual IEnumerable<Models.IndicatorBrief> GetIndicators(
-            string name = null)
+            string name = null,
+            int? accessRight = null)
         {
             var query = new Queries.IndicatorQuery();
 
             query.NameLike = '%' + name + '%';
+
+            if (accessRight != null) {
+                query.AccessRightIdIs = accessRight;
+            }
 
             using (DbConnection db = this.GetDbConnection()) {
                 var repository = new Repositories.IndicatorBriefRepository(

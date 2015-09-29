@@ -57,6 +57,19 @@ namespace LiiteriStatisticsCore.Queries
                 this.Parameters.Add("NameLike", value);
             }
         }
+        public int? AccessRightIdIs
+        {
+            get
+            {
+                return (int) this.Parameters["AccessRightIdIs"].Value;
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("OIK.KayttoOikeus_ID = @AccessRightIdIs");
+                this.Parameters.Add("AccessRightIdIs", value);
+            }
+        }
 
         [System.ComponentModel.DefaultValue(false)]
         public bool IncludeHelperStatistics { get; set; }
@@ -108,6 +121,10 @@ namespace LiiteriStatisticsCore.Queries
             fields["LT.O_Lyhenne"] = "AnnotationOrganizationShort";
             fields["LT.O_Nimi"] = "AnnotationOrganizationName";
             fields["LT.O_Nro"] = "AnnotationOrganizationNumber";
+
+            /* Right of access */
+            fields["OIK.KayttoOikeus_ID"] = "AccessRightID";
+            fields["OIK.Selite"] =  "AccessRightDescription";
 
             sb.Append(
                 string.Join<string>(", ", (
@@ -170,6 +187,16 @@ LEFT OUTER JOIN DimAjallinenVaihe AJV ON
             sb.Append(@"
 LEFT OUTER JOIN Tietosuojaraja TS ON
     TS.Tilasto_ID = T.Tilasto_ID
+");
+
+            sb.Append(@"
+LEFT OUTER JOIN Tilasto_KayttoOikeus TKO ON
+    TKO.Tilasto_ID = T.Tilasto_ID
+");
+
+            sb.Append(@"
+LEFT OUTER JOIN KayttoOikeus OIK ON
+    OIK.KayttoOikeus_ID = TKO.KayttoOikeus_ID
 ");
 
             if (!this.IncludeHelperStatistics) {
