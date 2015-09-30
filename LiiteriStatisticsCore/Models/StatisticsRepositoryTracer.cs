@@ -12,41 +12,41 @@ namespace LiiteriStatisticsCore.Models
     [DataContract]
     public class StatisticsRepositoryTracer
     {
-        public IReadRepository<StatisticsResult> Repository;
 
-        [DataMember]
-        [ReadOnly(true)]
-        public string QueryString
+        private IReadRepository<StatisticsResult> _Repository;
+        public IReadRepository<StatisticsResult> Repository
         {
             get
             {
-                if (this.Repository != null &&
-                        this.Repository.GetType().IsSubclassOf(typeof(
-                            SqlReadRepository<StatisticsResult>))) {
+                return this._Repository;
+            }
+            set
+            {
+                this._Repository = value;
+
+                if (value == null) {
+                    this.RepositoryType = null;
+                    this.QueryString = null;
+                    return;
+                }
+
+                Type repositoryType = value.GetType();
+                this.RepositoryType = repositoryType.Name.ToString();
+
+                if (repositoryType.IsSubclassOf(
+                        typeof(SqlReadRepository<StatisticsResult>))) {
                     var queries = ((SqlReadRepository<StatisticsResult>)
                         this.Repository).queries;
-                    return new Util.DebugOutput(queries).ToString();
-                } else {
-                    return null;
+                    this.QueryString = new Util.DebugOutput(queries).ToString();
                 }
-            }
-            protected set
-            {
             }
         }
 
         [DataMember]
-        [ReadOnly(true)]
-        public string RepositoryType
-        {
-            get
-            {
-                return this.Repository.GetType().Name.ToString();
-            }
-            protected set
-            {
-            }
-        }
+        public string QueryString { get; set; }
+
+        [DataMember]
+        public string RepositoryType { get; set; }
 
         [DataMember]
         public SQLQueryDetails QueryDetails { get; set; }
