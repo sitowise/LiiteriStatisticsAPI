@@ -5,96 +5,61 @@ using System.Text;
 using System.Threading.Tasks;
 
 using LiiteriStatisticsCore.Models;
+using System.Diagnostics;
 
 namespace LiiteriStatisticsCore.Repositories
 {
     class PrivacyLimitStatisticsRepository :
+        ComparingStatisticsRepository,
         IReadRepository<StatisticsResult>
     {
-        // Repository which we are applying the privacy limits to
-        private IReadRepository<StatisticsResult> MainRepository;
-
-        // Repository which we are comparing against
-        private IReadRepository<StatisticsResult> RefRepository;
-
         private PrivacyLimit Limit;
 
         public PrivacyLimitStatisticsRepository(
             PrivacyLimit privacyLimit,
             IReadRepository<StatisticsResult> mainRepository,
-            IReadRepository<StatisticsResult> refRepository)
+            IReadRepository<StatisticsResult> refRepository) : base()
         {
             this.Limit = privacyLimit;
-            this.MainRepository = mainRepository;
-            this.RefRepository = refRepository;
+
+            this.Repositories = new List<IReadRepository<StatisticsResult>>() {
+                refRepository,
+                mainRepository,
+            };
         }
 
-        public IEnumerable<StatisticsResult> FindAll()
+        protected override StatisticsResult Compare(StatisticsResult[] results)
         {
-            using (IEnumerator<StatisticsResult> mainEnumerator =
-                    this.MainRepository.FindAll().GetEnumerator())
-            using (IEnumerator<StatisticsResult> refEnumerator =
-                    this.RefRepository.FindAll().GetEnumerator()) {
-                StatisticsResult refResult;
-                StatisticsResult mainResult;
-                StatisticsResult ret_r;
-
-                refEnumerator.MoveNext();
-                refResult = refEnumerator.Current;
-                while (mainEnumerator.MoveNext()) {
-                    mainResult = mainEnumerator.Current;
-                    ret_r = (StatisticsResult) mainResult.Clone();
-
-                    // ref already at the end of data
-                    if (refResult == null) {
-                        ret_r.Value = 0;
-                        yield return ret_r;
-                        continue;
-                    }
-
-                    while (refResult.AreaId < mainResult.AreaId) {
-                        if (refEnumerator.MoveNext()) {
-                            refResult = refEnumerator.Current;
-                        } else {
-                            refResult = null;
-                            break;
-                        }
-                    }
-
-                    // ref just reached end of data
-                    if (refResult == null) {
-                        ret_r.Value = 0;
-                        yield return ret_r;
-                        continue;
-                    }
-
-                    if (refResult.AreaId > mainResult.AreaId) {
-                        /* ref hopped past main, ret_r is fine as is */
-                    } else if (refResult.AreaId == mainResult.AreaId) {
-                        /* NOTE: this should be done on values
-                         * that have already gone through unit conversion */
-                        if (refResult.Value <= this.Limit.GreaterThan) {
-                            ret_r.Value = null;
-                            ret_r.PrivacyLimitTriggered = true;
-                        }
-                    } else {
-                        throw new Exception("Unexpected state");
-                    }
-
-                    yield return ret_r;
-                }
-
+            if (results.Length != 2) {
+                throw new ArgumentException(
+                    "Should have 2 values, instead got " +
+                    results.Length.ToString());
             }
-        }
 
-        public StatisticsResult First()
-        {
-            throw new NotImplementedException();
-        }
+            StatisticsResult refval = results[0]; // value we compare against
+            StatisticsResult val = results[1]; // actual value
 
-        public StatisticsResult Single()
-        {
-            throw new NotImplementedException();
+            StatisticsResult ret_r;
+
+            /* we assume here that refval and val are never both null */
+
+            if (refval == null) { // ref null, nothing to do
+                return (StatisticsResult) val.Clone();
+            }
+
+            if (val == null) { // val null, create a fake result from ref
+                ret_r = (StatisticsResult) refval.Clone();
+                ret_r.Value = 0;
+            } else {
+                ret_r = (StatisticsResult) val.Clone();
+            }
+
+            if (refval.Value <= this.Limit.GreaterThan) {
+                ret_r.Value = null;
+                ret_r.PrivacyLimitTriggered = true;
+            }
+
+            return ret_r;
         }
     }
 }

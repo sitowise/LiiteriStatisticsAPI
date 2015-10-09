@@ -124,6 +124,7 @@
     <Compile Include="Repositories\IReadWriteRepository.cs" />
     <Compile Include="Repositories\SqlReadRepository.cs" />
     <Compile Include="Repositories\SqlReadWriteRepository.cs" />
+    <Compile Include="Repositories\Statistics\ComparingStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\DividingStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\NormalStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\PrivacyLimitStatisticsRepository.cs" />
