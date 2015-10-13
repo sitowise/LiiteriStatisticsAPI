@@ -331,11 +331,10 @@ namespace LiiteriStatisticsCore.Queries
                         geom2));
                     */
 
-                    /* previously we had schema["MainIdColumn"] here,
-                     * but A.Alue_ID is faster, and it should never be any
-                     * other column anyway */
                     string expr = string.Format(
-                        "A.Alue_ID IN (SELECT id FROM #{0})", paramName);
+                        "{0} IN (SELECT id FROM #{1})",
+                        SchemaDataFormat(schema["MainIdColumn"]),
+                        paramName);
 
                     return expr;
                 };
