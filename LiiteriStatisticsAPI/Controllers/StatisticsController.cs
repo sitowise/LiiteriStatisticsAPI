@@ -22,6 +22,7 @@ namespace LiiteriStatisticsAPI.Controllers
             public int[] years { get; set; }
             public string group { get; set; }
             public string filter { get; set; }
+            public int? area_year { get; set; }
         }
 
         private Core.Controllers.IStatisticsController GetController()
@@ -46,7 +47,8 @@ namespace LiiteriStatisticsAPI.Controllers
                 reqobj.years,
                 statisticsId,
                 reqobj.group,
-                reqobj.filter);
+                reqobj.filter,
+                reqobj.area_year);
         }
 
         [Route("statistics/{statisticsId}/")]
@@ -56,19 +58,21 @@ namespace LiiteriStatisticsAPI.Controllers
             int statisticsId,
             string group = null,
             string filter = null,
+            int? area_year = null,
             string debug = null)
         {
             if (debug != null && new string[] {
                     "exec", "noexec", "true" }.Contains(debug)) {
                 Core.Models.StatisticsRepositoryTracer debugOutput =
                     this.GetStatisticsDebugString(
-                        years, statisticsId, group, filter, debug);
+                        years, statisticsId, group, filter, area_year, debug);
                 return Request.CreateResponse(
                     HttpStatusCode.OK, debugOutput);
             } else {
                 return Request.CreateResponse(
                     HttpStatusCode.OK,
-                    this.GetStatistics(years, statisticsId, group, filter).ToList());
+                    this.GetStatistics(
+                        years, statisticsId, group, filter, area_year).ToList());
             }
         }
 
@@ -76,10 +80,11 @@ namespace LiiteriStatisticsAPI.Controllers
             int[] years,
             int statisticsId,
             string group,
-            string filter)
+            string filter,
+            int? area_year)
         {
             return this.GetController().GetStatistics(
-                years, statisticsId, group, filter);
+                years, statisticsId, group, filter, area_year);
         }
 
         public Core.Models.StatisticsRepositoryTracer GetStatisticsDebugString(
@@ -87,10 +92,11 @@ namespace LiiteriStatisticsAPI.Controllers
             int statisticsId,
             string group,
             string filter,
+            int? area_year,
             string debug)
         {
             return this.GetController().GetStatisticsDebugString(
-                years, statisticsId, group, filter, debug);
+                years, statisticsId, group, filter, area_year, debug);
         }
 
         [Route("areaTypes/")]

@@ -22,7 +22,8 @@ namespace LiiteriStatisticsCore.Controllers
             int[] years,
             int statisticsId,
             string group,
-            string filter);
+            string filter,
+            int? areaYear);
 
         [OperationContract]
         Models.StatisticsRepositoryTracer GetStatisticsDebugString(
@@ -30,6 +31,7 @@ namespace LiiteriStatisticsCore.Controllers
             int statisticsId,
             string group,
             string filter,
+            int? areaYear,
             string debug);
 
         [OperationContract]
@@ -70,6 +72,7 @@ namespace LiiteriStatisticsCore.Controllers
             int statisticsId,
             string group = null,
             string filter = null,
+            int? areaYear = null,
             string debug = null)
         {
             using (DbConnection db = this.GetDbConnection()) {
@@ -79,6 +82,7 @@ namespace LiiteriStatisticsCore.Controllers
                     Years = years,
                     Group = group,
                     Filter = filter,
+                    AreaYear = areaYear,
                 };
 
                 var repofactory = new Factories.StatisticsRepositoryFactory(
@@ -111,13 +115,15 @@ namespace LiiteriStatisticsCore.Controllers
             int[] years,
             int statisticsId,
             string group,
-            string filter)
+            string filter,
+            int? areaYear)
         {
             return this.GetStatisticsResultContainer(
                 years,
                 statisticsId,
                 group,
                 filter,
+                areaYear,
                 null).Results;
         }
 
@@ -126,6 +132,7 @@ namespace LiiteriStatisticsCore.Controllers
             int statisticsId,
             string group,
             string filter,
+            int? areaYear,
             string debug)
         {
             return this.GetStatisticsResultContainer(
@@ -133,6 +140,7 @@ namespace LiiteriStatisticsCore.Controllers
                 statisticsId,
                 group,
                 filter,
+                areaYear,
                 debug).Tracer;
         }
 

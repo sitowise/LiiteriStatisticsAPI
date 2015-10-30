@@ -23,6 +23,9 @@ namespace LiiteriStatisticsCore.Requests
         [DataMember]
         public string Filter { get; set; }
 
+        [DataMember]
+        public int? AreaYear { get; set; }
+
         // helper property to avoid infinite loop
         [System.ComponentModel.DefaultValue(false)]
         public bool SkipPrivacyLimits { get; set; }
@@ -39,6 +42,7 @@ namespace LiiteriStatisticsCore.Requests
         {
             var obj = new StatisticsRequest();
             obj.Years = this.Years;
+            obj.AreaYear = this.AreaYear;
             obj.StatisticsId = this.StatisticsId;
             obj.Group = this.Group;
             obj.Filter = this.Filter;

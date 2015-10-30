@@ -51,6 +51,21 @@ namespace LiiteriStatisticsCore.Queries
             }
         }
 
+        public int? AreaYearIs
+        {
+            get
+            {
+                if (!this.Parameters.Contains("AreaYearIs")) {
+                    return null;
+                }
+                return (int) this.Parameters["AreaYearIs"].Value;
+            }
+            set
+            {
+                this.Parameters.Add("AreaYearIs", value);
+            }
+        }
+
         public int GenderIs
         {
             get
@@ -440,6 +455,16 @@ namespace LiiteriStatisticsCore.Queries
             return sb.ToString();
         }
 
+        /* for performance reasons, prefer T.Jakso_ID unless a variable is
+         * actually needed */
+        protected string GetAreaYearField()
+        {
+            if (this.AreaYearIs == null || this.AreaYearIs == this.YearIs) {
+                return "T.Jakso_ID";
+            }
+            return "@AreaYearIs";
+        }
+
         private int DatabaseAreaTypeId_Home;
         private int DatabaseAreaTypeId_Work;
         private void SetDatabaseAreaTypeId()
@@ -508,40 +533,46 @@ namespace LiiteriStatisticsCore.Queries
 
             StringBuilder sbAreaJoin = new StringBuilder();
 
+            string areaYearField = this.GetAreaYearField();
+
             /* Work */
             if (this.DatabaseAreaTypeId_Work == 1) {
-                sbAreaJoin.Append(@"
+                sbAreaJoin.Append(string.Format(@"
     INNER JOIN DimAlue A_work ON
         (A_work.Alue_ID = T.TRuutu_Alue_ID AND
         A_work.AlueTaso_ID = 1 AND
-        (@YearIs BETWEEN A_work.Alkaen_Jakso_ID AND A_work.Asti_Jakso_ID))
-");
+        ({0} BETWEEN A_work.Alkaen_Jakso_ID AND A_work.Asti_Jakso_ID))
+",
+                areaYearField));
             } else if (this.DatabaseAreaTypeId_Work == 2) {
-                sbAreaJoin.Append(@"
+                sbAreaJoin.Append(string.Format(@"
     INNER JOIN DimAlue A_work ON
         (A_work.Alue_ID = T.TKunta_Alue_ID AND
         A_work.AlueTaso_ID = 2 AND
-        (@YearIs BETWEEN A_work.Alkaen_Jakso_ID AND A_work.Asti_Jakso_ID))
-");
+        ({0} BETWEEN A_work.Alkaen_Jakso_ID AND A_work.Asti_Jakso_ID))
+",
+                areaYearField));
             } else {
                 throw new Exception("Invalid DatabaseAreaTypeId_Work specified");
             }
 
             /* Home */
             if (this.DatabaseAreaTypeId_Home == 1) {
-                sbAreaJoin.Append(@"
+                sbAreaJoin.Append(string.Format(@"
     INNER JOIN DimAlue A_home ON
         (A_home.Alue_ID = T.ARuutu_Alue_ID AND
         A_home.AlueTaso_ID = 1 AND
-        (@YearIs BETWEEN A_home.Alkaen_Jakso_ID AND A_home.Asti_Jakso_ID))
-");
+        ({0} BETWEEN A_home.Alkaen_Jakso_ID AND A_home.Asti_Jakso_ID))
+",
+                areaYearField));
             } else if (this.DatabaseAreaTypeId_Home == 2) {
-                sbAreaJoin.Append(@"
+                sbAreaJoin.Append(string.Format(@"
     INNER JOIN DimAlue A_home ON
         (A_home.Alue_ID = T.AKunta_Alue_ID AND
         A_home.AlueTaso_ID = 2 AND
-        (@YearIs BETWEEN A_home.Alkaen_Jakso_ID AND A_home.Asti_Jakso_ID))
-");
+        ({0} BETWEEN A_home.Alkaen_Jakso_ID AND A_home.Asti_Jakso_ID))
+",
+                areaYearField));
             } else {
                 throw new Exception("Invalid DatabaseAreaTypeId_Home specified");
             }

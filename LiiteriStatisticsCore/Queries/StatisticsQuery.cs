@@ -90,6 +90,21 @@ namespace LiiteriStatisticsCore.Queries
             }
         }
 
+        public int? AreaYearIs
+        {
+            get
+            {
+                if (!this.Parameters.Contains("AreaYearIs")) {
+                    return null;
+                }
+                return (int) this.Parameters["AreaYearIs"].Value;
+            }
+            set
+            {
+                this.Parameters.Add("AreaYearIs", value);
+            }
+        }
+
         //public int SelectionAreaType { get; set; }
         public int CalculationTypeIdIs { get; set; }
 
@@ -450,6 +465,16 @@ namespace LiiteriStatisticsCore.Queries
             return (int) this.databaseAreaTypeId;
         }
 
+        /* for performance reasons, prefer T.Jakso_ID unless a variable is
+         * actually needed */
+        protected string GetAreaYearField()
+        {
+            if (this.AreaYearIs == null || this.AreaYearIs == this.YearIs) {
+                return "T.Jakso_ID";
+            }
+            return "@AreaYearIs";
+        }
+
         private void GenerateQueryString()
         {
             string queryString;
@@ -482,7 +507,8 @@ namespace LiiteriStatisticsCore.Queries
                 this.GetWhereString(),
                 this.GetGroupString(),
                 this.GetOrderString(),
-                this.GetFilterJoinsString());
+                this.GetFilterJoinsString(),
+                this.GetAreaYearField());
 
             /* preQuery stuff (which are geometry declarations at the moment)
              * should be common for all query types, let's prepend it here */

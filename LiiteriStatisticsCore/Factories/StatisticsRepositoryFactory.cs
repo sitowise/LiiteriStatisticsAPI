@@ -173,6 +173,10 @@ namespace LiiteriStatisticsCore.Factories
                 query.GroupByAreaTypeIdIs = group;
                 query.YearIs = year;
 
+                if (this.Request.AreaYear != null) {
+                    query.AreaYearIs = (int) this.Request.AreaYear;
+                }
+
                 if (filter != null && filter.Length == 0) {
                     filter = null;
                 }

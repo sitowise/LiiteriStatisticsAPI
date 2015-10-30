@@ -25,6 +25,7 @@ namespace LiiteriStatisticsAPI.Controllers
             public string group { get; set; }
             public string work_filter { get; set; }
             public string home_filter { get; set; }
+            public int? area_year { get; set; }
         }
 
         private Core.Controllers.ICommuteStatisticsController GetController()
@@ -60,7 +61,8 @@ namespace LiiteriStatisticsAPI.Controllers
                 reqobj.gender,
                 reqobj.group,
                 reqobj.work_filter,
-                reqobj.home_filter);
+                reqobj.home_filter,
+                reqobj.area_year);
         }
 
         [Route("commuteStatistics/{statisticsId}/")]
@@ -73,6 +75,7 @@ namespace LiiteriStatisticsAPI.Controllers
             string group = null,
             string work_filter = null,
             string home_filter = null,
+            int? area_year = null,
             bool debug = false)
         {
             if (debug) {
@@ -82,7 +85,8 @@ namespace LiiteriStatisticsAPI.Controllers
                     gender,
                     group,
                     work_filter,
-                    home_filter);
+                    home_filter,
+                    area_year);
                 return Request.CreateResponse(
                     HttpStatusCode.OK,
                     debugOutput,
@@ -96,7 +100,8 @@ namespace LiiteriStatisticsAPI.Controllers
                         gender,
                         group,
                         work_filter,
-                        home_filter).ToList());
+                        home_filter,
+                        area_year).ToList());
             }
         }
 
@@ -107,7 +112,8 @@ namespace LiiteriStatisticsAPI.Controllers
             int gender = 0,
             string group = null,
             string work_filter = null,
-            string home_filter = null)
+            string home_filter = null,
+            int? area_year = null)
         {
             return this.GetController().GetCommuteStatistics(
                 statisticsId,
@@ -116,7 +122,8 @@ namespace LiiteriStatisticsAPI.Controllers
                 gender,
                 group,
                 work_filter,
-                home_filter);
+                home_filter,
+                area_year);
         }
 
         public string GetCommuteStatisticsDebugString(
@@ -126,7 +133,8 @@ namespace LiiteriStatisticsAPI.Controllers
             int gender = 0,
             string group = null,
             string work_filter = null,
-            string home_filter = null)
+            string home_filter = null,
+            int? area_year = null)
         {
             return this.GetController().GetCommuteStatisticsDebugString(
                 statisticsId,
@@ -135,7 +143,8 @@ namespace LiiteriStatisticsAPI.Controllers
                 gender,
                 group,
                 work_filter,
-                home_filter);
+                home_filter,
+                area_year);
         }
     }
 }

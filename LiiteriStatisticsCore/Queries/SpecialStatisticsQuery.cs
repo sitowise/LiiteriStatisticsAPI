@@ -9,7 +9,7 @@ using LiiteriStatisticsCore.Util;
 
 namespace LiiteriStatisticsCore.Queries
 {
-    class SpecialStatisticsQuery : StatisticsQuery
+    public class SpecialStatisticsQuery : StatisticsQuery
     {
         public SpecialStatisticsQuery(int id) : base(id)
         {
@@ -53,7 +53,8 @@ namespace LiiteriStatisticsCore.Queries
                 this.GetWhereString(),
                 "/* group string omitted */",
                 this.GetOrderString(),
-                this.GetFilterJoinsString());
+                this.GetFilterJoinsString(),
+                this.GetAreaYearField());
 
             /* preQuery stuff (which are geometry declarations at the moment)
              * should be common for all query types, let's prepend it here */
