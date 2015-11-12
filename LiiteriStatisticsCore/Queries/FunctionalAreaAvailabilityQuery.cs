@@ -161,7 +161,7 @@ namespace LiiteriStatisticsCore.Queries
 SELECT
     {0},
 
-    -- SUM = number of municipalities within the group with NULL/0 as value
+    -- SUM = number of municipalities within the group with 1 as value
     {5}
 FROM
     {1}
@@ -177,13 +177,8 @@ GROUP BY
     {4}
 ";
 
-            string availTmpl = @"
-    SUM(
-        CASE WHEN COALESCE({0}, 0) = 0
-        THEN 1
-        ELSE 0
-        END)
-        AS {1}";
+            string availTmpl = "SUM(COALESCE({0}, 0)) AS {1}";
+
             var availabilityStrings = new List<string>();
             foreach (Models.AreaType areaType in AreaTypeMappings.GetAreaTypes(
                     Util.AreaTypeMappings.AreaTypeCategory.FunctionalArea)) {

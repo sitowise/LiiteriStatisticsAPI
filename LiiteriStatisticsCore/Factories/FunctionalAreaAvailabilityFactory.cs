@@ -28,7 +28,7 @@ namespace LiiteriStatisticsCore.Factories
                 if (!field.EndsWith("_avail")) {
                     continue;
                 }
-                if (this.GetNumber(rdr, field) > 0) {
+                if (this.GetNumber(rdr, field) == 0) {
                     continue;
                 }
                 // strip the _avail
