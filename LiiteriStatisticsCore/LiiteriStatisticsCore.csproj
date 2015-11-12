@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\DataAreaTypeFactory.cs" />
+    <Compile Include="Factories\FunctionalAreaAvailabilityFactory.cs" />
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Factories\IndicatorBriefFactory.cs" />
     <Compile Include="Factories\IndicatorDetailsFactory.cs" />
@@ -83,6 +84,7 @@
     </Compile>
     <Compile Include="Models\CommuteStatisticsIndicator.cs" />
     <Compile Include="Models\DataAreaType.cs" />
+    <Compile Include="Models\FunctionalAreaAvailability.cs" />
     <Compile Include="Models\ILiiteriEntity.cs" />
     <Compile Include="Models\ILiiteriMarker.cs" />
     <Compile Include="Models\IndicatorBrief.cs" />
@@ -106,8 +108,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\AnySqlQuery.cs" />
     <Compile Include="Queries\AreaQuery.cs" />
+    <Compile Include="Queries\AreaYearAvailabilityQuery.cs" />
     <Compile Include="Queries\CommuteStatisticsQuery.cs" />
     <Compile Include="Queries\CommuteStatisticsYearQuery.cs" />
+    <Compile Include="Queries\FunctionalAreaAvailabilityQuery.cs" />
     <Compile Include="Queries\IndicatorQuery.cs" />
     <Compile Include="Queries\IndicatorSubQuery.cs" />
     <Compile Include="Queries\SpecialStatisticsQuery.cs" />
@@ -115,8 +119,10 @@
     <Compile Include="Queries\StatisticsQuery.cs" />
     <Compile Include="Queries\ThemeQuery.cs" />
     <Compile Include="Repositories\AreaRepository.cs" />
+    <Compile Include="Repositories\AreaYearAvailabilityRepository.cs" />
     <Compile Include="Repositories\CommuteStatisticsIndicatorRepository.cs" />
     <Compile Include="Repositories\CommuteStatisticsYearRepository.cs" />
+    <Compile Include="Repositories\FunctionalAreaAvailabilityRepository.cs" />
     <Compile Include="Repositories\IndicatorBriefRepository.cs" />
     <Compile Include="Repositories\IndicatorDetailsRepository.cs" />
     <Compile Include="Repositories\IndicatorSubRepository.cs" />

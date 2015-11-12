@@ -12,7 +12,6 @@ namespace LiiteriStatisticsCore.Models
     [DataContract]
     public class StatisticsRepositoryTracer
     {
-
         private IReadRepository<StatisticsResult> _Repository;
         public IReadRepository<StatisticsResult> Repository
         {

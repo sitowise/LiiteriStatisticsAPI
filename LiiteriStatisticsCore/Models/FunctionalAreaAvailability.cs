@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiiteriStatisticsCore.Models
 {
-    public class Area : ILiiteriEntity
+    public class FunctionalAreaAvailability : ILiiteriEntity
     {
         public int Id { get; set; }
 
@@ -16,10 +16,9 @@ namespace LiiteriStatisticsCore.Models
 
         public string AreaType { get; set; }
 
-        // some areas only exist at some point in time
         public int? Year { get; set; }
 
-        public IEnumerable<Area> ParentAreas;
+        public IEnumerable<string> AvailableFunctionalAreas;
 
         public int OrderNumber { get; set; }
     }

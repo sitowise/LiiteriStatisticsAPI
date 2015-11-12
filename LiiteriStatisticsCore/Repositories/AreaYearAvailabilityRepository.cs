@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.Data.Common;
-
 namespace LiiteriStatisticsCore.Repositories
 {
-    public class CommuteStatisticsYearRepository : SqlReadRepository<int>
+    public class AreaYearAvailabilityRepository : SqlReadRepository<int>
     {
-        public CommuteStatisticsYearRepository(
+        public AreaYearAvailabilityRepository(
             DbConnection dbConnection,
             IEnumerable<Queries.ISqlQuery> queries) :
             base(dbConnection, queries)

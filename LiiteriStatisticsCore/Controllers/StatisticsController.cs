@@ -39,6 +39,13 @@ namespace LiiteriStatisticsCore.Controllers
 
         [OperationContract]
         IEnumerable<Models.Area> GetAreas(string areaTypeId);
+
+        [OperationContract]
+        IEnumerable<Models.FunctionalAreaAvailability> GetFunctionalAreaAvailability(
+            string areaTypeId, int year);
+
+        [OperationContract]
+        IEnumerable<int> GetAreaYearAvailability(string areaTypeId);
     }
 
     public class StatisticsController : IStatisticsController
@@ -157,6 +164,38 @@ namespace LiiteriStatisticsCore.Controllers
                 var repository = new Repositories.AreaRepository(
                     db, new Queries.ISqlQuery[] { query });
                 foreach (Models.Area r in repository.FindAll()) {
+                    yield return r;
+                }
+            }
+        }
+
+        public IEnumerable<Models.FunctionalAreaAvailability> GetFunctionalAreaAvailability(
+            string areaTypeId, int year)
+        {
+            var query = new Queries.FunctionalAreaAvailabilityQuery();
+            query.AreaTypeIdIs = areaTypeId;
+            query.YearIs = year;
+
+            using (DbConnection db = this.GetDbConnection()) {
+                var repository =
+                    new Repositories.FunctionalAreaAvailabilityRepository(
+                        db, new Queries.ISqlQuery[] { query });
+                foreach (Models.FunctionalAreaAvailability r in
+                        repository.FindAll()) {
+                    yield return r;
+                }
+            }
+        }
+
+        public IEnumerable<int> GetAreaYearAvailability(string areaTypeId)
+        {
+            var query = new Queries.AreaYearAvailabilityQuery(
+                areaTypeId);
+            using (DbConnection db = this.GetDbConnection()) {
+                var repository =
+                    new Repositories.AreaYearAvailabilityRepository(
+                        db, new Queries.ISqlQuery[] { query });
+                foreach (int r in repository.FindAll()) {
                     yield return r;
                 }
             }

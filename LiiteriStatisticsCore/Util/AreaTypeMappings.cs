@@ -123,6 +123,8 @@ namespace LiiteriStatisticsCore.Util
                     "FilterJoinQuery",
                     "JoinQuery",
                     "SubOrderColumn",
+                    "FunctionalAreaAvailabilityField",
+                    "AreaYearAvailabilityField",
                     }) {
                 if (queryElem.Element(key) != null) {
                     schema[key] = queryElem.Element(key).Value.ToString();
@@ -238,6 +240,21 @@ namespace LiiteriStatisticsCore.Util
                 from d in this.xdoc.Root
                     .Elements("SelectionAreaTypes").Single()
                     .Elements("SelectionAreaType")
+                select (Models.AreaType) factory.Create(d));
+            return areaTypes;
+        }
+
+        public IEnumerable<Models.AreaType> GetAreaTypes(
+            AreaTypeCategory category)
+        {
+            var factory = new Factories.AreaTypeFactory();
+            var areaTypes = (
+                from d in this.xdoc.Root
+                    .Elements("SelectionAreaTypes").Single()
+                    .Elements("SelectionAreaType")
+                where
+                    this.GetAreaTypeCategory(
+                        d.Attribute("id").Value) == category
                 select (Models.AreaType) factory.Create(d));
             return areaTypes;
         }

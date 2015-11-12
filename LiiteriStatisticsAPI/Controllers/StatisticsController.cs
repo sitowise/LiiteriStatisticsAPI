@@ -112,5 +112,21 @@ namespace LiiteriStatisticsAPI.Controllers
         {
             return this.GetController().GetAreas(areaTypeId);
         }
+
+        [Route("areaTypes/{areaTypeId}/functionalAreaAvailability/{year}/")]
+        [HttpGet]
+        public IEnumerable<Core.Models.FunctionalAreaAvailability> GetFunctionalAreaAvailability(
+            string areaTypeId, int year)
+        {
+            return this.GetController().GetFunctionalAreaAvailability(
+                areaTypeId, year);
+        }
+
+        [Route("areaTypes/{areaTypeId}/availability/")]
+        [HttpGet]
+        public IEnumerable<int> GetAreaYearAvailability(string areaTypeId)
+        {
+            return this.GetController().GetAreaYearAvailability(areaTypeId);
+        }
     }
 }
