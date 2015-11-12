@@ -38,11 +38,11 @@ namespace LiiteriStatisticsCore.Controllers
         IEnumerable<Models.AreaType> GetAreaTypes();
 
         [OperationContract]
-        IEnumerable<Models.Area> GetAreas(string areaTypeId);
+        IEnumerable<Models.Area> GetAreas(string areaTypeId, string filter);
 
         [OperationContract]
         IEnumerable<Models.FunctionalAreaAvailability> GetFunctionalAreaAvailability(
-            string areaTypeId, int year);
+            string areaTypeId, int year, string filter = null);
 
         [OperationContract]
         IEnumerable<int> GetAreaYearAvailability(string areaTypeId);
@@ -156,10 +156,15 @@ namespace LiiteriStatisticsCore.Controllers
             return AreaTypeMappings.GetAreaTypes();
         }
 
-        public virtual IEnumerable<Models.Area> GetAreas(string areaTypeId)
+        public virtual IEnumerable<Models.Area> GetAreas(
+            string areaTypeId,
+            string filter = null)
         {
             var query = new Queries.AreaQuery();
             query.AreaTypeIdIs = areaTypeId;
+            if (filter != null) {
+                query.AreaFilterQueryString = filter;
+            }
             using (DbConnection db = this.GetDbConnection()) {
                 var repository = new Repositories.AreaRepository(
                     db, new Queries.ISqlQuery[] { query });
@@ -170,11 +175,15 @@ namespace LiiteriStatisticsCore.Controllers
         }
 
         public IEnumerable<Models.FunctionalAreaAvailability> GetFunctionalAreaAvailability(
-            string areaTypeId, int year)
+            string areaTypeId, int year, string filter = null)
         {
             var query = new Queries.FunctionalAreaAvailabilityQuery();
             query.AreaTypeIdIs = areaTypeId;
             query.YearIs = year;
+
+            if (filter != null) {
+                query.AreaFilterQueryString = filter;
+            }
 
             using (DbConnection db = this.GetDbConnection()) {
                 var repository =

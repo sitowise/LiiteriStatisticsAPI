@@ -12,11 +12,16 @@ namespace LiiteriStatisticsCore.Queries
         private static Util.AreaTypeMappings
             AreaTypeMappings = new Util.AreaTypeMappings();
 
+        List<string> whereList;
+
         public FunctionalAreaAvailabilityQuery() : base()
         {
+            this.whereList = new List<string>();
         }
 
         public string AreaTypeIdIs { get; set; }
+
+        public string AreaFilterQueryString { get; set; }
 
         public int YearIs
         {
@@ -28,6 +33,49 @@ namespace LiiteriStatisticsCore.Queries
             {
                 this.Parameters.Add("YearIs", value);
             }
+        }
+
+        private void SetFilters()
+        {
+            if (this.AreaFilterQueryString == null) return;
+
+            if (AreaTypeMappings.GetAreaTypeCategory(this.AreaTypeIdIs) !=
+                    Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                throw new NotImplementedException(
+                    "Area filters are only available for administrative areas");
+            }
+
+            var parser = new Parsers.AreaFilterParser();
+
+            parser.ValueHandler = delegate (object val)
+            {
+                return "@" + this.Parameters.AddValue(val);
+            };
+
+            parser.IdHandler = delegate (string name)
+            {
+                if (AreaTypeMappings.GetAreaTypeCategory(name) !=
+                        Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                    throw new NotImplementedException(
+                        "Area filtering can only be done with administrative areas");
+                }
+                var schema = AreaTypeMappings.GetDatabaseSchema(name);
+                string idColumn = schema["MainIdColumn"];
+                idColumn = SchemaDataFormat(idColumn);
+                return idColumn;
+            };
+
+            parser.SpatialHandler = delegate (
+                string geom1,
+                string geom2,
+                string func)
+            {
+                throw new NotImplementedException(
+                    "Spatial filtering not supported by area queries");
+            };
+
+            string whereString = parser.Parse(this.AreaFilterQueryString);
+            this.whereList.Add(whereString);
         }
 
         /* The column aliases are different for statistics and
@@ -100,6 +148,15 @@ namespace LiiteriStatisticsCore.Queries
                 fields.Add("0 AS OrderNumber");
             }
 
+            if (this.AreaFilterQueryString != null &&
+                    AreaTypeMappings.GetAreaTypeCategory(this.AreaTypeIdIs) !=
+                        Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                throw new NotImplementedException(
+                    "FunctionalAreaAvailability filters are only available for administrative areas");
+            } else {
+                this.SetFilters();
+            }
+
             string sqlString = @"
 SELECT
     {0},
@@ -115,6 +172,7 @@ FROM
     LEFT JOIN Apu_KuntaToiminnallinenAlueTallennusJakso KTAT ON
         (KTAT.Kunta_Alue_ID = A.Alue_ID AND
         KTAT.Jakso_ID = @YearIs)
+{6}
 GROUP BY
     {4}
 ";
@@ -144,13 +202,19 @@ GROUP BY
                 availabilityStrings.Add(avail);
             }
 
+            string whereString = "";
+            if (this.whereList.Count > 0) {
+                whereString = " WHERE " + string.Join(", ", whereList);
+            }
+
             sqlString = string.Format(sqlString,
                 string.Join(", ", fields),
                 SchemaDataFormat(schema["SubFromString"]),
                 SchemaDataFormat(schema["MainIdColumn"]),
                 SchemaDataFormat(schema["SubIdColumn"]),
                 string.Join(", ", groups),
-                string.Join(",\n", availabilityStrings));
+                string.Join(",\n", availabilityStrings),
+                whereString);
 
             return sqlString;
         }

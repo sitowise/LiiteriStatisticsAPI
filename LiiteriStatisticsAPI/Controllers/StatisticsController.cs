@@ -108,18 +108,19 @@ namespace LiiteriStatisticsAPI.Controllers
 
         [Route("areaTypes/{areaTypeId}/areas/")]
         [HttpGet]
-        public IEnumerable<Core.Models.Area> GetAreas(string areaTypeId)
+        public IEnumerable<Core.Models.Area> GetAreas(
+            string areaTypeId, string filter = null)
         {
-            return this.GetController().GetAreas(areaTypeId);
+            return this.GetController().GetAreas(areaTypeId, filter);
         }
 
         [Route("areaTypes/{areaTypeId}/functionalAreaAvailability/{year}/")]
         [HttpGet]
         public IEnumerable<Core.Models.FunctionalAreaAvailability> GetFunctionalAreaAvailability(
-            string areaTypeId, int year)
+            string areaTypeId, int year, string filter = null)
         {
             return this.GetController().GetFunctionalAreaAvailability(
-                areaTypeId, year);
+                areaTypeId, year, filter);
         }
 
         [Route("areaTypes/{areaTypeId}/availability/")]

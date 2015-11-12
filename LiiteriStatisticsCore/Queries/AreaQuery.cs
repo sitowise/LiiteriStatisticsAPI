@@ -9,8 +9,8 @@ namespace LiiteriStatisticsCore.Queries
 {
     public class AreaQuery : SqlQuery, ISqlQuery
     {
-        private static LiiteriStatisticsCore.Util.AreaTypeMappings
-            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
+        private static Util.AreaTypeMappings
+            AreaTypeMappings = new Util.AreaTypeMappings();
 
         List<string> whereList;
 
@@ -20,6 +20,51 @@ namespace LiiteriStatisticsCore.Queries
         }
 
         public string AreaTypeIdIs { get; set; }
+
+        public string AreaFilterQueryString { get; set; }
+
+        private void SetFilters()
+        {
+            if (this.AreaFilterQueryString == null) return;
+
+            if (AreaTypeMappings.GetAreaTypeCategory(this.AreaTypeIdIs) !=
+                    Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                throw new NotImplementedException(
+                    "Area filters are only available for administrative areas");
+            }
+
+            var parser = new Parsers.AreaFilterParser();
+
+            parser.ValueHandler = delegate (object val)
+            {
+                return "@" + this.Parameters.AddValue(val);
+            };
+
+            parser.IdHandler = delegate (string name)
+            {
+                if (AreaTypeMappings.GetAreaTypeCategory(name) !=
+                        Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                    throw new NotImplementedException(
+                        "Area filtering can only be done with administrative areas");
+                }
+                var schema = AreaTypeMappings.GetDatabaseSchema(name);
+                string idColumn = schema["MainIdColumn"];
+                idColumn = SchemaDataFormat(idColumn);
+                return idColumn;
+            };
+
+            parser.SpatialHandler = delegate (
+                string geom1,
+                string geom2,
+                string func)
+            {
+                throw new NotImplementedException(
+                    "Spatial filtering not supported by area queries");
+            };
+
+            string whereString = parser.Parse(this.AreaFilterQueryString);
+            this.whereList.Add(whereString);
+        }
 
         /* The column aliases are different for statistics and
          * commuteStatistics, so AreaTypeMappings only provides
@@ -102,6 +147,13 @@ namespace LiiteriStatisticsCore.Queries
             string fromString = ""; // FROM xxx yyy
             string whereString = ""; // WHERE xxx, yyy
 
+            if (this.AreaFilterQueryString != null &&
+                    AreaTypeMappings.GetAreaTypeCategory(this.AreaTypeIdIs) !=
+                        Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
+                throw new NotImplementedException(
+                    "Area filters are only available for administrative areas");
+            }
+
             bool addAreaTable =
                 AreaTypeMappings.GetDatabaseListAddAreaTable(this.AreaTypeIdIs);
             if (addAreaTable) {
@@ -125,6 +177,8 @@ namespace LiiteriStatisticsCore.Queries
                         Util.AreaTypeMappings.AreaTypeCategory.AdministrativeArea) {
                     fields.Add(string.Format("-1 AS parent_finland"));
                 }
+
+                this.SetFilters();
             }
 
             /* extra fields, this is a special additional way of adding
