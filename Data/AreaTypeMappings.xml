@@ -450,7 +450,7 @@
                 <SubFromString>DimKeskustatyyppi {0} INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 2)</SubFromString>
                 <SubOrderColumn>JarjNro</SubOrderColumn>
                 <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 2)</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KeskustaTyyppi_ID</FunctionalAreaAvailabilityField>
+                <FunctionalAreaAvailabilityField>{0}.KaupanAlueTyyppi_ID</FunctionalAreaAvailabilityField>
                 <AreaYearAvailabilityField>{0}.KaupanAlueTyyppi_ID</AreaYearAvailabilityField>
                 <ExtraAreaFields>
                     <ExtraAreaField name="parent_shop_area_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
@@ -471,7 +471,7 @@
                 <SubFromString>DimKeskustaLuokka {0} INNER JOIN DimKeskustaLuokka SJ ON (SJ.KeskustaLuokka_ID = A2.KeskustaLuokka_ID AND A2.Keskustaluokka_ID = 2)</SubFromString>
                 <JoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON ({0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID AND {0}.Keskustaluokka_ID = 2)</JoinQuery>
                 <FilterJoinQuery>LEFT JOIN BridgeKeskustatyyppi_Keskustaluokka F_KaupanAlueLuokka ON (F_KaupanAlueLuokka.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND F_KaupanAlueLuokka.Keskustaluokka_ID = 2)</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KeskustaTyyppi_ID</FunctionalAreaAvailabilityField>
+                <FunctionalAreaAvailabilityField>{0}.KaupanAlueTyyppi_ID</FunctionalAreaAvailabilityField>
                 <AreaYearAvailabilityField>{0}.KaupanAlueTyyppi_ID</AreaYearAvailabilityField>
             </DatabaseSchema>
             <DatabaseAreaTypes>
