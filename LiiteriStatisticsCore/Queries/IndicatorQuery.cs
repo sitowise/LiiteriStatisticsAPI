@@ -126,6 +126,9 @@ namespace LiiteriStatisticsCore.Queries
             fields["OIK.KayttoOikeus_ID"] = "AccessRightID";
             fields["OIK.Selite"] =  "AccessRightDescription";
 
+            /* no summing above this area type */
+            fields["YLA.AlueTaso_ID"] = "NoSummingAreaType";
+
             sb.Append(
                 string.Join<string>(", ", (
                     from pair in fields
@@ -199,6 +202,17 @@ LEFT OUTER JOIN KayttoOikeus OIK ON
     OIK.KayttoOikeus_ID = TKO.KayttoOikeus_ID
 ");
 
+            sb.Append(@"
+OUTER APPLY (
+    SELECT
+        TOP 1 YLA.AlueTaso_ID
+    FROM
+        YlakerrannaisilleEiKoostettavaTilasto YLA
+    WHERE
+        YLA.Tilasto_ID = T.Tilasto_ID AND
+        YLA.Jakso_ID = J.Jakso_ID
+    ) YLA
+");
             if (!this.IncludeHelperStatistics) {
                 this.whereList.Add("T.TilastoLaskentatyyppi_ID <> 2");
             }

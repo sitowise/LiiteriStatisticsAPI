@@ -53,6 +53,15 @@ namespace LiiteriStatisticsCore.Util
             this.xdoc = XDocument.Load(xmlFile);
         }
 
+        private bool IsTrue(XAttribute attribute)
+        {
+            if (attribute != null &&
+                    attribute.Value.ToLower() == "true") {
+                return true;
+            }
+            return false;
+        }
+
         /* SubFromString/addAreaTable="true/false"
          * Used by AreaQuery, determines whether DimAlue should be
          * joined in the query */
@@ -68,8 +77,7 @@ namespace LiiteriStatisticsCore.Util
                     .Element("SubFromString")
                 ).Single();
             if (queryElem == null) return false;
-            if (queryElem.Attribute("addAreaTable") != null &&
-                    queryElem.Attribute("addAreaTable").Value.ToLower() == "true") {
+            if (this.IsTrue(queryElem.Attribute("addAreaTable"))) {
                 return true;
             }
             return false;
@@ -90,8 +98,7 @@ namespace LiiteriStatisticsCore.Util
                     .Element("SubFromString")
                 ).Single();
             if (queryElem == null) return false;
-            if (queryElem.Attribute("disableList") != null &&
-                    queryElem.Attribute("disableList").Value.ToLower() == "true") {
+            if (this.IsTrue(queryElem.Attribute("disableList"))) {
                 return true;
             }
             return false;
@@ -175,9 +182,7 @@ namespace LiiteriStatisticsCore.Util
                 select d.Element("DatabaseAreaTypes")).Single();
             var retval = (
                 from d in databaseAreaTypes.Descendants("DatabaseAreaType")
-                where (
-                    d.Attribute("primary") != null &&
-                    d.Attribute("primary").Value.ToLower() == "true")
+                where this.IsTrue(d.Attribute("primary"))
                 select Convert.ToInt32(d.Attribute("id").Value)
                 );
             if (retval.Count() == 0) {
@@ -214,8 +219,7 @@ namespace LiiteriStatisticsCore.Util
                         .Elements("DatabaseAreaType")
                     where
                         Convert.ToInt32(d.Attribute("id").Value) == databaseAreaTypeId &&
-                        d.Attribute("primary") != null &&
-                        d.Attribute("primary").Value.ToLower() == "true"
+                        this.IsTrue(d.Attribute("primary"))
                     select d);
                 if (found.Count() > 0) {
                     /* Debug.WriteLine(string.Format(
@@ -263,36 +267,40 @@ namespace LiiteriStatisticsCore.Util
          * databaseAreaType (for example (int) 2), and we want to know
          * what virtualAreaTypes (for example (string) "municipality") can be
          * used to query that statistic */
-        public IEnumerable<Models.AreaType> GetAreaTypes(int databaseAreaType)
+        public IEnumerable<Models.AreaType> GetAreaTypes(
+            int databaseAreaType,
+            int? noSummingAreaType = null)
         {
-            /* Debug.WriteLine(string.Format(
-                "Getting virtualAreaTypes for databaseAreaType:{0}",
-                databaseAreaType)); */
-
             var factory = new Factories.AreaTypeFactory();
             IList<Models.AreaType> areaTypes = new List<Models.AreaType>();
 
             foreach (var sAreaType in this.xdoc.Root
                     .Elements("SelectionAreaTypes").Single()
                     .Elements("SelectionAreaType")) {
-                /* Debug.WriteLine(string.Format(
-                    "Checking virtualAreaType:{0}",
-                    sAreaType.Attribute("id").Value)); */
                 bool found = false;
+                bool doNotAdd = false;
                 foreach (var dAreaType in sAreaType
                         .Elements("DatabaseAreaTypes").Single()
                         .Elements("DatabaseAreaType")) {
                     int id = Convert.ToInt32(dAreaType.Attribute("id").Value);
-                    /* Debug.WriteLine(string.Format(
-                        "  Checking databaseAreaType:{0}", id)); */
+
+                    /* if areaType has noSummingAreaType
+                     * in it's databaseAreaTypes, but it is not primary,
+                     * ignore this areaType completely */
+                    if (noSummingAreaType != null &&
+                            id == noSummingAreaType &&
+                            !this.IsTrue(dAreaType.Attribute("primary"))) {
+                        doNotAdd = true;
+                    }
+
                     if (id == databaseAreaType) {
                         // Debug.WriteLine("    Match! breaking...");
                         found = true;
                         break;
                     }
                 }
-                if (found) {
-                    // Debug.WriteLine("Some stuff was found, add to areaTypes");
+
+                if (found && !doNotAdd) {
                     areaTypes.Add((Models.AreaType) factory.Create(sAreaType));
                 }
             }
