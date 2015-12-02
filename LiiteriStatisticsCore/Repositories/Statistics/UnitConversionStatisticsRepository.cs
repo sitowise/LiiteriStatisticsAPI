@@ -46,6 +46,13 @@ namespace LiiteriStatisticsCore.Repositories
                             break;
                     }
                     break;
+                case 4: // km2
+                    switch (this.Details.DisplayUnitId) {
+                        case 10: // m2
+                            obj.Value = (decimal) (obj.Value * 1000000);
+                            break;
+                    }
+                    break;
                 case 21: // as/m2 (Asukasta per neliömetri)
                     switch (this.Details.DisplayUnitId) {
                         case 16: // as/km2
@@ -53,10 +60,24 @@ namespace LiiteriStatisticsCore.Repositories
                             break;
                     }
                     break;
+                case 16: // as/km2
+                    switch (this.Details.DisplayUnitId) {
+                        case 21:  // as/m2 (Asukasta per neliömetri)
+                            obj.Value = (decimal) (obj.Value / 1000000);
+                            break;
+                    }
+                    break;
                 case 22: // lkm/as (Lukumäärä asukasta kohden)
                     switch (this.Details.DisplayUnitId) {
                         case 23: // lkm / 1000 as (Lukumäärä tuhatta asukasta kohden)
                             obj.Value = (decimal) (obj.Value * 1000);
+                            break;
+                    }
+                    break;
+                case 23: // lkm / 1000 as (Lukumäärä tuhatta asukasta kohden)
+                    switch (this.Details.DisplayUnitId) {
+                        case 22: // lkm/as (Lukumäärä asukasta kohden)
+                            obj.Value = (decimal) (obj.Value / 1000);
                             break;
                     }
                     break;
