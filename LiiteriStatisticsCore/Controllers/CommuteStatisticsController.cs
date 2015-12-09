@@ -69,10 +69,14 @@ namespace LiiteriStatisticsCore.Controllers
         public IEnumerable<Models.CommuteStatisticsIndicator>
             GetCommuteStatisticsIndicators()
         {
+            var query = new Queries.CommuteStatisticsIndicatorQuery();
+
             using (DbConnection db = this.GetDbConnection()) {
                 return new Repositories
-                    .CommuteStatisticsIndicatorRepository(db)
-                    .GetAll();
+                    .CommuteStatisticsIndicatorRepository(
+                        db, new Queries.ISqlQuery[] { query })
+                    .FindAll()
+                    .ToArray();
             }
         }
 
@@ -87,11 +91,14 @@ namespace LiiteriStatisticsCore.Controllers
             int? area_year = null,
             bool debug = false)
         {
-            using (DbConnection db = this.GetDbConnection()) {
+            var indicatorQuery = new Queries.CommuteStatisticsIndicatorQuery();
+            indicatorQuery.StatisticsId = statisticsId;
 
+            using (DbConnection db = this.GetDbConnection()) {
                 var indicator = new Repositories
-                    .CommuteStatisticsIndicatorRepository(db)
-                    .Get(statisticsId);
+                    .CommuteStatisticsIndicatorRepository(
+                        db, new Queries.ISqlQuery[] { indicatorQuery })
+                    .Single();
 
                 var queries = new List<Queries.CommuteStatisticsQuery>();
 

@@ -13,17 +13,34 @@ namespace LiiteriStatisticsCore.Models
         public string Description;
     }
 
-    public class CommuteStatisticsIndicator
+    public class CommuteStatisticsIndicator : ILiiteriEntity
     {
         public int Id { get; set; }
+
         public string Name { get; set; }
+
         public string Description { get; set; }
 
         [IgnoreDataMember]
         public string TableName { get; set; }
 
+        public string PrivacyDescription { get; set; }
+
+        public string TimeSpan { get; set; }
+
+        public string TimeSpanDescription { get; set; }
+
+        public string Unit { get; set; }
+
         public CommuteStatisticsType[] CommuteStatisticsTypes { get; set; }
 
-        public int[] Years { get; set; }
+        public CommuteStatisticsYear[] CommuteStatisticsYears { get; set; }
+
+        [IgnoreDataMember]
+        public static Tuple<string, int>[] TableNameIdMapping = new Tuple<string, int>[]
+        {
+            new Tuple<string, int>("FactTyomatkaTOL2002", -1),
+            new Tuple<string, int>("FactTyomatkaTOL2008", -2),
+        };
     }
 }

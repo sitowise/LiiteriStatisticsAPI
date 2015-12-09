@@ -65,6 +65,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Factories\BaseFactory.cs" />
+    <Compile Include="Factories\CommuteStatisticsIndicatorFactory.cs" />
     <Compile Include="Factories\DataAreaTypeFactory.cs" />
     <Compile Include="Factories\FunctionalAreaAvailabilityFactory.cs" />
     <Compile Include="Factories\IFactory.cs" />
@@ -83,6 +84,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\CommuteStatisticsIndicator.cs" />
+    <Compile Include="Models\CommuteStatisticsYear.cs" />
     <Compile Include="Models\DataAreaType.cs" />
     <Compile Include="Models\FunctionalAreaAvailability.cs" />
     <Compile Include="Models\ILiiteriEntity.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Queries\AnySqlQuery.cs" />
     <Compile Include="Queries\AreaQuery.cs" />
     <Compile Include="Queries\AreaYearAvailabilityQuery.cs" />
+    <Compile Include="Queries\CommuteStatisticsIndicatorQuery.cs" />
     <Compile Include="Queries\CommuteStatisticsQuery.cs" />
     <Compile Include="Queries\CommuteStatisticsYearQuery.cs" />
     <Compile Include="Queries\FunctionalAreaAvailabilityQuery.cs" />

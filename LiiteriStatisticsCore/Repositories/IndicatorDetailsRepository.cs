@@ -19,7 +19,7 @@ namespace LiiteriStatisticsCore.Repositories
         public IndicatorDetailsRepository(
             DbConnection dbConnection,
             IEnumerable<Queries.ISqlQuery> queries) :
-            base(dbConnection, queries, new Factories.IndicatorDetailsFactory())
+            base(dbConnection, queries)
         {
         }
 

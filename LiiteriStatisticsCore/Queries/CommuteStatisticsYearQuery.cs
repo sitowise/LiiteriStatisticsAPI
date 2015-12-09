@@ -32,11 +32,15 @@ namespace LiiteriStatisticsCore.Queries
         {
             string sqlString = @"
 SELECT
-    Jakso_ID AS Year
+    TJ.Jakso_ID AS Year,
+    TL.Tietolahde AS DataSource
 FROM
-    Apu_TyomatkaTOLTallennusJakso
+    Apu_TyomatkaTOLTallennusJakso TJ
+
+    INNER JOIN FactTyomatkaAnalyysiTietolahde TL ON
+        TJ.Jakso_ID >= TL.Alkaen_Jakso_ID
 WHERE
-    Taulu = @TableNameIs
+    TJ.Taulu = @TableNameIs
 ";
             return sqlString;
         }
