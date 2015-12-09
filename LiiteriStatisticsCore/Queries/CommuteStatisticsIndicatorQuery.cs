@@ -17,6 +17,7 @@ namespace LiiteriStatisticsCore.Queries
             set
             {
                 this.Parameters.Add("TableNameIs", value);
+                this.whereList.Add("K.Taulu = @TableNameIs");
             }
         }
 
