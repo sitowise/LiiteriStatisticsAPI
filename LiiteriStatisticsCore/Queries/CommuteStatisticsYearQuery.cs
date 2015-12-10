@@ -41,6 +41,8 @@ FROM
         TJ.Jakso_ID >= TL.Alkaen_Jakso_ID
 WHERE
     TJ.Taulu = @TableNameIs
+ORDER BY
+    Year
 ";
             return sqlString;
         }
