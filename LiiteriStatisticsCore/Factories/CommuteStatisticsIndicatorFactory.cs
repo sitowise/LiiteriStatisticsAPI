@@ -15,6 +15,7 @@ namespace LiiteriStatisticsCore.Factories
             obj.TableName = rdr["TableName"].ToString();
             obj.Name = rdr["Name"].ToString();
             obj.Description = rdr["Description"].ToString();
+            obj.AdditionalInformation = rdr["AdditionalInformation"].ToString();
             obj.PrivacyDescription = rdr["PrivacyDescription"].ToString();
 
             obj.TimeSpan = rdr["TimeSpan"].ToString();

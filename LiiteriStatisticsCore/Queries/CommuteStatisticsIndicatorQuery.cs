@@ -55,7 +55,8 @@ namespace LiiteriStatisticsCore.Queries
 SELECT
     K.Taulu AS TableName,
     K.Nimi AS Name,
-    K.Lisatieto AS Description,
+    K.Kuvaus AS Description,
+    K.Lisatieto AS AdditionalInformation,
     K.TietosuojaSelite AS PrivacyDescription,
     AV.AjallinenVaiheLyhenne AS TimeSpan,
     AV.AjallinenVaiheKuvaus AS TimeSpanDescription,

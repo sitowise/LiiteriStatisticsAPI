@@ -21,6 +21,8 @@ namespace LiiteriStatisticsCore.Models
 
         public string Description { get; set; }
 
+        public string AdditionalInformation { get; set; }
+
         [IgnoreDataMember]
         public string TableName { get; set; }
 
