@@ -16,6 +16,7 @@ namespace LiiteriStatisticsCore.Models
         public string ProcessingStage { get; set; }
 
         public string TimeSpan { get; set; }
+
         public string TimeSpanDetails { get; set; }
 
         public int? DecimalCount { get; set; }
