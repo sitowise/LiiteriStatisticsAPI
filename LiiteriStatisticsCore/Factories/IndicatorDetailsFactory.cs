@@ -18,8 +18,8 @@ namespace LiiteriStatisticsCore.Factories
 
             obj.DecimalCount = (int?) this.GetValueOrNull(rdr, "DecimalCount");
 
-            obj.DisplayUnitId = (int) rdr["DisplayUnitId"];
-            obj.InternalUnitId = (int) rdr["InternalUnitId"];
+            obj.DisplayUnitId = (int?) this.GetValueOrNull(rdr, "DisplayUnitId");
+            obj.InternalUnitId = (int?) this.GetValueOrNull(rdr, "InternalUnitId");
             obj.Unit = (string) this.GetValueOrNull(rdr, "Unit");
             obj.Description = rdr["Description"].ToString(); ;
             obj.AdditionalInformation = rdr["AdditionalInformation"].ToString();

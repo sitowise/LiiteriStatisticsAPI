@@ -23,9 +23,10 @@ namespace LiiteriStatisticsCore.Models
 
         /* unit of measurement */
         [IgnoreDataMember]
-        public int DisplayUnitId { get; set; }
+        public int? DisplayUnitId { get; set; }
+
         [IgnoreDataMember]
-        public int InternalUnitId { get; set; }
+        public int? InternalUnitId { get; set; }
 
         public string Description { get; set; }
 
