@@ -463,7 +463,7 @@
         <SelectionAreaType id="shop_area_class" category="functional">
             <Description>Kaupan alue -luokka</Description>
             <DatabaseSchema>
-                <MainIdColumn>F_KeskustaLuokka.Keskustaluokka_ID</MainIdColumn>
+                <MainIdColumn>F_KaupanAlueLuokka.Keskustaluokka_ID</MainIdColumn>
                 <SubIdColumn>{0}.Keskustaluokka_ID</SubIdColumn>
                 <SubNameColumn>{0}.Selite</SubNameColumn>
                 <SubAlternativeIdColumn/>
