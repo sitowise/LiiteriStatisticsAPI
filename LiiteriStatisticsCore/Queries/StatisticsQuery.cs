@@ -429,7 +429,7 @@ namespace LiiteriStatisticsCore.Queries
 
         protected string GetPostQueryString()
         {
-            return this.labelSQLString("preQueryString",
+            return this.labelSQLString("postQueryString",
                 this.sbPostQuery.ToString());
         }
 
