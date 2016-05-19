@@ -27,7 +27,7 @@ namespace LiiteriStatisticsCore.Repositories
         {
             // values excluding nulls
             decimal[] values = results
-                .Where(x => x.Value != null)
+                .Where(x => x != null && x.Value != null)
                 .Select(x => (decimal) x.Value)
                 .ToArray();
 
