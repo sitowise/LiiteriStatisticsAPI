@@ -46,7 +46,7 @@ namespace LiiteriStatisticsCore.Controllers
                     asm.Location);
                 versions.Add(new Models.ApplicationVersion() {
                     Application = asm.GetName().Name,
-                    Version = fv.FileVersion.ToString()
+                    Version = fv.ProductVersion.ToString()
                 });
             }
 
