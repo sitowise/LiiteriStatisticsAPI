@@ -25,14 +25,22 @@ namespace LiiteriStatisticsCore.Repositories
 
         protected override StatisticsResult Compare(StatisticsResult[] results)
         {
-            // values excluding nulls
-            decimal[] values = results
+            // exclude nulls from the results
+            StatisticsResult[] results2 = results
                 .Where(x => x != null && x.Value != null)
+                .ToArray();
+
+            // grab the decimal values for summing
+            decimal[] values = results2
                 .Select(x => (decimal) x.Value)
                 .ToArray();
 
-            var ret_r = (StatisticsResult) results.First().Clone();
+            // pick the first item to use as a template
+            var ret_r = (StatisticsResult) results2.First().Clone();
+
+            // .. and override the value with the summed value
             ret_r.Value = values.Sum();
+
             return ret_r;
         }
     }
