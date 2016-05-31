@@ -13,8 +13,8 @@ namespace LiiteriStatisticsCore.Repositories
     public class IndicatorDetailsRepository :
         SqlReadRepository<Models.IndicatorDetails>
     {
-        private static LiiteriStatisticsCore.Util.AreaTypeMappings
-            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
+        private static Util.AreaTypeMappings
+            AreaTypeMappings = new Util.AreaTypeMappings();
 
         public IndicatorDetailsRepository(
             DbConnection dbConnection,
@@ -114,6 +114,8 @@ namespace LiiteriStatisticsCore.Repositories
                         timePeriod.DataAreaTypes = dataAreaTypes;
                         timePeriod.AreaTypes = areaTypes;
 
+                        timePeriod.BlockedAreaTypes = new string[0];
+
                         annotations = new List<Models.Annotation>();
                         timePeriod.Annotations = annotations;
 
@@ -137,7 +139,15 @@ namespace LiiteriStatisticsCore.Repositories
                             AreaTypeMappings.GetAreaTypes(databaseAreaType);
                     }
 
+                    timePeriod.BlockedAreaTypes =
+                        Convert.IsDBNull(rdr["BlockedAreaTypes"]) ?
+                        new string[0] :
+                        ((string) rdr["BlockedAreaTypes"]).Split(',');
+
                     foreach (Models.AreaType a in applicableAreaTypes) {
+                        if (timePeriod.BlockedAreaTypes.Contains(a.Id)) {
+                            continue;
+                        }
                         areaTypes.Add((Models.AreaType)
                             areaTypeFactory.Create(a, rdr));
                     }

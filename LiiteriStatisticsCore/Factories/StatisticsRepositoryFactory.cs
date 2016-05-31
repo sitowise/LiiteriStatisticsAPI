@@ -166,6 +166,7 @@ namespace LiiteriStatisticsCore.Factories
 
                 var query = new StatisticsQuery(this.Request.StatisticsId);
 
+                query.BlockedAreaTypes = timePeriod.BlockedAreaTypes;
                 query.CalculationTypeIdIs = details.CalculationType;
                 query.AvailableAreaTypes = availableAreaTypes;
 

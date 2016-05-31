@@ -126,6 +126,9 @@ namespace LiiteriStatisticsCore.Queries
             fields["OIK.KayttoOikeus_ID"] = "AccessRightID";
             fields["OIK.Selite"] =  "AccessRightDescription";
 
+            /* prevent using these areatypes for anything */
+            fields["ESTO.RajapintaAlueTaso"] = "BlockedAreaTypes";
+
             sb.Append(
                 string.Join<string>(", ", (
                     from pair in fields
@@ -197,6 +200,18 @@ LEFT OUTER JOIN Tilasto_KayttoOikeus TKO ON
             sb.Append(@"
 LEFT OUTER JOIN KayttoOikeus OIK ON
     OIK.KayttoOikeus_ID = TKO.KayttoOikeus_ID
+");
+
+            sb.Append(@"
+OUTER APPLY (
+    SELECT
+        TOP 1 ESTO.RajapintaAlueTaso
+    FROM
+        TilastoKoosteAluetasoEstetty ESTO
+    WHERE
+        ESTO.Tilasto_ID = T.Tilasto_ID AND
+        ESTO.Jakso_ID = J.Jakso_ID
+    ) ESTO
 ");
 
             if (!this.IncludeHelperStatistics) {
