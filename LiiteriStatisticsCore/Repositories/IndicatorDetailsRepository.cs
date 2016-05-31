@@ -13,8 +13,8 @@ namespace LiiteriStatisticsCore.Repositories
     public class IndicatorDetailsRepository :
         SqlReadRepository<Models.IndicatorDetails>
     {
-        private static Util.AreaTypeMappings
-            AreaTypeMappings = new Util.AreaTypeMappings();
+        private static LiiteriStatisticsCore.Util.AreaTypeMappings
+            AreaTypeMappings = new LiiteriStatisticsCore.Util.AreaTypeMappings();
 
         public IndicatorDetailsRepository(
             DbConnection dbConnection,
@@ -124,11 +124,6 @@ namespace LiiteriStatisticsCore.Repositories
 
                     int databaseAreaType = (int) rdr["AreaTypeId"];
 
-                    int? noSummingAreaType =
-                        Convert.IsDBNull(rdr["NoSummingAreaType"]) ?
-                        (int?) null :
-                        (int) rdr["NoSummingAreaType"];
-
                     IEnumerable<Models.AreaType> applicableAreaTypes;
                     /* special statistics should only return
                      * one available areaType */
@@ -138,8 +133,8 @@ namespace LiiteriStatisticsCore.Repositories
                                 AreaTypeMappings.GetPrimaryAreaType(databaseAreaType)
                             };
                     } else {
-                        applicableAreaTypes = AreaTypeMappings.GetAreaTypes(
-                            databaseAreaType, noSummingAreaType);
+                        applicableAreaTypes =
+                            AreaTypeMappings.GetAreaTypes(databaseAreaType);
                     }
 
                     foreach (Models.AreaType a in applicableAreaTypes) {
