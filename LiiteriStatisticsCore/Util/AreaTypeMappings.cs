@@ -53,6 +53,14 @@ namespace LiiteriStatisticsCore.Util
             this.xdoc = XDocument.Load(xmlFile);
         }
 
+        private bool IsTrue(XAttribute attribute)
+        {
+            if (attribute != null && attribute.Value.ToLower() == "true") {
+                return true;
+            }
+            return false;
+        }
+
         /* SubFromString/addAreaTable="true/false"
          * Used by AreaQuery, determines whether DimAlue should be
          * joined in the query */
@@ -68,8 +76,7 @@ namespace LiiteriStatisticsCore.Util
                     .Element("SubFromString")
                 ).Single();
             if (queryElem == null) return false;
-            if (queryElem.Attribute("addAreaTable") != null &&
-                    queryElem.Attribute("addAreaTable").Value.ToLower() == "true") {
+            if (this.IsTrue(queryElem.Attribute("addAreaTable"))) {
                 return true;
             }
             return false;
@@ -90,8 +97,7 @@ namespace LiiteriStatisticsCore.Util
                     .Element("SubFromString")
                 ).Single();
             if (queryElem == null) return false;
-            if (queryElem.Attribute("disableList") != null &&
-                    queryElem.Attribute("disableList").Value.ToLower() == "true") {
+            if (this.IsTrue(queryElem.Attribute("disableList"))) {
                 return true;
             }
             return false;
@@ -175,9 +181,7 @@ namespace LiiteriStatisticsCore.Util
                 select d.Element("DatabaseAreaTypes")).Single();
             var retval = (
                 from d in databaseAreaTypes.Descendants("DatabaseAreaType")
-                where (
-                    d.Attribute("primary") != null &&
-                    d.Attribute("primary").Value.ToLower() == "true")
+                where this.IsTrue(d.Attribute("primary"))
                 select Convert.ToInt32(d.Attribute("id").Value)
                 );
             if (retval.Count() == 0) {
@@ -214,8 +218,7 @@ namespace LiiteriStatisticsCore.Util
                         .Elements("DatabaseAreaType")
                     where
                         Convert.ToInt32(d.Attribute("id").Value) == databaseAreaTypeId &&
-                        d.Attribute("primary") != null &&
-                        d.Attribute("primary").Value.ToLower() == "true"
+                        this.IsTrue(d.Attribute("primary"))
                     select d);
                 if (found.Count() > 0) {
                     /* Debug.WriteLine(string.Format(
@@ -263,7 +266,8 @@ namespace LiiteriStatisticsCore.Util
          * databaseAreaType (for example (int) 2), and we want to know
          * what virtualAreaTypes (for example (string) "municipality") can be
          * used to query that statistic */
-        public IEnumerable<Models.AreaType> GetAreaTypes(int databaseAreaType)
+        public IEnumerable<Models.AreaType> GetAreaTypes(
+            int databaseAreaType)
         {
             /* Debug.WriteLine(string.Format(
                 "Getting virtualAreaTypes for databaseAreaType:{0}",
