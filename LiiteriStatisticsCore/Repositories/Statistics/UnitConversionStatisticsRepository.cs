@@ -102,6 +102,7 @@ namespace LiiteriStatisticsCore.Repositories
             using (IEnumerator<StatisticsResult> enumerator =
                     this.Repository.FindAll().GetEnumerator()) {
                 while (enumerator.MoveNext()) {
+                    if (enumerator.Current == null) continue;
                     var ret_r = (StatisticsResult) enumerator.Current.Clone();
                     ret_r = this.MakeUnitConversions(ret_r);
                     ret_r = this.SetDecimalCount(ret_r);
