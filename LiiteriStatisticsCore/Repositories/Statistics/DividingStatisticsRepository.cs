@@ -40,8 +40,11 @@ namespace LiiteriStatisticsCore.Repositories
             StatisticsResult ret_r = (StatisticsResult) denominator.Clone();
 
             if (numerator == null) {
+                return null; // YM-625 / SUPPORT-5338
+                /*
                 ret_r.Value = 0;
                 return ret_r;
+                */
             }
 
             if (denominator.Value == null || denominator.Value == 0) {
