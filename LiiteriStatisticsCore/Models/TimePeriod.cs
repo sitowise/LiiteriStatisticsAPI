@@ -24,5 +24,11 @@ namespace LiiteriStatisticsCore.Models
         /* each time period in an indicator can have multiple annotations
          * from different sources */
         public IEnumerable<Annotation> Annotations;
+
+        /* Some area types are listed in a block list [TilastoKoosteAluetasoEstetty]
+         * This member stores the block list, so it can be passed to
+         * the query object */
+        [IgnoreDataMember]
+        public string[] BlockedAreaTypes;
     }
 }

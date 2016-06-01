@@ -55,8 +55,7 @@ namespace LiiteriStatisticsCore.Util
 
         private bool IsTrue(XAttribute attribute)
         {
-            if (attribute != null &&
-                    attribute.Value.ToLower() == "true") {
+            if (attribute != null && attribute.Value.ToLower() == "true") {
                 return true;
             }
             return false;
@@ -268,39 +267,36 @@ namespace LiiteriStatisticsCore.Util
          * what virtualAreaTypes (for example (string) "municipality") can be
          * used to query that statistic */
         public IEnumerable<Models.AreaType> GetAreaTypes(
-            int databaseAreaType,
-            int? noSummingAreaType = null)
+            int databaseAreaType)
         {
+            /* Debug.WriteLine(string.Format(
+                "Getting virtualAreaTypes for databaseAreaType:{0}",
+                databaseAreaType)); */
+
             var factory = new Factories.AreaTypeFactory();
             IList<Models.AreaType> areaTypes = new List<Models.AreaType>();
 
             foreach (var sAreaType in this.xdoc.Root
                     .Elements("SelectionAreaTypes").Single()
                     .Elements("SelectionAreaType")) {
+                /* Debug.WriteLine(string.Format(
+                    "Checking virtualAreaType:{0}",
+                    sAreaType.Attribute("id").Value)); */
                 bool found = false;
-                bool doNotAdd = false;
                 foreach (var dAreaType in sAreaType
                         .Elements("DatabaseAreaTypes").Single()
                         .Elements("DatabaseAreaType")) {
                     int id = Convert.ToInt32(dAreaType.Attribute("id").Value);
-
-                    /* if areaType has noSummingAreaType
-                     * in it's databaseAreaTypes, but it is not primary,
-                     * ignore this areaType completely */
-                    if (noSummingAreaType != null &&
-                            id == noSummingAreaType &&
-                            !this.IsTrue(dAreaType.Attribute("primary"))) {
-                        doNotAdd = true;
-                    }
-
+                    /* Debug.WriteLine(string.Format(
+                        "  Checking databaseAreaType:{0}", id)); */
                     if (id == databaseAreaType) {
                         // Debug.WriteLine("    Match! breaking...");
                         found = true;
                         break;
                     }
                 }
-
-                if (found && !doNotAdd) {
+                if (found) {
+                    // Debug.WriteLine("Some stuff was found, add to areaTypes");
                     areaTypes.Add((Models.AreaType) factory.Create(sAreaType));
                 }
             }

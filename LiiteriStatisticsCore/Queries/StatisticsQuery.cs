@@ -117,6 +117,8 @@ namespace LiiteriStatisticsCore.Queries
         /* this is used to enforce non aggregation for calculation type 4 */
         private bool RelaxedAreaTypes = true;
 
+        public string[] BlockedAreaTypes { get; set; }
+
         private int[] GetDatabaseAreaTypes(string areaType)
         {
             if (!this.RelaxedAreaTypes) {
@@ -150,6 +152,16 @@ namespace LiiteriStatisticsCore.Queries
         {
             /* add the proper table that we are grouping by */
             if (this.GroupByAreaTypeIdIs != null) {
+                if (this.BlockedAreaTypes != null &&
+                        this.BlockedAreaTypes.Contains(this.GroupByAreaTypeIdIs)) {
+                    /* normally the user should never reach this exception,
+                     * since the available areaTypes are already listed in the
+                     * indicator */
+                    throw new Exception(string.Format(
+                        "Specified grouping areaType \"{2}\" is disabled for statisticsId:{0} year:{1}",
+                        this.IdIs, this.YearIs, this.GroupByAreaTypeIdIs));
+                }
+
                 var schema = AreaTypeMappings.GetDatabaseSchema(
                     this.GroupByAreaTypeIdIs);
 
@@ -261,6 +273,16 @@ namespace LiiteriStatisticsCore.Queries
                 };
                 parser.IdHandler = delegate(string name)
                 {
+                    if (this.BlockedAreaTypes != null &&
+                            this.BlockedAreaTypes.Contains(name)) {
+                        /* normally the user should never reach this exception,
+                         * since the available areaTypes are already listed in the
+                         * indicator */
+                        throw new Exception(string.Format(
+                            "Specified filtering areaType \"{2}\" is disabled for statisticsId:{0} year:{1}",
+                            this.IdIs, this.YearIs, name));
+                    }
+
                     this.ReduceUsableAreaTypes(name);
                     var schema = AreaTypeMappings.GetDatabaseSchema(name);
                     string idColumn = schema["MainIdColumn"];
@@ -304,6 +326,16 @@ namespace LiiteriStatisticsCore.Queries
 
                         geom1 = SchemaDataFormat(schema["GeometryColumn"]);
                         // geom2 should be geometry
+                    }
+
+                    if (this.BlockedAreaTypes != null &&
+                            this.BlockedAreaTypes.Contains(areaType)) {
+                        /* normally the user should never reach this exception,
+                         * since the available areaTypes are already listed in the
+                         * indicator */
+                        throw new Exception(string.Format(
+                            "Specified filtering areaType \"{2}\" is disabled for statisticsId:{0} year:{1}",
+                            this.IdIs, this.YearIs, areaType));
                     }
 
                     this.ReduceUsableAreaTypes(areaType);
