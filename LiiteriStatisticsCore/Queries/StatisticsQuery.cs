@@ -273,7 +273,9 @@ namespace LiiteriStatisticsCore.Queries
                 };
                 parser.IdHandler = delegate(string name)
                 {
-                    if (this.BlockedAreaTypes != null &&
+                    // currently disabled areaTypes should only affect grouping,
+                    // so this block of code is disabled
+                    if (false && this.BlockedAreaTypes != null &&
                             this.BlockedAreaTypes.Contains(name)) {
                         /* normally the user should never reach this exception,
                          * since the available areaTypes are already listed in the
@@ -328,7 +330,9 @@ namespace LiiteriStatisticsCore.Queries
                         // geom2 should be geometry
                     }
 
-                    if (this.BlockedAreaTypes != null &&
+                    // currently disabled areaTypes should only affect grouping,
+                    // so this block of code is disabled
+                    if (false && this.BlockedAreaTypes != null &&
                             this.BlockedAreaTypes.Contains(areaType)) {
                         /* normally the user should never reach this exception,
                          * since the available areaTypes are already listed in the
