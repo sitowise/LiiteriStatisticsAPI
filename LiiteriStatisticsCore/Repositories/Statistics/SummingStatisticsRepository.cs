@@ -11,14 +11,14 @@ namespace LiiteriStatisticsCore.Repositories
 {
     public class SummingStatisticsRepository :
         ComparingStatisticsRepository,
-        IReadRepository<StatisticsResult>
+        IStatisticsRepository
     {
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public SummingStatisticsRepository(
-            IEnumerable<IReadRepository<StatisticsResult>> repositories)
+            IEnumerable<IStatisticsRepository> repositories)
         {
             this.Repositories = repositories;
         }

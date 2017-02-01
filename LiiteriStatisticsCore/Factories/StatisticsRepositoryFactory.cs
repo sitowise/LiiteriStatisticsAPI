@@ -14,6 +14,10 @@ namespace LiiteriStatisticsCore.Factories
 {
     public class StatisticsRepositoryFactory
     {
+        public static readonly log4net.ILog logger =
+            log4net.LogManager.GetLogger(
+                System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private DbConnection db;
         private Requests.StatisticsRequest Request;
         public StatisticsRepositoryTracer Tracer;
@@ -56,7 +60,7 @@ namespace LiiteriStatisticsCore.Factories
             return factory;
         }
 
-        public IReadRepository<StatisticsResult> GetRepository()
+        public IStatisticsRepository GetRepository()
         {
             var indicatorQuery = new IndicatorQuery();
             indicatorQuery.IdIs = this.Request.StatisticsId;
@@ -68,7 +72,7 @@ namespace LiiteriStatisticsCore.Factories
                     new ISqlQuery[] { indicatorQuery });
             var details = indicatorDetailsRepository.Single();
 
-            IReadRepository<StatisticsResult> repo;
+            IStatisticsRepository repo;
 
             if (!this.SkipPrivacyLimits && details.PrivacyLimit != null) {
                 repo = this.GetPrivacyLimitRepository(details);
@@ -123,13 +127,21 @@ namespace LiiteriStatisticsCore.Factories
             return convrepo;
         }
 
-        private PrivacyLimitStatisticsRepository GetPrivacyLimitRepository(
+        private IStatisticsRepository GetPrivacyLimitRepository(
             IndicatorDetails details)
         {
             var mainrequest =
                 (Requests.StatisticsRequest) this.Request.Clone();
 
             var mainrepo = this.GetFactory(mainrequest).GetRepository();
+
+            /* SUPPORT-14527 / YM-654
+             * Privacy limits should be skipped for administrative areas.
+             */
+            if (mainrepo.MaySkipPrivacyLimits) {
+                logger.Debug("Skipping privacy limits");
+                return mainrepo;
+            }
 
             var refrequest =
                 (Requests.StatisticsRequest) this.Request.Clone();
@@ -269,7 +281,7 @@ namespace LiiteriStatisticsCore.Factories
         private SummingStatisticsRepository GetSummingRepository(
             IndicatorDetails details)
         {
-            var repos = new List<IReadRepository<StatisticsResult>>();
+            var repos = new List<IStatisticsRepository>();
 
             if (details.DerivedStatistics.Length < 2) {
                 throw new ArgumentException(

@@ -10,17 +10,17 @@ namespace LiiteriStatisticsCore.Repositories
 {
     public class DividingStatisticsRepository :
         ComparingStatisticsRepository,
-        IReadRepository<StatisticsResult>
+        IStatisticsRepository
     {
         public static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public DividingStatisticsRepository(
-            IReadRepository<StatisticsResult> denominatorRepository,
-            IReadRepository<StatisticsResult> numeratorRepository)
+            IStatisticsRepository denominatorRepository,
+            IStatisticsRepository numeratorRepository)
         {
-            this.Repositories = new List<IReadRepository<StatisticsResult>>() {
+            this.Repositories = new List<IStatisticsRepository>() {
                 denominatorRepository,
                 numeratorRepository,
             };
