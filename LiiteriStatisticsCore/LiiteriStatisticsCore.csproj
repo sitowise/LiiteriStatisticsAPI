@@ -135,6 +135,7 @@
     <Compile Include="Repositories\SqlReadWriteRepository.cs" />
     <Compile Include="Repositories\Statistics\ComparingStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\DividingStatisticsRepository.cs" />
+    <Compile Include="Repositories\Statistics\IStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\NormalStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\PrivacyLimitStatisticsRepository.cs" />
     <Compile Include="Repositories\Statistics\SpecialStatisticsRepository.cs" />

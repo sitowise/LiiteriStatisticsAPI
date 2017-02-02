@@ -304,7 +304,7 @@ namespace LiiteriStatisticsCore.Util
         }
 
         /* SelectionAreaType/category
-         * Returns the category (functional/administrative) for an areaType. */
+         * Returns the category (functional/administrative) for a selection areaType. */
         public AreaTypeMappings.AreaTypeCategory GetAreaTypeCategory(
             string areaTypeId)
         {
@@ -313,6 +313,29 @@ namespace LiiteriStatisticsCore.Util
                     .Elements("SelectionAreaTypes").Single()
                     .Elements("SelectionAreaType")
                 where d.Attribute("id").Value == areaTypeId
+                select d.Attribute("category").Value.ToString()).Single();
+
+            switch (category) {
+                case "functional":
+                    return AreaTypeMappings.AreaTypeCategory.FunctionalArea;
+                case "administrative":
+                    return AreaTypeMappings.AreaTypeCategory.AdministrativeArea;
+                default:
+                    throw new Exception(
+                        "Unknown areatype category: " + category);
+            }
+        }
+
+        /* DatabaseAreaType/category
+         * Returns the category (functional/administrative) for a database areaType. */
+        public AreaTypeMappings.AreaTypeCategory GetAreaTypeCategory(
+            int databaseAreaTypeId)
+        {
+            string category = (
+                from d in this.xdoc.Root
+                    .Elements("DatabaseAreaTypes").Single()
+                    .Elements("DatabaseAreaType")
+                where Convert.ToInt32(d.Attribute("id").Value) == databaseAreaTypeId
                 select d.Attribute("category").Value.ToString()).Single();
 
             switch (category) {

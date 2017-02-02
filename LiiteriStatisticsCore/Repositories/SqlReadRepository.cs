@@ -88,6 +88,7 @@ namespace LiiteriStatisticsCore.Repositories
                 return retval;
             }
         }
+
         private IEnumerable<T> FindAll(Queries.ISqlQuery query)
         {
             if (this.factory == null) {

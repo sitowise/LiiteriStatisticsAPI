@@ -1,18 +1,18 @@
 <root>
     <DatabaseAreaTypes>
-        <DatabaseAreaType id="1" name="Ruutu 250m" availability="ATJ.Ruutu_Alue_ID = 1" />
-        <DatabaseAreaType id="2" name="Kunta" availability="ATJ.Kunta_Alue_ID = 1" />
-        <DatabaseAreaType id="7" name="Ruutu 500m" availability="ATJ.Kunta_Alue_ID = 1" />
-        <DatabaseAreaType id="11" name="Asemakaavoitettu alue" availability="ATJ.AsemakaavoitettuAlue_Alue_ID = 1" />
-        <!--<DatabaseAreaType id="13" name="Kunta, asemakaavoitettu osa" availability="0 = 1" />-->
-        <DatabaseAreaType id="16" name="Maakunta" availability="ATJ.Maakunta_Alue_ID = 1" />
-        <DatabaseAreaType id="17" name="Seutukunta" availability="ATJ.Seutukunta_Alue_ID = 1" />
-        <DatabaseAreaType id="18" name="ELY" availability="ATJ.ELY_L_Alue_ID = 1" />
-        <DatabaseAreaType id="21" name="Suomi" />
-        <DatabaseAreaType id="22" name="Ruutu 1km" availability="ATJ.Ruutu_1km_Alue_ID = 1" />
-        <DatabaseAreaType id="23" name="Ruutu 2km" availability="ATJ.Ruutu_2km_Alue_ID = 1" />
-        <DatabaseAreaType id="24" name="Ruutu 5km" availability="ATJ.Ruutu_5km_Alue_ID = 1" />
-        <DatabaseAreaType id="25" name="Ruutu 10km" availability="ATJ.Ruutu_10km_Alue_ID = 1" />
+        <DatabaseAreaType id="1" category="functional" name="Ruutu 250m" availability="ATJ.Ruutu_Alue_ID = 1" />
+        <DatabaseAreaType id="2" category="administrative" name="Kunta" availability="ATJ.Kunta_Alue_ID = 1" />
+        <DatabaseAreaType id="7" category="functional" name="Ruutu 500m" availability="ATJ.Kunta_Alue_ID = 1" />
+        <DatabaseAreaType id="11" category="functional" name="Asemakaavoitettu alue" availability="ATJ.AsemakaavoitettuAlue_Alue_ID = 1" />
+        <!--<DatabaseAreaType id="13" category="administrative" name="Kunta, asemakaavoitettu osa" availability="0 = 1" />-->
+        <DatabaseAreaType id="16" category="administrative" name="Maakunta" availability="ATJ.Maakunta_Alue_ID = 1" />
+        <DatabaseAreaType id="17" category="administrative" name="Seutukunta" availability="ATJ.Seutukunta_Alue_ID = 1" />
+        <DatabaseAreaType id="18" category="administrative" name="ELY" availability="ATJ.ELY_L_Alue_ID = 1" />
+        <DatabaseAreaType id="21" category="administrative" name="Suomi" />
+        <DatabaseAreaType id="22" category="functional" name="Ruutu 1km" availability="ATJ.Ruutu_1km_Alue_ID = 1" />
+        <DatabaseAreaType id="23" category="functional" name="Ruutu 2km" availability="ATJ.Ruutu_2km_Alue_ID = 1" />
+        <DatabaseAreaType id="24" category="functional" name="Ruutu 5km" availability="ATJ.Ruutu_5km_Alue_ID = 1" />
+        <DatabaseAreaType id="25" category="functional" name="Ruutu 10km" availability="ATJ.Ruutu_10km_Alue_ID = 1" />
     </DatabaseAreaTypes>
     <SelectionAreaTypes>
         <SelectionAreaType id="locality" category="functional">

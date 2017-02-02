@@ -10,7 +10,9 @@ namespace LiiteriStatisticsCore.Repositories
 {
     /* This is empty, but still useful since it provides a distinct name
      * in the repository tracer */
-    class SpecialStatisticsRepository : NormalStatisticsRepository
+    class SpecialStatisticsRepository :
+        NormalStatisticsRepository,
+        IStatisticsRepository
     {
         public SpecialStatisticsRepository(
             DbConnection dbConnection,

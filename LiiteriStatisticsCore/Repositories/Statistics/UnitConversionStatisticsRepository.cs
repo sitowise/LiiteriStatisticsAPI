@@ -9,18 +9,26 @@ using LiiteriStatisticsCore.Models;
 namespace LiiteriStatisticsCore.Repositories
 {
     public class UnitConversionStatisticsRepository :
-        IReadRepository<StatisticsResult>
+        IStatisticsRepository
     {
         public static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private IndicatorDetails Details;
-        private IReadRepository<StatisticsResult> Repository;
+        public IStatisticsRepository Repository;
+
+        public bool MaySkipPrivacyLimits
+        {
+            get
+            {
+                return this.Repository.MaySkipPrivacyLimits;
+            }
+        }
 
         public UnitConversionStatisticsRepository(
             IndicatorDetails details,
-            IReadRepository<StatisticsResult> repository)
+            IStatisticsRepository repository)
         {
             this.Details = details;
             this.Repository = repository;

@@ -10,13 +10,24 @@ using System.Diagnostics;
 namespace LiiteriStatisticsCore.Repositories
 {
     public abstract class ComparingStatisticsRepository :
-        IReadRepository<StatisticsResult>
+        IStatisticsRepository
     {
         private static readonly log4net.ILog logger =
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected IEnumerable<IReadRepository<StatisticsResult>> Repositories;
+        protected IEnumerable<IStatisticsRepository> Repositories;
+
+        public virtual bool MaySkipPrivacyLimits
+        {
+            get
+            {
+                foreach (var repo in this.Repositories) {
+                    if (!repo.MaySkipPrivacyLimits) return false;
+                }
+                return true;
+            }
+        }
 
         /* helper class for processing the results in parallel */
         private class RState
@@ -69,8 +80,7 @@ namespace LiiteriStatisticsCore.Repositories
 
             var rstates = new List<RState>();
 
-            foreach (IReadRepository<StatisticsResult> repo in
-                    this.Repositories) {
+            foreach (IStatisticsRepository repo in this.Repositories) {
                 rstates.Add(new RState() {
                     Enumerator = repo.FindAll().GetEnumerator()
                 });

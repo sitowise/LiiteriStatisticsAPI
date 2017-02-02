@@ -11,21 +11,29 @@ namespace LiiteriStatisticsCore.Repositories
 {
     class PrivacyLimitStatisticsRepository :
         ComparingStatisticsRepository,
-        IReadRepository<StatisticsResult>
+        IStatisticsRepository
     {
         private PrivacyLimit Limit;
 
         public PrivacyLimitStatisticsRepository(
             PrivacyLimit privacyLimit,
-            IReadRepository<StatisticsResult> mainRepository,
-            IReadRepository<StatisticsResult> refRepository) : base()
+            IStatisticsRepository mainRepository,
+            IStatisticsRepository refRepository) : base()
         {
             this.Limit = privacyLimit;
 
-            this.Repositories = new List<IReadRepository<StatisticsResult>>() {
+            this.Repositories = new List<IStatisticsRepository>() {
                 refRepository,
                 mainRepository,
             };
+        }
+
+        public override bool MaySkipPrivacyLimits
+        {
+            get
+            {
+                throw new Exception("Not valid here!");
+            }
         }
 
         protected override StatisticsResult Compare(StatisticsResult[] results)
