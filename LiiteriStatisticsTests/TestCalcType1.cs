@@ -91,6 +91,14 @@ namespace LiiteriStatisticsTests
         }
 
         [TestMethod]
+        public void Test_filter_ct1_reindeer_herding_cooperative()
+        {
+            this.CheckStatistics(9000, new int[] { 2010 },
+                "reindeer_herding_cooperative",
+                "reindeer_herding_cooperative=19695087");
+        }
+
+        [TestMethod]
         public void Test_group_ct1_ely_e()
         {
             this.CheckStatistics(20, new int[] { 2010 }, "ely_e");
