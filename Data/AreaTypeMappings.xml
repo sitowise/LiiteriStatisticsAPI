@@ -720,5 +720,22 @@
                 <DatabaseAreaType id="1" />
             </DatabaseAreaTypes>
         </SelectionAreaType>
+        <SelectionAreaType id="reindeer_herding_cooperative" category="administrative">
+            <Description>Paliskunta</Description>
+            <DatabaseSchema>
+                <MainIdColumn>{1}.Paliskunta_Alue_ID</MainIdColumn>
+                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+                <SubNameColumn>{0}.Plk_nimi</SubNameColumn>
+                <SubAlternativeIdColumn>CONVERT(INT, {0}.Plk_Nro)</SubAlternativeIdColumn>
+                <SubYearColumn/>
+                <SubFromString addAreaTable="true">DimPaliskunta {0}</SubFromString>
+                <JoinQuery>INNER JOIN DimPaliskunta {0} ON {0}.Alue_ID = {1}.Paliskunta_Alue_ID</JoinQuery>
+                <AreaYearAvailabilityField>{0}.Paliskunta_Alue_ID</AreaYearAvailabilityField>
+            </DatabaseSchema>
+            <DatabaseAreaTypes>
+                <DatabaseAreaType primary="true" id="29" />
+                <DatabaseAreaType id="1" />
+            </DatabaseAreaTypes>
+        </SelectionAreaType>
     </SelectionAreaTypes>
 </root>
