@@ -49,5 +49,8 @@ namespace LiiteriStatisticsCore.Models
 
         [DefaultValue(null)]
         public AccessRight AccessRight { get; set; }
+
+        [DefaultValue(false)]
+        public bool ZeroVisibility { get; set; }
     }
 }

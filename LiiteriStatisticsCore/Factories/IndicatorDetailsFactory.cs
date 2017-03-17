@@ -25,6 +25,8 @@ namespace LiiteriStatisticsCore.Factories
             obj.AdditionalInformation = rdr["AdditionalInformation"].ToString();
             obj.CalculationType = (int) rdr["CalculationType"];
 
+            obj.ZeroVisibility = (bool) rdr["ZeroVisibility"];
+
             obj.ProcessingStage = null;
 
             obj.TimeSpan = (string) this.GetValueOrNull(rdr, "TimeSpan");

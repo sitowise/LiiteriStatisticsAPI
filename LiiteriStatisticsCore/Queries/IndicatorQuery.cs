@@ -95,6 +95,7 @@ namespace LiiteriStatisticsCore.Queries
             fields["T.Kuvaus"] = "Description";
             fields["T.Lisatieto"] = "AdditionalInformation";
             fields["T.TilastoLaskentatyyppi_ID"] = "CalculationType";
+            fields["T.NollatEsitetaan"] = "ZeroVisibility";
 
             fields["MY.MittayksikkoLyhenne"] = "Unit";
 
