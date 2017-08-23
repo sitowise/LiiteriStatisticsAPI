@@ -59,7 +59,7 @@ namespace LiiteriStatisticsTests
         public void Test_fail()
         {
             var results = this.controller.GetStatistics(
-                new int[] { 2010 }, 23, "municipality", null, null);
+                new int[] { 2010 }, 5001, "municipality", null, null);
         }
     }
 }
