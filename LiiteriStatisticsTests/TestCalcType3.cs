@@ -217,7 +217,7 @@ namespace LiiteriStatisticsTests
         public void Test_filter_ct3_shop_area()
         {
             this.CheckStatistics(4100, new int[] { 2012 }, "municipality",
-                "shop_area=19407009");
+                "shop_area=19598699");
         }
 
         [TestMethod]
