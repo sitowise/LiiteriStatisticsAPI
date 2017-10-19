@@ -103,6 +103,13 @@ namespace LiiteriStatisticsCore.Repositories
                             break;
                     }
                     break;
+                case 25: // €
+                    switch (this.Details.DisplayUnitId) {
+                        case 28: // 1000 €
+                            obj.Value = (decimal) (obj.Value / 1000);
+                            break;
+                    }
+                    break;
             }
 
             return obj;
