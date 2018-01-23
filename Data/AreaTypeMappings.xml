@@ -1,741 +1,780 @@
 <root>
-    <DatabaseAreaTypes>
-        <DatabaseAreaType id="1" category="functional" name="Ruutu 250m" availability="ATJ.Ruutu_Alue_ID = 1" />
-        <DatabaseAreaType id="2" category="administrative" name="Kunta" availability="ATJ.Kunta_Alue_ID = 1" />
-        <DatabaseAreaType id="7" category="functional" name="Ruutu 500m" availability="ATJ.Kunta_Alue_ID = 1" />
-        <DatabaseAreaType id="11" category="functional" name="Asemakaavoitettu alue" availability="ATJ.AsemakaavoitettuAlue_Alue_ID = 1" />
-        <!--<DatabaseAreaType id="13" category="administrative" name="Kunta, asemakaavoitettu osa" availability="0 = 1" />-->
-        <DatabaseAreaType id="16" category="administrative" name="Maakunta" availability="ATJ.Maakunta_Alue_ID = 1" />
-        <DatabaseAreaType id="17" category="administrative" name="Seutukunta" availability="ATJ.Seutukunta_Alue_ID = 1" />
-        <DatabaseAreaType id="18" category="administrative" name="ELY" availability="ATJ.ELY_L_Alue_ID = 1" />
-        <DatabaseAreaType id="21" category="administrative" name="Suomi" />
-        <DatabaseAreaType id="22" category="functional" name="Ruutu 1km" availability="ATJ.Ruutu_1km_Alue_ID = 1" />
-        <DatabaseAreaType id="23" category="functional" name="Ruutu 2km" availability="ATJ.Ruutu_2km_Alue_ID = 1" />
-        <DatabaseAreaType id="24" category="functional" name="Ruutu 5km" availability="ATJ.Ruutu_5km_Alue_ID = 1" />
-        <DatabaseAreaType id="25" category="functional" name="Ruutu 10km" availability="ATJ.Ruutu_10km_Alue_ID = 1" />
-    </DatabaseAreaTypes>
-    <SelectionAreaTypes>
-        <SelectionAreaType id="locality" category="functional">
-            <Description>Taajama</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Taajama_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Nimi</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
-                <SubFromString addAreaTable="true">DimTaajama {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimTaajama {0} ON ({0}.Alue_ID = {1}.Taajama_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.Taajama_Alue_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.Taajama_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="urban_area" category="functional">
-            <Description>Kaupunkiseutu</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Kaupunkiseutu_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.KseutuNimi</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.KseutuNro)</SubAlternativeIdColumn>
-                <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
-                <SubFromString addAreaTable="true">DimKaupunkiseutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimKaupunkiseutu {0} ON ({0}.Alue_ID = {1}.Kaupunkiseutu_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.Kaupunkiseutu_Alue_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.Kaupunkiseutu_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="planned_area_type" category="functional">
-            <Description>Asemakaavoitettu alue -tyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.AsemakaavoitettuAlueTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.AsemakaavoitettuAlueTyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.AsemakaavoitettuAlueTyyppi</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimAsemakaavoitettuAlueTyyppi {0} LEFT OUTER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {0}.AsemakaavoitettuAlueTyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID)</JoinQuery>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_planned_area_class">BR_{0}.AsemakaavoitettuAlueLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-                <FunctionalAreaAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="planned_area_class" category="functional">
-            <Description>Asemakaavoitettu alue -luokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_AsemakaavoitettuAlueLuokka.AsemakaavoitettuAlueLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.AsemakaavoitettuAlueLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.AsemakaavoitettuAlueLuokka</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimAsemakaavoitettuAlueLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID INNER JOIN DimAsemakaavoitettuAlueLuokka {0} ON {0}.AsemakaavoitettuAlueLuokka_ID = BR_{0}.AsemakaavoitettuAlueLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka F_AsemakaavoitettuAlueLuokka ON F_AsemakaavoitettuAlueLuokka.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="municipality" category="administrative">
-            <Description>Kunta</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Kunta_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Nimi</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimKunta {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimKunta {0} ON {0}.Alue_ID = {1}.Kunta_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Kunta_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType primary="true" id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="sub_region" category="administrative">
-            <Description>Seutukunta</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Seutukunta_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.NimiPitka</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimSeutukunta {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimSeutukunta {0} ON {0}.Alue_ID = {1}.Seutukunta_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Seutukunta_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="17" primary="true" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="region" category="administrative">
-            <Description>Maakunta</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Maakunta_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Nimi</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimMaakunta {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimMaakunta {0} ON {0}.Alue_ID = {1}.Maakunta_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Maakunta_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="16" primary="true" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="ely_e" category="administrative">
-            <Description>ELY E-alue</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.ELY_E_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Nimi</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_E_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.ELY_E_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="16" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="ely_l" category="administrative">
-            <Description>ELY L-alue</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.ELY_L_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>COALESCE({0}.LiikenneElyNimi, {0}.Nimi)</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
-                <SubWhereString>{0}.LiikenneElyNimi IS NOT NULL</SubWhereString>
-                <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_L_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.ELY_L_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="16" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="ely_y" category="administrative">
-            <Description>ELY Y-alue</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.ELY_Y_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.YmparistoElyNimi</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
-                <SubWhereString>{0}.YmparistoElyNimi IS NOT NULL</SubWhereString>
-                <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_Y_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.ELY_Y_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="16" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="finland" category="administrative">
-            <Description>Suomi</Description>
-            <DatabaseSchema>
-                <MainIdColumn/>
-                <SubIdColumn/>
-                <SubNameColumn>'Suomi'</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <JoinQuery/>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="21" primary="true" />
-                <DatabaseAreaType id="18"/>
-                <DatabaseAreaType id="16" />
-                <DatabaseAreaType id="17" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="planned_area" category="functional">
-            <Description>Asemakaavoitettu alue</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.AsemakaavoitettuAlue_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.KaavaNro</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.KaavaNro)</SubAlternativeIdColumn>
-                <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
-                <SubFromString addAreaTable="true">DimAsemakaavoitettuAlue {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimAsemakaavoitettuAlue {0} ON ({0}.Alue_ID = {1}.AsemakaavoitettuAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.AsemakaavoitettuAlue_Alue_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.AsemakaavoitettuAlue_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="neighborhood_type" category="functional">
-            <Description>Asutusalueen tyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.AsutusalueTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.Asutusaluetyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.AsutusalueTyyppiSelite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimAsutusalueTyyppi {0} LEFT OUTER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {0}.Asutusaluetyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID</JoinQuery>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_neighborhood_class">BR_{0}.AsutusalueLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-                <FunctionalAreaAvailabilityField>{0}.AsutusalueTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.AsutusalueTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="neighborhood_class" category="functional">
-            <Description>Asutusalueen luokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_AsutusalueLuokka.AsutusalueLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.AsutusalueLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.AsutusalueLuokkaSelite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimAsutusalueLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID INNER JOIN DimAsutusalueLuokka {0} ON {0}.AsutusalueLuokka_ID = BR_{0}.AsutusalueLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka F_AsutusalueLuokka ON F_AsutusalueLuokka.Asutusaluetyyppi_ID = {1}.Asutusaluetyyppi_ID</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.AsutusalueTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.AsutusalueTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="administrative_law_area" category="administrative">
-            <Description>Hallinto-oikeus</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.HallintoOikeus_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Nimi</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimHallintoOikeus {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = {1}.HallintoOikeus_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.HallintoOikeus_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="16" />
-                <DatabaseAreaType id="2" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="shop_area" category="functional">
-            <Description>Kaupan alue</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.KaupanAlue_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>(KT.Selite + ' (' + CAST({0}.Alue_ID AS varchar(max)) + ')')</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
-                <SubFromString addAreaTable="true">DimKaupanAlue {0} INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID</SubFromString>
-                <JoinQuery>INNER JOIN DimKaupanAlue {0} ON ({0}.Alue_ID = {1}.KaupanAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID)) INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.KeskustaTyyppi_ID</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KaupanAlue_Alue_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KaupanAlue_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="city_rural_area_type" category="functional">
-            <Description>Kaupunkimaaseutuluokitustyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.KaupunkiMaaseutuTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.KaupunkimaaseutuTyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKaupunkiMaaseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {0}.KaupunkimaaseutuTyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_city_rural_area_class">BR_{0}.KaupunkimaaseutuLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="city_rural_area_class" category="functional">
-            <Description>Kaupunkimaaseutuluokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_KaupunkiMaaseutuLuokka.KaupunkiMaaseutuLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.KaupunkiMaaseutuLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.KaupunkiMaaseutuLuokka</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKaupunkiMaaseutuLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID INNER JOIN DimKaupunkiMaaseutuLuokka {0} ON {0}.KaupunkiMaaseutuLuokka_ID = BR_{0}.KaupunkiMaaseutuLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka F_KaupunkiMaaseutuLuokka ON F_KaupunkiMaaseutuLuokka.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="urban_area_type" category="functional">
-            <Description>Kaupunkiseutu-tyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.KaupunkiseutuTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.KaupunkiseutuTyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKaupunkiseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {0}.KaupunkiseutuTyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.KaupunkiseutuTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_urban_area_class">BR_{0}.KaupunkiseutuLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="urban_area_class" category="functional">
-            <Description>Kaupunkiseutuluokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_KaupunkiseutuLuokka.KaupunkiseutuLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.KaupunkiseutuLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.KaupunkiseutuLuokka</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKaupunkiseutuLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID INNER JOIN DimKaupunkiseutuLuokka {0} ON {0}.KaupunkiseutuLuokka_ID = BR_{0}.KaupunkiseutuLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka F_KaupunkiseutuLuokka ON F_KaupunkiseutuLuokka.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</FilterJoinQuery>
-                <AreaYearAvailabilityField>{0}.KaupunkiseutuTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="city_central_area" category="functional">
-            <Description>Keskusta-alue</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Keskusta_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.KeskustaNimi</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
-                <SubFromString addAreaTable="true">DimKeskusta {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimKeskusta {0} ON ({0}.Alue_ID = {1}.Keskusta_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.Keskusta_Alue_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.Keskusta_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="city_central_type" category="functional">
-            <Description>Keskustatyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.KeskustaTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.Keskustatyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKeskustatyyppi {0} INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 1)</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 1)</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KeskustaTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KeskustaTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_city_central_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="city_central_class" category="functional">
-            <Description>Keskustaluokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_KeskustaLuokka.Keskustaluokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.Keskustaluokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKeskustaLuokka {0} INNER JOIN DimKeskustaLuokka SJ ON (SJ.KeskustaLuokka_ID = A2.KeskustaLuokka_ID AND A2.Keskustaluokka_ID = 1)</SubFromString>
-                <JoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON ({0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID AND {0}.Keskustaluokka_ID = 1)</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeKeskustatyyppi_Keskustaluokka F_KeskustaLuokka ON (F_KeskustaLuokka.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND F_KeskustaLuokka.Keskustaluokka_ID = 1)</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KeskustaTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KeskustaTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="shop_area_type" category="functional">
-            <Description>Kaupan alue -tyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.KeskustaTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.Keskustatyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKeskustatyyppi {0} INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 2)</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 2)</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KaupanAlueTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KaupanAlueTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_shop_area_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="shop_area_class" category="functional">
-            <Description>Kaupan alue -luokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_KaupanAlueLuokka.Keskustaluokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.Keskustaluokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimKeskustaLuokka {0} INNER JOIN DimKeskustaLuokka SJ ON (SJ.KeskustaLuokka_ID = A2.KeskustaLuokka_ID AND A2.Keskustaluokka_ID = 2)</SubFromString>
-                <JoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON ({0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID AND {0}.Keskustaluokka_ID = 2)</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeKeskustatyyppi_Keskustaluokka F_KaupanAlueLuokka ON (F_KaupanAlueLuokka.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND F_KaupanAlueLuokka.Keskustaluokka_ID = 2)</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.KaupanAlueTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.KaupanAlueTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="locality_density_type" category="functional">
-            <Description>Taajama harva/tiheä -tyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.TaajamaHarvaTiheaTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.TaajamaHarvaTiheaTyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimTaajamaHarvaTiheaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {0}.TaajamaHarvaTiheaTyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_locality_density_class">BR_{0}.TaajamaHarvaTiheaLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="locality_density_class" category="functional">
-            <Description>Taajama harva/tiheä -luokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_TaajamaHarvaTiheaLuokka.TaajamaHarvaTiheaLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.TaajamaHarvaTiheaLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.TaajamaHarvaTiheaLuokka</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimTaajamaHarvaTiheaLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID INNER JOIN DimTaajamaHarvaTiheaLuokka {0} ON {0}.TaajamaHarvaTiheaLuokka_ID = BR_{0}.TaajamaHarvaTiheaLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka F_TaajamaHarvaTiheaLuokka ON F_TaajamaHarvaTiheaLuokka.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="locality_rural_type" category="functional">
-            <Description>Taajama haja-asutustyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.TaajamaHajaAsutusTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.TaajamaHajaAsutusTyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.TaajamaHajaAsutusTyyppi</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimTaajamaHajaAsutusTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {0}.TaajamaHajaAsutusTyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_locality_rural_class">BR_{0}.TaajamaHajaAsutusLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="locality_rural_class" category="functional">
-            <Description>Taajama haja-asutusluokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_TaajamaHajaAsutusLuokka.TaajamaHajaAsutusLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.TaajamaHajaAsutusLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.TaajamaHajaAsutusLuokka</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimTaajamaHajaAsutusLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID INNER JOIN DimTaajamaHajaAsutusLuokka {0} ON {0}.TaajamaHajaAsutusLuokka_ID = BR_{0}.TaajamaHajaAsutusLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka F_TaajamaHajaAsutusLuokka ON F_TaajamaHajaAsutusLuokka.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="urban_zone_type" category="functional">
-            <Description>Yhdyskuntarakenteen vyöhyke -tyyppi</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.UZVyohykeTyyppi_ID</MainIdColumn>
-                <SubIdColumn>{0}.UZVyohykeTyyppi_ID</SubIdColumn>
-                <SubNameColumn>{0}.Selite</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimUZVyohykeTyyppi {0} LEFT OUTER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {0}.UZVyohykeTyyppi_ID</SubFromString>
-                <SubOrderColumn>JarjNro</SubOrderColumn>
-                <JoinQuery>INNER JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</JoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.UZVyohykeTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.UZVyohykeTyyppi_ID</AreaYearAvailabilityField>
-                <ExtraAreaFields>
-                    <ExtraAreaField name="parent_urban_zone_class">BR_{0}.UZVyohykeLuokka_ID</ExtraAreaField>
-                </ExtraAreaFields>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="urban_zone_class" category="functional">
-            <Description>Yhdyskuntarakenteen vyöhyke -luokka</Description>
-            <DatabaseSchema>
-                <MainIdColumn>F_UZVyohykeLuokka.UZVyohykeLuokka_ID</MainIdColumn>
-                <SubIdColumn>{0}.UZVyohykeLuokka_ID</SubIdColumn>
-                <SubNameColumn>{0}.UZVyohykeLuokka</SubNameColumn>
-                <SubAlternativeIdColumn/>
-                <SubYearColumn/>
-                <SubFromString>DimUZVyohykeLuokka {0}</SubFromString>
-                <JoinQuery>INNER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID INNER JOIN DimUZVyohykeLuokka {0} ON {0}.UZVyohykeLuokka_ID = BR_{0}.UZVyohykeLuokka_ID</JoinQuery>
-                <FilterJoinQuery>LEFT JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka F_UZVyohykeLuokka ON F_UZVyohykeLuokka.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</FilterJoinQuery>
-                <FunctionalAreaAvailabilityField>{0}.UZVyohykeTyyppi_ID</FunctionalAreaAvailabilityField>
-                <AreaYearAvailabilityField>{0}.UZVyohykeTyyppi_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid250m" category="functional">
-            <Description>Ruutu 250m</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="1" primary="true" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid500m" category="functional">
-            <Description>Ruutu 500m</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_500m_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_500m_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_500m_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="7" primary="true" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid1km" category="functional">
-            <Description>Ruutu 1km</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_1km_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_1km_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_1km_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="22" primary="true" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid2km" category="functional">
-            <Description>Ruutu 2km</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_2km_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_2km_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_2km_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="23" primary="true" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid5km" category="functional">
-            <Description>Ruutu 5km</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_5km_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_5km_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_5km_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="24" primary="true" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid10km" category="functional">
-            <Description>Ruutu 10km</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_10km_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_10km_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_10km_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="25" primary="true" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="grid20km" category="functional">
-            <Description>Ruutu 20km</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Ruutu_20km_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Alue_ID</SubNameColumn>
-                <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
-                <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_20km_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Ruutu_20km_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType id="26" primary="true" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-        <SelectionAreaType id="reindeer_herding_cooperative" category="administrative">
-            <Description>Paliskunta</Description>
-            <DatabaseSchema>
-                <MainIdColumn>{1}.Paliskunta_Alue_ID</MainIdColumn>
-                <SubIdColumn>{0}.Alue_ID</SubIdColumn>
-                <SubNameColumn>{0}.Plk_nimi</SubNameColumn>
-                <SubAlternativeIdColumn>CONVERT(INT, {0}.Plk_Nro)</SubAlternativeIdColumn>
-                <SubYearColumn/>
-                <SubFromString addAreaTable="true">DimPaliskunta {0}</SubFromString>
-                <JoinQuery>INNER JOIN DimPaliskunta {0} ON {0}.Alue_ID = {1}.Paliskunta_Alue_ID</JoinQuery>
-                <AreaYearAvailabilityField>{0}.Paliskunta_Alue_ID</AreaYearAvailabilityField>
-            </DatabaseSchema>
-            <DatabaseAreaTypes>
-                <DatabaseAreaType primary="true" id="29" />
-                <DatabaseAreaType id="1" />
-            </DatabaseAreaTypes>
-        </SelectionAreaType>
-    </SelectionAreaTypes>
+  <DatabaseAreaTypes>
+    <DatabaseAreaType id="1" category="functional" name="Ruutu 250m" availability="ATJ.Ruutu_Alue_ID = 1" />
+    <DatabaseAreaType id="2" category="administrative" name="Kunta" availability="ATJ.Kunta_Alue_ID = 1" />
+    <DatabaseAreaType id="7" category="functional" name="Ruutu 500m" availability="ATJ.Kunta_Alue_ID = 1" />
+    <DatabaseAreaType id="11" category="functional" name="Asemakaavoitettu alue" availability="ATJ.AsemakaavoitettuAlue_Alue_ID = 1" />
+    <!--<DatabaseAreaType id="13" category="administrative" name="Kunta, asemakaavoitettu osa" availability="0 = 1" />-->
+    <DatabaseAreaType id="16" category="administrative" name="Maakunta" availability="ATJ.Maakunta_Alue_ID = 1" />
+    <DatabaseAreaType id="17" category="administrative" name="Seutukunta" availability="ATJ.Seutukunta_Alue_ID = 1" />
+    <DatabaseAreaType id="18" category="administrative" name="ELY" availability="ATJ.ELY_L_Alue_ID = 1" />
+    <DatabaseAreaType id="21" category="administrative" name="Suomi" />
+    <DatabaseAreaType id="22" category="functional" name="Ruutu 1km" availability="ATJ.Ruutu_1km_Alue_ID = 1" />
+    <DatabaseAreaType id="23" category="functional" name="Ruutu 2km" availability="ATJ.Ruutu_2km_Alue_ID = 1" />
+    <DatabaseAreaType id="24" category="functional" name="Ruutu 5km" availability="ATJ.Ruutu_5km_Alue_ID = 1" />
+    <DatabaseAreaType id="25" category="functional" name="Ruutu 10km" availability="ATJ.Ruutu_10km_Alue_ID = 1" />
+  </DatabaseAreaTypes>
+  <SelectionAreaTypes>
+    <SelectionAreaType id="locality" category="functional">
+      <Description>Taajama</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Taajama_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Nimi</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
+        <SubFromString addAreaTable="true">DimTaajama {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimTaajama {0} ON ({0}.Alue_ID = {1}.Taajama_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.Taajama_Alue_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.Taajama_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="urban_area" category="functional">
+      <Description>Kaupunkiseutu</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Kaupunkiseutu_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.KseutuNimi</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.KseutuNro)</SubAlternativeIdColumn>
+        <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
+        <SubFromString addAreaTable="true">DimKaupunkiseutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimKaupunkiseutu {0} ON ({0}.Alue_ID = {1}.Kaupunkiseutu_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.Kaupunkiseutu_Alue_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.Kaupunkiseutu_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="planned_area_type" category="functional">
+      <Description>Asemakaavoitettu alue -tyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.AsemakaavoitettuAlueTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.AsemakaavoitettuAlueTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.AsemakaavoitettuAlueTyyppi</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimAsemakaavoitettuAlueTyyppi {0} LEFT OUTER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {0}.AsemakaavoitettuAlueTyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimAsemakaavoitettuAlueTyyppi {0} ON ({0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID)</JoinQuery>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_planned_area_class">BR_{0}.AsemakaavoitettuAlueLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+        <FunctionalAreaAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="planned_area_class" category="functional">
+      <Description>Asemakaavoitettu alue -luokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_AsemakaavoitettuAlueLuokka.AsemakaavoitettuAlueLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.AsemakaavoitettuAlueLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.AsemakaavoitettuAlueLuokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimAsemakaavoitettuAlueLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka BR_{0} ON BR_{0}.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID INNER JOIN DimAsemakaavoitettuAlueLuokka {0} ON {0}.AsemakaavoitettuAlueLuokka_ID = BR_{0}.AsemakaavoitettuAlueLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeAsemakaavoitettuAlueTyyppi_AsemakaavoitettuAlueLuokka F_AsemakaavoitettuAlueLuokka ON F_AsemakaavoitettuAlueLuokka.AsemakaavoitettuAlueTyyppi_ID = {1}.AsemakaavoitettuAlueTyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.AsemakaavoitettuAlueTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="municipality" category="administrative">
+      <Description>Kunta</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Kunta_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Nimi</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimKunta {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimKunta {0} ON {0}.Alue_ID = {1}.Kunta_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Kunta_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType primary="true" id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="sub_region" category="administrative">
+      <Description>Seutukunta</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Seutukunta_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.NimiPitka</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimSeutukunta {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimSeutukunta {0} ON {0}.Alue_ID = {1}.Seutukunta_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Seutukunta_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="17" primary="true" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="region" category="administrative">
+      <Description>Maakunta</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Maakunta_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Nimi</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimMaakunta {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimMaakunta {0} ON {0}.Alue_ID = {1}.Maakunta_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Maakunta_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="16" primary="true" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="ely_e" category="administrative">
+      <Description>ELY E-alue</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.ELY_E_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Nimi</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_E_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.ELY_E_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="16" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="ely_l" category="administrative">
+      <Description>ELY L-alue</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.ELY_L_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>COALESCE({0}.LiikenneElyNimi, {0}.Nimi)</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
+        <SubWhereString>{0}.LiikenneElyNimi IS NOT NULL</SubWhereString>
+        <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_L_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.ELY_L_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="16" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="ely_y" category="administrative">
+      <Description>ELY Y-alue</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.ELY_Y_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.YmparistoElyNimi</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimELY {0}</SubFromString>
+        <SubWhereString>{0}.YmparistoElyNimi IS NOT NULL</SubWhereString>
+        <JoinQuery>INNER JOIN DimEly {0} ON {0}.Alue_ID = {1}.ELY_Y_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.ELY_Y_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="16" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="finland" category="administrative">
+      <Description>Suomi</Description>
+      <DatabaseSchema>
+        <MainIdColumn/>
+        <SubIdColumn/>
+        <SubNameColumn>'Suomi'</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <JoinQuery/>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="21" primary="true" />
+        <DatabaseAreaType id="18"/>
+        <DatabaseAreaType id="16" />
+        <DatabaseAreaType id="17" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="planned_area" category="functional">
+      <Description>Asemakaavoitettu alue</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.AsemakaavoitettuAlue_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.KaavaNro</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.KaavaNro)</SubAlternativeIdColumn>
+        <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
+        <SubFromString addAreaTable="true">DimAsemakaavoitettuAlue {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimAsemakaavoitettuAlue {0} ON ({0}.Alue_ID = {1}.AsemakaavoitettuAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.AsemakaavoitettuAlue_Alue_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.AsemakaavoitettuAlue_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="neighborhood_type" category="functional">
+      <Description>Asutusalueen tyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.AsutusalueTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.Asutusaluetyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.AsutusalueTyyppiSelite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimAsutusalueTyyppi {0} LEFT OUTER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {0}.Asutusaluetyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimAsutusalueTyyppi {0} ON {0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID</JoinQuery>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_neighborhood_class">BR_{0}.AsutusalueLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+        <FunctionalAreaAvailabilityField>{0}.AsutusalueTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.AsutusalueTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="neighborhood_class" category="functional">
+      <Description>Asutusalueen luokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_AsutusalueLuokka.AsutusalueLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.AsutusalueLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.AsutusalueLuokkaSelite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimAsutusalueLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka BR_{0} ON BR_{0}.Asutusaluetyyppi_ID = {1}.AsutusalueTyyppi_ID INNER JOIN DimAsutusalueLuokka {0} ON {0}.AsutusalueLuokka_ID = BR_{0}.AsutusalueLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeAsutusalueTyyppi_AsutusalueLuokka F_AsutusalueLuokka ON F_AsutusalueLuokka.Asutusaluetyyppi_ID = {1}.Asutusaluetyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.AsutusalueTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.AsutusalueTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="administrative_law_area" category="administrative">
+      <Description>Hallinto-oikeus</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.HallintoOikeus_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Nimi</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimHallintoOikeus {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimHallintoOikeus {0} ON {0}.Alue_ID = {1}.HallintoOikeus_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.HallintoOikeus_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="16" />
+        <DatabaseAreaType id="2" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="shop_area" category="functional">
+      <Description>Kaupan alue</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.KaupanAlue_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>(KT.Selite + ' (' + CAST({0}.Alue_ID AS varchar(max)) + ')')</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
+        <SubFromString addAreaTable="true">DimKaupanAlue {0} INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID</SubFromString>
+        <JoinQuery>INNER JOIN DimKaupanAlue {0} ON ({0}.Alue_ID = {1}.KaupanAlue_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID)) INNER JOIN DimKeskustatyyppi KT ON KT.Keskustatyyppi_ID = {0}.KeskustaTyyppi_ID</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KaupanAlue_Alue_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KaupanAlue_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_rural_area_type" category="functional">
+      <Description>Kaupunkimaaseutuluokitustyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.KaupunkiMaaseutuTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.KaupunkimaaseutuTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKaupunkiMaaseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {0}.KaupunkimaaseutuTyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimKaupunkiMaaseutuTyyppi {0} ON {0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkiMaaseutuTyyppi_ID</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_city_rural_area_class">BR_{0}.KaupunkimaaseutuLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_rural_area_class" category="functional">
+      <Description>Kaupunkimaaseutuluokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_KaupunkiMaaseutuLuokka.KaupunkiMaaseutuLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.KaupunkiMaaseutuLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.KaupunkiMaaseutuLuokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKaupunkiMaaseutuLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka BR_{0} ON BR_{0}.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID INNER JOIN DimKaupunkiMaaseutuLuokka {0} ON {0}.KaupunkiMaaseutuLuokka_ID = BR_{0}.KaupunkiMaaseutuLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeKaupunkiMaaseutuTyyppi_KaupunkiMaaseutuLuokka F_KaupunkiMaaseutuLuokka ON F_KaupunkiMaaseutuLuokka.KaupunkimaaseutuTyyppi_ID = {1}.KaupunkimaaseutuTyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KaupunkiMaaseutuTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="urban_area_type" category="functional">
+      <Description>Kaupunkiseutu-tyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.KaupunkiseutuTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.KaupunkiseutuTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKaupunkiseutuTyyppi {0} LEFT OUTER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {0}.KaupunkiseutuTyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimKaupunkiseutuTyyppi {0} ON {0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.KaupunkiseutuTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_urban_area_class">BR_{0}.KaupunkiseutuLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="urban_area_class" category="functional">
+      <Description>Kaupunkiseutuluokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_KaupunkiseutuLuokka.KaupunkiseutuLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.KaupunkiseutuLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.KaupunkiseutuLuokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKaupunkiseutuLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka BR_{0} ON BR_{0}.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID INNER JOIN DimKaupunkiseutuLuokka {0} ON {0}.KaupunkiseutuLuokka_ID = BR_{0}.KaupunkiseutuLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeKaupunkiseutuTyyppi_KaupunkiseutuLuokka F_KaupunkiseutuLuokka ON F_KaupunkiseutuLuokka.KaupunkiseutuTyyppi_ID = {1}.KaupunkiseutuTyyppi_ID</FilterJoinQuery>
+        <AreaYearAvailabilityField>{0}.KaupunkiseutuTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_central_area" category="functional">
+      <Description>Keskusta-alue</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Keskusta_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.KeskustaNimi</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn>{0}.Jakso_ID</SubYearColumn>
+        <SubFromString addAreaTable="true">DimKeskusta {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimKeskusta {0} ON ({0}.Alue_ID = {1}.Keskusta_Alue_ID AND ({0}.Jakso_ID BETWEEN {1}.Alkaen_Jakso_ID AND {1}.Asti_Jakso_ID))</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.Keskusta_Alue_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.Keskusta_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_central_type" category="functional">
+      <Description>Keskustatyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.KeskustaTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.Keskustatyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKeskustatyyppi {0} INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 1)</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 1)</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KeskustaTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KeskustaTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_city_central_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="city_central_class" category="functional">
+      <Description>Keskustaluokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_KeskustaLuokka.Keskustaluokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.Keskustaluokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKeskustaLuokka {0} INNER JOIN DimKeskustaLuokka SJ ON (SJ.KeskustaLuokka_ID = A2.KeskustaLuokka_ID AND A2.Keskustaluokka_ID = 1)</SubFromString>
+        <JoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON ({0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID AND {0}.Keskustaluokka_ID = 1)</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeKeskustatyyppi_Keskustaluokka F_KeskustaLuokka ON (F_KeskustaLuokka.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND F_KeskustaLuokka.Keskustaluokka_ID = 1)</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KeskustaTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KeskustaTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="shop_area_type" category="functional">
+      <Description>Kaupan alue -tyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.KeskustaTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.Keskustatyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKeskustatyyppi {0} INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {0}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 2)</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimKeskustatyyppi {0} ON {0}.Keskustatyyppi_ID = {1}.KeskustaTyyppi_ID INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON (BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND BR_{0}.Keskustaluokka_ID = 2)</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KaupanAlueTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KaupanAlueTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_shop_area_class">BR_{0}.Keskustaluokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="shop_area_class" category="functional">
+      <Description>Kaupan alue -luokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_KaupanAlueLuokka.Keskustaluokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.Keskustaluokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimKeskustaLuokka {0} INNER JOIN DimKeskustaLuokka SJ ON (SJ.KeskustaLuokka_ID = A2.KeskustaLuokka_ID AND A2.Keskustaluokka_ID = 2)</SubFromString>
+        <JoinQuery>INNER JOIN BridgeKeskustatyyppi_Keskustaluokka BR_{0} ON BR_{0}.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID INNER JOIN DimKeskustaLuokka {0} ON ({0}.Keskustaluokka_ID = BR_{0}.Keskustaluokka_ID AND {0}.Keskustaluokka_ID = 2)</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeKeskustatyyppi_Keskustaluokka F_KaupanAlueLuokka ON (F_KaupanAlueLuokka.Keskustatyyppi_ID = {1}.Keskustatyyppi_ID AND F_KaupanAlueLuokka.Keskustaluokka_ID = 2)</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.KaupanAlueTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.KaupanAlueTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_density_type" category="functional">
+      <Description>Taajama harva/tiheä -tyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.TaajamaHarvaTiheaTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.TaajamaHarvaTiheaTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimTaajamaHarvaTiheaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {0}.TaajamaHarvaTiheaTyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimTaajamaHarvaTiheaTyyppi {0} ON {0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_locality_density_class">BR_{0}.TaajamaHarvaTiheaLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_density_class" category="functional">
+      <Description>Taajama harva/tiheä -luokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_TaajamaHarvaTiheaLuokka.TaajamaHarvaTiheaLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.TaajamaHarvaTiheaLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.TaajamaHarvaTiheaLuokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimTaajamaHarvaTiheaLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka BR_{0} ON BR_{0}.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID INNER JOIN DimTaajamaHarvaTiheaLuokka {0} ON {0}.TaajamaHarvaTiheaLuokka_ID = BR_{0}.TaajamaHarvaTiheaLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeTaajamaHarvaTiheaTyyppi_TaajamaHarvaTiheaLuokka F_TaajamaHarvaTiheaLuokka ON F_TaajamaHarvaTiheaLuokka.TaajamaHarvaTiheaTyyppi_ID = {1}.TaajamaHarvaTiheaTyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaHarvaTiheaTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_rural_type" category="functional">
+      <Description>Taajama haja-asutustyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.TaajamaHajaAsutusTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.TaajamaHajaAsutusTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.TaajamaHajaAsutusTyyppi</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimTaajamaHajaAsutusTyyppi {0} LEFT OUTER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {0}.TaajamaHajaAsutusTyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimTaajamaHajaAsutusTyyppi {0} ON {0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_locality_rural_class">BR_{0}.TaajamaHajaAsutusLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_rural_class" category="functional">
+      <Description>Taajama haja-asutusluokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_TaajamaHajaAsutusLuokka.TaajamaHajaAsutusLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.TaajamaHajaAsutusLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.TaajamaHajaAsutusLuokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimTaajamaHajaAsutusLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka BR_{0} ON BR_{0}.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID INNER JOIN DimTaajamaHajaAsutusLuokka {0} ON {0}.TaajamaHajaAsutusLuokka_ID = BR_{0}.TaajamaHajaAsutusLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeTaajamaHajaAsutusTyyppi_TaajamaHajaAsutusLuokka F_TaajamaHajaAsutusLuokka ON F_TaajamaHajaAsutusLuokka.TaajamaHajaAsutusTyyppi_ID = {1}.TaajamaHajaAsutusTyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaHajaAsutusTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="urban_zone_type" category="functional">
+      <Description>Yhdyskuntarakenteen vyöhyke -tyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.UZVyohykeTyyppi_ID</MainIdColumn>
+        <SubIdColumn>{0}.UZVyohykeTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimUZVyohykeTyyppi {0} LEFT OUTER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {0}.UZVyohykeTyyppi_ID</SubFromString>
+        <SubOrderColumn>JarjNro</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimUZVyohykeTyyppi {0} ON {0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.UZVyohykeTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.UZVyohykeTyyppi_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_urban_zone_class">BR_{0}.UZVyohykeLuokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="urban_zone_class" category="functional">
+      <Description>Yhdyskuntarakenteen vyöhyke -luokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_UZVyohykeLuokka.UZVyohykeLuokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.UZVyohykeLuokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.UZVyohykeLuokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimUZVyohykeLuokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka BR_{0} ON BR_{0}.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID INNER JOIN DimUZVyohykeLuokka {0} ON {0}.UZVyohykeLuokka_ID = BR_{0}.UZVyohykeLuokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeUZVyohykeTyyppi_UZVyohykeLuokka F_UZVyohykeLuokka ON F_UZVyohykeLuokka.UZVyohykeTyyppi_ID = {1}.UZVyohykeTyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.UZVyohykeTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.UZVyohykeTyyppi_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid250m" category="functional">
+      <Description>Ruutu 250m</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" primary="true" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid500m" category="functional">
+      <Description>Ruutu 500m</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_500m_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_500m_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_500m_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="7" primary="true" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid1km" category="functional">
+      <Description>Ruutu 1km</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_1km_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_1km_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_1km_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="22" primary="true" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid2km" category="functional">
+      <Description>Ruutu 2km</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_2km_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_2km_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_2km_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="23" primary="true" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid5km" category="functional">
+      <Description>Ruutu 5km</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_5km_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_5km_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_5km_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="24" primary="true" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid10km" category="functional">
+      <Description>Ruutu 10km</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_10km_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_10km_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_10km_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="25" primary="true" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="grid20km" category="functional">
+      <Description>Ruutu 20km</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Ruutu_20km_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Alue_ID</SubNameColumn>
+        <SubAlternativeIdColumn>{0}.xyind</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <GeometryColumn>{0}.KoordsGeom</GeometryColumn>
+        <SubFromString addAreaTable="true" disableList="true">DimRuutu {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimRuutu {0} ON {0}.Alue_ID = {1}.Ruutu_20km_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Ruutu_20km_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="26" primary="true" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="reindeer_herding_cooperative" category="administrative">
+      <Description>Paliskunta</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.Paliskunta_Alue_ID</MainIdColumn>
+        <SubIdColumn>{0}.Alue_ID</SubIdColumn>
+        <SubNameColumn>{0}.Plk_nimi</SubNameColumn>
+        <SubAlternativeIdColumn>CONVERT(INT, {0}.Plk_Nro)</SubAlternativeIdColumn>
+        <SubYearColumn/>
+        <SubFromString addAreaTable="true">DimPaliskunta {0}</SubFromString>
+        <JoinQuery>INNER JOIN DimPaliskunta {0} ON {0}.Alue_ID = {1}.Paliskunta_Alue_ID</JoinQuery>
+        <AreaYearAvailabilityField>{0}.Paliskunta_Alue_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType primary="true" id="29" />
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_size_type" category="functional">
+      <Description>Taajaman kokoluokkatyyppi</Description>
+      <DatabaseSchema>
+        <MainIdColumn>{1}.TaajamaKokoluokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.TaajamaKokoluokkaTyyppi_ID</SubIdColumn>
+        <SubNameColumn>{0}.Selite</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimTaajamaKokoluokkaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {0}.TaajamaKokoluokkaTyyppi_ID</SubFromString>
+        <SubOrderColumn>{0}.TaajamaKokoluokkaTyyppi_ID</SubOrderColumn>
+        <JoinQuery>INNER JOIN DimTaajamaKokoluokkaTyyppi {0} ON {0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID</JoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokka_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaKokoluokka_ID</AreaYearAvailabilityField>
+        <ExtraAreaFields>
+          <ExtraAreaField name="parent_locality_size_class">BR_{0}.TaajamaKokoluokka_ID</ExtraAreaField>
+        </ExtraAreaFields>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+    <SelectionAreaType id="locality_size_class" category="functional">
+      <Description>Taajaman kokoluokka</Description>
+      <DatabaseSchema>
+        <MainIdColumn>F_DimTaajamaKokoluokka.TaajamaKokoluokka_ID</MainIdColumn>
+        <SubIdColumn>{0}.TaajamaKokoluokka_ID</SubIdColumn>
+        <SubNameColumn>{0}.TaajamaKokoluokka</SubNameColumn>
+        <SubAlternativeIdColumn/>
+        <SubYearColumn/>
+        <SubFromString>DimTaajamaKokoluokka {0}</SubFromString>
+        <JoinQuery>INNER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID INNER JOIN DimTaajamaKokoluokka {0} ON {0}.TaajamaKokoluokka_ID = BR_{0}.TaajamaKokoluokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka F_DimTaajamaKokoluokka ON F_TaajamaHarvaTiheaLuokka.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID</FilterJoinQuery>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokka_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaKokoluokka_ID</AreaYearAvailabilityField>
+      </DatabaseSchema>
+      <DatabaseAreaTypes>
+        <DatabaseAreaType id="1" />
+      </DatabaseAreaTypes>
+    </SelectionAreaType>
+  </SelectionAreaTypes>
 </root>
