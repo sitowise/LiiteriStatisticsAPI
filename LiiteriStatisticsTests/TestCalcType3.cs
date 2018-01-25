@@ -344,6 +344,12 @@ namespace LiiteriStatisticsTests
         }
 
         [TestMethod]
+        public void Test_group_ct3_locality_size_type()
+        {
+            this.CheckStatistics(3002, new int[] { 2010 }, "locality_size_type");
+        }
+
+        [TestMethod]
         public void Test_filter_ct3_locality_rural_type()
         {
             this.CheckStatistics(3002, new int[] { 2010 }, "municipality",
@@ -361,6 +367,19 @@ namespace LiiteriStatisticsTests
         {
             this.CheckStatistics(3002, new int[] { 2010 }, "locality_rural_type",
                 "locality_rural_class=1");
+        }
+
+        [TestMethod]
+        public void Test_group_ct3_locality_size_class()
+        {
+            this.CheckStatistics(3002, new int[] { 2010 }, "locality_size_class");
+        }
+
+        [TestMethod]
+        public void Test_filter_ct3_locality_size_class()
+        {
+            this.CheckStatistics(3002, new int[] { 2010 }, "locality_size_type",
+                "locality_size_class=1");
         }
 
         [TestMethod]
