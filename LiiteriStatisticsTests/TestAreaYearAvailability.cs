@@ -181,6 +181,18 @@ namespace LiiteriStatisticsTests
         }
 
         [TestMethod]
+        public void TestAreaYearAvailability_locality_size_type()
+        {
+            this.CheckAreaYearAvailability("locality_size_type");
+        }
+
+        [TestMethod]
+        public void TestAreaYearAvailability_locality_size_class()
+        {
+            this.CheckAreaYearAvailability("locality_size_class");
+        }
+
+        [TestMethod]
         public void TestAreaYearAvailability_urban_zone_type()
         {
             this.CheckAreaYearAvailability("urban_zone_type");

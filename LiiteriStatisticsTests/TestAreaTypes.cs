@@ -203,6 +203,20 @@ namespace LiiteriStatisticsTests
         }
 
         [TestMethod]
+        public void TestAreaType_locality_size_type()
+        {
+            var areas = this.controller.GetAreas("locality_size_type");
+            Assert.IsTrue(areas.Count() > 0);
+        }
+
+        [TestMethod]
+        public void TestAreaType_locality_size_class()
+        {
+            var areas = this.controller.GetAreas("locality_size_class");
+            Assert.IsTrue(areas.Count() > 0);
+        }
+
+        [TestMethod]
         public void TestAreaType_urban_zone_type()
         {
             var areas = this.controller.GetAreas("urban_zone_type");
