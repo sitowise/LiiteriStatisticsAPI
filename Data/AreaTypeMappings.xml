@@ -738,17 +738,16 @@
       </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="locality_size_type" category="functional">
-      <!-- DimAlue-taulussa TaajamaKokoluokka_ID sarake tarkoittaa TaajamaKokoluokkaTyyppi_ID:tä -->
       <Description>Taajaman kokoluokkatyyppi</Description>
       <DatabaseSchema>
-        <MainIdColumn>{1}.TaajamaKokoluokka_ID</MainIdColumn>
+        <MainIdColumn>{1}.TaajamaKokoluokkaTyyppi_ID</MainIdColumn>
         <SubIdColumn>{0}.TaajamaKokoluokkaTyyppi_ID</SubIdColumn>
         <SubNameColumn>{0}.Selite</SubNameColumn>
         <SubAlternativeIdColumn/>
         <SubYearColumn/>
         <SubFromString>DimTaajamaKokoluokkaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {0}.TaajamaKokoluokkaTyyppi_ID</SubFromString>
         <SubOrderColumn>{0}.TaajamaKokoluokkaTyyppi_ID</SubOrderColumn>
-        <JoinQuery>INNER JOIN DimTaajamaKokoluokkaTyyppi {0} ON {0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokka_ID</JoinQuery>
+        <JoinQuery>INNER JOIN DimTaajamaKokoluokkaTyyppi {0} ON {0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID</JoinQuery>
         <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokka_ID</FunctionalAreaAvailabilityField>
         <AreaYearAvailabilityField>{0}.TaajamaKokoluokka_ID</AreaYearAvailabilityField>
         <ExtraAreaFields>
@@ -760,7 +759,6 @@
       </DatabaseAreaTypes>
     </SelectionAreaType>
     <SelectionAreaType id="locality_size_class" category="functional">
-      <!-- DimAlue-taulussa TaajamaKokoluokka_ID sarake tarkoittaa TaajamaKokoluokkaTyyppi_ID:tä -->
       <Description>Taajaman kokoluokka</Description>
       <DatabaseSchema>
         <MainIdColumn>F_DimTaajamaKokoluokka.TaajamaKokoluokka_ID</MainIdColumn>
@@ -769,8 +767,8 @@
         <SubAlternativeIdColumn/>
         <SubYearColumn/>
         <SubFromString>DimTaajamaKokoluokka {0}</SubFromString>
-        <JoinQuery>INNER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokka_ID INNER JOIN DimTaajamaKokoluokka {0} ON {0}.TaajamaKokoluokka_ID = BR_{0}.TaajamaKokoluokka_ID</JoinQuery>
-        <FilterJoinQuery>LEFT JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka F_DimTaajamaKokoluokka ON F_DimTaajamaKokoluokka.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokka_ID</FilterJoinQuery>
+        <JoinQuery>INNER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID INNER JOIN DimTaajamaKokoluokka {0} ON {0}.TaajamaKokoluokka_ID = BR_{0}.TaajamaKokoluokka_ID</JoinQuery>
+        <FilterJoinQuery>LEFT JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka F_DimTaajamaKokoluokka ON F_DimTaajamaKokoluokka.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID</FilterJoinQuery>
         <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokka_ID</FunctionalAreaAvailabilityField>
         <AreaYearAvailabilityField>{0}.TaajamaKokoluokka_ID</AreaYearAvailabilityField>
       </DatabaseSchema>
