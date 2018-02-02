@@ -748,8 +748,8 @@
         <SubFromString>DimTaajamaKokoluokkaTyyppi {0} LEFT OUTER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {0}.TaajamaKokoluokkaTyyppi_ID</SubFromString>
         <SubOrderColumn>{0}.TaajamaKokoluokkaTyyppi_ID</SubOrderColumn>
         <JoinQuery>INNER JOIN DimTaajamaKokoluokkaTyyppi {0} ON {0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID</JoinQuery>
-        <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokka_ID</FunctionalAreaAvailabilityField>
-        <AreaYearAvailabilityField>{0}.TaajamaKokoluokka_ID</AreaYearAvailabilityField>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokkaTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaKokoluokkaTyyppi_ID</AreaYearAvailabilityField>
         <ExtraAreaFields>
           <ExtraAreaField name="parent_locality_size_class">BR_{0}.TaajamaKokoluokka_ID</ExtraAreaField>
         </ExtraAreaFields>
@@ -769,8 +769,8 @@
         <SubFromString>DimTaajamaKokoluokka {0}</SubFromString>
         <JoinQuery>INNER JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka BR_{0} ON BR_{0}.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID INNER JOIN DimTaajamaKokoluokka {0} ON {0}.TaajamaKokoluokka_ID = BR_{0}.TaajamaKokoluokka_ID</JoinQuery>
         <FilterJoinQuery>LEFT JOIN BridgeTaajamaKokoluokkaTyyppi_TaajamaKokoluokka F_DimTaajamaKokoluokka ON F_DimTaajamaKokoluokka.TaajamaKokoluokkaTyyppi_ID = {1}.TaajamaKokoluokkaTyyppi_ID</FilterJoinQuery>
-        <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokka_ID</FunctionalAreaAvailabilityField>
-        <AreaYearAvailabilityField>{0}.TaajamaKokoluokka_ID</AreaYearAvailabilityField>
+        <FunctionalAreaAvailabilityField>{0}.TaajamaKokoluokkaTyyppi_ID</FunctionalAreaAvailabilityField>
+        <AreaYearAvailabilityField>{0}.TaajamaKokoluokkaTyyppi_ID</AreaYearAvailabilityField>
       </DatabaseSchema>
       <DatabaseAreaTypes>
         <DatabaseAreaType id="1" />
