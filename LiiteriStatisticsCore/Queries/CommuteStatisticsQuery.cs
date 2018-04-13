@@ -35,6 +35,7 @@ namespace LiiteriStatisticsCore.Queries
         /* Dynamic custom declarations/queries before the main query
          * Intended to be used with geometry stuff */
         private StringBuilder sbPreQuery;
+        private StringBuilder sbPostQuery;
 
         public string TableName { get; set; }
 
@@ -308,13 +309,15 @@ namespace LiiteriStatisticsCore.Queries
                     "SpatialParam_" +
                     (++this.GeometryParameterCount).ToString();
                 this.sbPreQuery.Append(string.Format(
-                    "DECLARE @{0} TABLE (id INT NOT NULL)\n",
+                    "CREATE TABLE #{0} (id INT NOT NULL)\n",
                     paramName));
+                this.sbPostQuery.Append(string.Format(
+                    "DROP TABLE #{0}\n", paramName));
 
                 int databaseAreaTypeId =
                     AreaTypeMappings.GetPrimaryDatabaseAreaType(areaType);
                 this.sbPreQuery.Append(string.Format(
-                    "INSERT INTO @{0} SELECT {1} FROM {2} WHERE {3} = {4} AND {5}.{6}({7}) = 1\n",
+                    "INSERT INTO #{0} SELECT {1} FROM {2} WHERE {3} = {4} AND {5}.{6}({7}) = 1\n",
                     paramName,
                     dataFormat(schema["SubIdColumn"]),
                     dataFormat(schema["SubFromString"]),
@@ -325,7 +328,7 @@ namespace LiiteriStatisticsCore.Queries
                     geom2));
 
                 string expr = string.Format(
-                    "{0} IN (SELECT id FROM @{1})",
+                    "{0} IN (SELECT id FROM #{1})",
                     dataFormat(schema["MainIdColumn"]),
                     paramName);
 
@@ -414,6 +417,7 @@ namespace LiiteriStatisticsCore.Queries
             this.orders = new List<string>();
             this.sbFrom = new StringBuilder();
             this.sbPreQuery = new StringBuilder();
+            this.sbPostQuery = new StringBuilder();
         }
 
         private string GetWhereString()
@@ -607,7 +611,10 @@ GROUP BY
 
             /* preQuery stuff (which are geometry declarations at the moment)
              * should be common for all query types, let's prepend it here */
-            queryString = this.sbPreQuery.ToString() + "\n" + queryString;
+            queryString =
+                this.sbPreQuery.ToString() + "\n" +
+                queryString + "\n" +
+                this.sbPostQuery.ToString();
 
             return queryString;
         }
